@@ -44,17 +44,17 @@ class Package_model extends CI_Model {
 			return $query->row_array()['count'];
 		}
 
-		public function set_package()
+		public function set_package($container_id, $length, $width, $height, $weight, $fragile)
 		{
 
 		    $this->load->helper('url');
 		    
-		    $container_id = $this->input->post('container');
-		    $length = $this->input->post('length');
-		    $width = $this->input->post('width');
-		    $height = $this->input->post('height');
-		    $weight = $this->input->post('weight');
-		    $fragile = $this->input->post('fragile');
+		    // $container_id = $this->input->post('container');
+		    // $length = $this->input->post('length');
+		    // $width = $this->input->post('width');
+		    // $height = $this->input->post('height');
+		    // $weight = $this->input->post('weight');
+		    // $fragile = $this->input->post('fragile');
 
 
 		    $x = 0;//$this->Package_model->count_package(1);
@@ -94,8 +94,10 @@ class Package_model extends CI_Model {
 			    	$data['orientation'] = 'vertical';
 			    }
 
-			    return $this->db->insert('package', $data);
+			    $this->db->insert('package', $data);
+			    return true;
 		    }
+		    return false;
 		}
 
 		public function compute($container_id,$length, $width, $height, &$x,&$y,&$z, &$orientation)
@@ -246,9 +248,10 @@ class Package_model extends CI_Model {
 			endforeach;
 
 			$prev_y = -1;
+			$prev_x = -1;
 			$min_tick = -1;
 			foreach ($candidates as $candidate):
-				//var_dump($candidate);
+				// var_dump($candidate);
 				$candidate_x  = ($candidate['orientation'] == 'vertical'? $candidate['x'] + $width:$candidate['x'] + $length);
 				$candidate_y  = ($candidate['orientation'] == 'vertical'? $candidate['y'] + $length:$candidate['y'] + $width);
 				$temp_x = ($max_x > $candidate_x? $max_x: $candidate_x);
@@ -261,18 +264,28 @@ class Package_model extends CI_Model {
 				2. if area is equal, get candidate with lesser y to prioritize putting on left side
 				3. if area and y is equal, prioritize vertical
 				*/
+				// var_dump('area',$temp_x*$temp_y);
+				// var_dump('condition1: '.$min_area,$min_area == -1);
+				// var_dump('condition2: ',round($temp_x * $temp_y,4) < round($min_area,4));
+				// var_dump('condition2: ',abs($temp_x * $temp_y - $min_area) < 0);
+				// var_dump('condition3: ',($temp_x * $temp_y == $min_area && $temp_x < $prev_x));
+				// var_dump('condition4: ',($temp_x * $temp_y == $min_area && $temp_x >= $prev_x && $temp_y < $prev_y));
+				// var_dump('condition5: ',($temp_x * $temp_y == $min_area && $temp_x >= $prev_x && $candidate['orientation'] == 'vertical' && $candidate['y'] <= $min_tick));
 				if($min_area == -1 || 
-					$temp_x * $temp_y < $min_area || 
-					($temp_x * $temp_y == $min_area && $temp_y < $prev_y) ||
-					($temp_x * $temp_y == $min_area && $candidate['orientation'] == 'vertical' && $candidate['y'] <= $min_tick)
+					round($temp_x * $temp_y,4) < round($min_area,4) || 
+					($temp_x * $temp_y == $min_area && $temp_x < $prev_x) ||
+					($temp_x * $temp_y == $min_area && $temp_x < $prev_x && $temp_y < $prev_y) ||
+					($temp_x * $temp_y == $min_area && $temp_x < $prev_x && $candidate['orientation'] == 'vertical' && $candidate['y'] <= $min_tick)
 					)
 				{
 					$min_area = $temp_x * $temp_y;
+					$prev_x = $temp_x;
 					$min_candidate = $candidate;
 					$min_tick = $candidate['y'];
 
 				}
 			endforeach;
+			// var_dump('$min_candidate', $min_candidate);
 			return $min_candidate;
 		}
 
@@ -288,19 +301,20 @@ class Package_model extends CI_Model {
 
 				if(
 
+						($corner['x'] < (float)$package['x2'] && $x2 > (float)$package['x1'] && $corner['y'] < (float)$package['y2'] && $y2 > (float)$package['y1'])
 						// ((float)$package['x1'] < $x2  && $x2 <= (float)$package['x2'] || (float)$package['y1'] < $y2  && $y2 <= (float)$package['y2'] ) &&
 						// ((float)$package['x1'] < $x2  && $x2 <= (float)$package['x2'] || (float)$package['y1'] < $corner['y']  && $corner['y'] <= (float)$package['y2'] ) &&
 						// ((float)$package['x1'] >= $corner['x']  && $corner['x'] <= (float)$package['x2'] || (float)$package['y1'] < $y2  && $y2 <= (float)$package['y2'] ) &&
 						// ((float)$package['x1'] >= $corner['x']  && $corner['x'] <= (float)$package['x2'] || (float)$package['y1'] < $corner['y']  && $corner['y'] <= (float)$package['y2'] )
 					
-					($orientation == 'horizontal' &&
-					($corner['x'] >= (float)$package['x1'] && $corner['x'] < (float)$package['x2'] &&
-					$corner['y'] >= (float)$package['y1'] && $corner['y'] < (float)$package['y2'])
-					) ||
-					($orientation == 'vertical' &&
-					($corner['x'] >= (float)$package['x1'] && $corner['x'] < (float)$package['x2'] &&
-					$corner['y'] >= (float)$package['y1'] && $corner['y'] < (float)$package['y2'])
-					)
+					// ($orientation == 'horizontal' &&
+					// ($corner['x'] >= (float)$package['x1'] && $corner['x'] < (float)$package['x2'] &&
+					// $corner['y'] >= (float)$package['y1'] && $corner['y'] < (float)$package['y2'])
+					// ) ||
+					// ($orientation == 'vertical' &&
+					// ($corner['x'] >= (float)$package['x1'] && $corner['x'] < (float)$package['x2'] &&
+					// $corner['y'] >= (float)$package['y1'] && $corner['y'] < (float)$package['y2'])
+					// )
 				)
 				{
 		   //          var_dump($corner);
@@ -315,10 +329,14 @@ class Package_model extends CI_Model {
 					// {
 					// 	var_dump('$x2: '.$x2);
 					// 	var_dump('$y2: '.$y2);
-					// 	var_dump((float)$package['x1'] < $x2  && $x2 <= (float)$package['x2'] || (float)$package['y1'] < $y2  && $y2 <= (float)$package['y2']);
-					// 	var_dump((float)$package['x1'] < $x2  && $x2 <= (float)$package['x2'] || (float)$package['y1'] < $corner['y']  && $corner['y'] <= (float)$package['y2'] );
-					// 	var_dump((float)$package['x1'] >= $corner['x']  && $corner['x'] <= (float)$package['x2'] || (float)$package['y1'] < $y2  && $y2 <= (float)$package['y2']);
-					// 	var_dump((float)$package['x1'] >= $corner['x']  && $corner['x'] <= (float)$package['x2'] || (float)$package['y1'] < $corner['y']  && $corner['y'] <= (float)$package['y2']);
+					// 	// var_dump((float)$package['x1'] < $x2  && $x2 <= (float)$package['x2'] || (float)$package['y1'] < $y2  && $y2 <= (float)$package['y2']);
+					// 	// var_dump((float)$package['x1'] < $x2  && $x2 <= (float)$package['x2'] || (float)$package['y1'] < $corner['y']  && $corner['y'] <= (float)$package['y2'] );
+					// 	// var_dump((float)$package['x1'] >= $corner['x']  && $corner['x'] <= (float)$package['x2'] || (float)$package['y1'] < $y2  && $y2 <= (float)$package['y2']);
+					// 	// var_dump((float)$package['x1'] >= $corner['x']  && $corner['x'] <= (float)$package['x2'] || (float)$package['y1'] < $corner['y']  && $corner['y'] <= (float)$package['y2']);
+					// 	var_dump($corner['x'] < (float)$package['x2']);
+					// 	var_dump($x2 > (float)$package['x1']);
+					// 	var_dump($corner['y'] < (float)$package['y2']);
+					// 	var_dump($y2 > (float)$package['y1']);
 					// }
 					return false;
 				}
