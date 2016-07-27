@@ -27,17 +27,17 @@ class Index extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
-	public function index($page='auth')
+	public function index($page='package')
 	{
 
 
-		redirect('auth');
-		
-		//if(!empty($page))
-		//{
-		//	redirect('auth');
-		//}
-		//$this->$page();
+		// redirect('index/'.$page);
+		if(!empty($page))
+		{
+			redirect('index/'.$page);
+		}
+		redirect('index/package');
+		// $this->$page();
 	}
 
 
@@ -109,18 +109,7 @@ class Index extends CI_Controller {
 					)
 				);
 		$data['container']=$this->Address_model->get_address(-1,-1,$order);
-		$this->load->view('template/view_header');
-		$this->load->view('template/view_top');
-		$this->load->view('template/view_menu');
-		$this->load->view('form/add_content', $data);
-		$this->load->view('template/view_footer');
-	}
 
-	public function add()
-	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
 
 		$this->load->helper('form');
         $this->load->library('form_validation');
@@ -131,19 +120,69 @@ class Index extends CI_Controller {
 		$this->form_validation->set_rules('height', 'Height', 'required');
 		$this->form_validation->set_rules('weight', 'Weight', 'required');
 
-
-		if ($this->form_validation->run() === FALSE)
+		$container_id = $this->input->post('container');
+		$length = $this->input->post('length');
+		$width = $this->input->post('width');
+		$height = $this->input->post('height');
+		$weight = $this->input->post('weight');
+		$fragile = $this->input->post('fragile');
+		
+		$data['length'] = $length;
+		$data['width'] = $width;
+		$data['height'] = $height;
+		$data['weight'] = $weight;
+		
+		if ($this->form_validation->run() === TRUE)
 		{
-			echo '<script>alert("Wrong input!")</script>';
-			$this->index('form');
-		}
-		else
-		{
-
-			$this->Package_model->set_package();
-			// redirect(base_url('index.php/index/package'));
+			$this->add($container_id, $length, $width, $height, $weight, $fragile);
+			// echo '<script>alert("Wrong input!")</script>';
+			// $this->index('form');
 		}
 
+		$this->load->view('template/view_header');
+		$this->load->view('template/view_top');
+		$this->load->view('template/view_menu');
+		$this->load->view('form/add_content', $data);
+		$this->load->view('template/view_footer');
+
+
+		
+		
+	}
+
+	public function add($container_id, $length, $width, $height,  $weight, $fragile)
+	{
+		if (!$this->tank_auth->is_logged_in()) {
+			redirect('/auth/login/');
+		}
+
+		$this->load->helper('form');
+  //       $this->load->library('form_validation');
+
+		// $this->form_validation->set_rules('container', 'container', 'required');
+		// $this->form_validation->set_rules('length', 'Length', 'required');
+		// $this->form_validation->set_rules('width', 'Width', 'required');
+		// $this->form_validation->set_rules('height', 'Height', 'required');
+		// $this->form_validation->set_rules('weight', 'Weight', 'required');
+
+
+		// if ($this->form_validation->run() === FALSE)
+		// {
+		// 	echo '<script>alert("Wrong input!")</script>';
+		// 	$this->index('form');
+		// }
+		// else
+		// {
+			$return_value = $this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile); 
+			if($return_value)
+			{
+			redirect(base_url('index.php/index/package'));	
+			}
+			else
+			{
+			echo '<script>alert("Container cannot accomodate package!")</script>';	
+			}
+		// }
 	}
 
 	public function analytics()
