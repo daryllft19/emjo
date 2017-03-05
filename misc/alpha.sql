@@ -15,21 +15,22 @@ CREATE TABLE cluster(
 );
 
 
-INSERT INTO cluster values(default, 'BWE',2.4,1.2);			
-INSERT INTO cluster values(default, 'Central 1', 6, 2.4);	
-INSERT INTO cluster values(default, 'Central 2', 6, 2.4);	
-INSERT INTO cluster values(default, 'Domestic', 2.4, 1.2);	
-INSERT INTO cluster values(default, 'East 1', 7.2, 2.4);
-INSERT INTO cluster values(default, 'East 2', 7.2, 2.4);
-INSERT INTO cluster values(default, 'East 3', 7.2, 1.2);
-INSERT INTO cluster values(default, 'East 4', 7.2, 1.2);
-INSERT INTO cluster values(default, 'North 1', 7.2, 1.2);
-INSERT INTO cluster values(default, 'North 2', 7.2, 1.2);
-INSERT INTO cluster values(default, 'RSO', 6, 1.2);
-INSERT INTO cluster values(default, 'South 1', 7.2, 1.2);	
-INSERT INTO cluster values(default, 'South 2', 7.2, 1.2);	
-INSERT INTO cluster values(default, 'West 1', 3.6, 1.2);
-INSERT INTO cluster values(default, 'West 2', 3.6, 1.2);	
+INSERT INTO cluster values(default, 'BWE',2.4,1.2, 1.52);			
+INSERT INTO cluster values(default, 'Central 1', 6, 2.4, 1.52);	
+INSERT INTO cluster values(default, 'Central 2', 6, 2.4, 1.52);	
+INSERT INTO cluster values(default, 'Domestic', 2.4, 1.2, 1.52);	
+INSERT INTO cluster values(default, 'East 1', 7.2, 2.4, 1.52);
+INSERT INTO cluster values(default, 'East 2', 7.2, 2.4, 1.52);
+INSERT INTO cluster values(default, 'East 3', 7.2, 1.2, 1.52);
+INSERT INTO cluster values(default, 'East 4', 7.2, 1.2, 1.52);
+INSERT INTO cluster values(default, 'North 1', 7.2, 1.2, 1.52);
+INSERT INTO cluster values(default, 'North 2', 7.2, 1.2, 1.52);
+INSERT INTO cluster values(default, 'RSO', 6, 1.2, 1.52);
+INSERT INTO cluster values(default, 'South 1', 7.2, 1.2, 1.52);	
+INSERT INTO cluster values(default, 'South 2', 7.2, 1.2, 1.52);	
+INSERT INTO cluster values(default, 'West 1', 3.6, 1.2, 1.52);
+INSERT INTO cluster values(default, 'West 2', 3.6, 1.2, 1.52);	
+INSERT INTO cluster values(default, 'TEST-CLUSTER',6,2.4, 1.52);
 
 /*creates table for container*/
 CREATE TABLE container(
@@ -40,6 +41,7 @@ CREATE TABLE container(
 	is_serviceable boolean default true
 );
 
+INSERT INTO container values(default, 16, 'TEST','TEST');
 INSERT INTO container values(default, 1, 'Quezon','Agno, Banaue');
 INSERT INTO container values(default, 2, 'Makati','San Antonio Village, Makati');
 INSERT INTO container values(default, 2, 'Makati','Pasong Tamo, Makati');

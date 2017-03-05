@@ -84,6 +84,8 @@ class Index extends CI_Controller {
 		}
 
 		$data['package']=$this->Package_model->get_package();
+		$data['cluster']=$this->Cluster_model->get_cluster();
+		$data['address']=$this->Address_model->get_address();
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
 		$this->load->view('template/view_menu');
@@ -173,14 +175,100 @@ class Index extends CI_Controller {
 		// }
 		// else
 		// {
-			$return_value = $this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile); 
-			if($return_value)
+			$populate = TRUE;
+			$return_value = FALSE;
+			if ($populate){
+				
+				$array = [
+					[
+					[.4,.3,.3,50],
+					[.4,.3,.4,60],
+					[.4,.3,.45,50],
+					[.3,.3,.4,50],
+					[.3,.2,.1,25],
+					[.2,.2,.4,30],
+					[.2,.2,.3,40]
+					],
+
+					[
+					[.3,.3,.3,50],
+					[.2,.2,.1,60],
+					[.2,.2,.35,55],
+					[.2,.2,.3,50]
+					],
+					
+					[
+					[.3,.3,.5,45],
+					[.3,.3,.5,60],
+					[.3,.3,.3,70],
+					[.3,.3,.2,50],
+					[.3,.3,.2,20]
+					],
+					
+					[
+					[.3,.3,.3,45],
+					[.3,.3,.3,60],
+					[.3,.3,.3,50],
+					[.3,.3,.2,50],
+					[.3,.3,.2,30]
+					],
+					
+					[
+					[.3,.3,.3,45],
+					[.3,.3,.3,20],
+					[.3,.3,.3,30],
+					[.3,.3,.2,40],
+					[.3,.3,.2,30]
+					],
+					
+					[
+					[.3,.3,.3,50],
+					[.3,.3,.3,30],
+					[.3,.3,.3,10],
+					[.3,.3,.2,40],
+					[.3,.3,.2,30]
+					],
+
+					[
+					[.3,.3,.3,50],
+					[.3,.3,.3,30],
+					[.3,.3,.3,30],
+					[.3,.2,.2,40],
+					[.3,.3,.1,30]
+					],
+
+					];
+
+				foreach ($array[6] as $temp) {
+					list($length, $width, $height, $weight) = $temp;
+					$this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile); 
+				}
+				$return_value = TRUE;
+			}
+			else{
+				$return_value = $this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile); 
+			}
+
+			if (in_array('height', $return_value) && !in_array('weight', $return_value)) {
+				echo '<script>alert("Package cannot be accomodated due to excess height!")</script>';	
+				// echo '<script>alert("Package is too heavy!")</script>';	
+			}
+			elseif (in_array('weight', $return_value) && !in_array('height', $return_value)) {
+				echo '<script>alert("Package cannot be accomodated due to excess weight!")</script>';	
+				// echo '<script>alert("Package is too heavy!")</script>';	
+			}
+			elseif (in_array('weight', $return_value) && in_array('height', $return_value)) {
+				echo '<script>alert("Package cannot be accomodated due to excess height and weight!")</script>';	
+			}
+			elseif($return_value)
+			// if($return_value)
 			{
-			redirect(base_url('index.php/index/package'));	
+				// redirect(base_url('index.php/index/package'));	
+				redirect(base_url('index.php/index/form'));	
 			}
 			else
 			{
-			echo '<script>alert("Container cannot accomodate package!")</script>';	
+				echo '<script>alert("Container cannot accomodate package!")</script>';	
 			}
 		// }
 	}

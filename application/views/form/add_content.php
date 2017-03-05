@@ -14,6 +14,8 @@
 	                       	echo "disabled";
 	                    }
 						echo "value=".$container_item['id'];
+						if ($container_item['keywords'] == 'TEST')
+							echo " selected ";
 						echo ">".$container_item['keywords']."</option";
                       
                       echo "</tr>";
@@ -23,7 +25,7 @@
 			</div>
 			<div class="form-group">
 			  <label for="length">Length:</label>
-			  <input type="number" step="any" min=0 class="form-control" name='length' id="length" value='<?php echo $length; ?>'>
+			  <input type="number" step="any" min=0 class="form-control" name='length' id="length" value='<?php echo $length; ?>' autofocus>
 			  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('length'); ?></span>
 			</div>
 
@@ -41,7 +43,7 @@
 
 			<div class="form-group">
 			  <label for="weight">Weight:</label>
-			  <input type="number" step="any" min=0 class="form-control" name='weight' id="weight" value='<?php echo $weight; ?>'>
+			  <input type="number" step="any" min=0 class="form-control" name='weight' id="weight" value='<?php $weight; ?>'>
 			  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('weight'); ?></span>
 			</div>
 
