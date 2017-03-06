@@ -472,7 +472,7 @@ class Package_model extends CI_Model {
 	        	}
 
 				// var_dump('candidates', $candidates);
-		        var_dump('best', $this->get_minimum_area($packages, $candidates, $length, $width, $height));
+		        // var_dump('best', $this->get_minimum_area($packages, $candidates, $length, $width, $height));
 				// return 'STOP';
 
 				if(!empty($constraint))
@@ -537,8 +537,8 @@ class Package_model extends CI_Model {
 							// var_dump('wa', $weight_array);
 							// var_dump('wt:', ($weight_temp+$weight),($val['weight']*4));
 							// var_dump('exceeded: ', ($weight_temp+$weight > ($val['weight']*4)));
-							var_dump('weight exceeded at '. $key .' !!!');
-							var_dump('unsetting candidate', $candidates[$ckey]);
+							// var_dump('weight exceeded at '. $key .' !!!');
+							// var_dump('unsetting candidate', $candidates[$ckey]);
 							unset($candidates[$ckey]);
 							break;
 						}
@@ -605,7 +605,7 @@ class Package_model extends CI_Model {
 						if($height_temp+$height > (min($val['width'],$val['length'])*3))
 						{
 
-							var_dump('height exceeded at '. $key .' !!!');
+							// var_dump('height exceeded at '. $key .' !!!');
 							// var_dump($weight_temp+$weight.' >= '.($val['weight']*4));
 							unset($candidates[$ckey]);
 							break;
@@ -669,9 +669,9 @@ class Package_model extends CI_Model {
 				2. if area is equal, get candidate with lesser y to prioritize putting on left side
 				3. if area and y is equal, prioritize vertical
 				*/
-				var_dump('candidate', $candidate);;
-				var_dump($temp_x.' '.$temp_y.' '.$temp_z);
-				var_dump('candidate area', round($temp_x * $temp_y * $temp_z,4));
+				// var_dump('candidate', $candidate);;
+				// var_dump($temp_x.' '.$temp_y.' '.$temp_z);
+				// var_dump('candidate area', round($temp_x * $temp_y * $temp_z,4));
 				// var_dump('get below',array('x1'=>$candidate['x'], 'x2'=>$candidate_x, 'y1'=>$candidate['y'], 'y2'=>$candidate_y, 'z'=>$candidate['z']));
 				// var_dump('below it', $this->get_below(array('coordinates'=>array('x1'=>$candidate['x'], 'x2'=>$candidate_x, 'y1'=>$candidate['y'], 'y2'=>$candidate_y, 'z'=>$candidate['z']), 'level'=>1)));
 				$below = $this->get_below(array('coordinates'=>array('x1'=>$candidate['x'], 'x2'=>$candidate_x, 'y1'=>$candidate['y'], 'y2'=>$candidate_y, 'z'=>$candidate['z']), 'level'=>1));
