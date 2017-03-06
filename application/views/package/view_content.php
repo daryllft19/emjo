@@ -1,6 +1,6 @@
 
         <script type="text/javascript">
-          var lBox = [];
+          var dBox = {};
         </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Package</h1>
@@ -77,7 +77,7 @@
                       }
                       echo "</tr>";
                       echo "<script>";
-                      echo "lBox.push({";
+                      echo "dBox[".$package_item['id']."] = {";
                       echo "'id':".$package_item['id'].",";
                       echo "'container':".$package_item['container'].",";
                       echo "'length':".$package_item['length'].",";
@@ -87,7 +87,7 @@
                       echo "'x1':".$package_item['x1'].",";
                       echo "'y1':".$package_item['y1'].",";
                       echo "'z1':".$package_item['z1']."";
-                      echo "});";
+                      echo "};";
                       echo "</script>";
                     ?>
               <?php endforeach; ?>
@@ -123,24 +123,79 @@
               var createScene = function () {
                   var scene = new BABYLON.Scene(engine);
 
-                  var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI, Math.PI / 8, 150, BABYLON.Vector3.Zero(), scene);
+                  var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI, Math.PI / 8, 5, BABYLON.Vector3.Zero(), scene);
 
-                  camera.attachControl(canvas, true);
+                  camera.attachControl(canvas, false);
 
                   var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
 
+                  var mouseOverUnit = function(unit_mesh) {
+                    if (unit_mesh.meshUnderPointer !== null) {
+                        // $('tr.')
+                        unit_mesh.meshUnderPointer.renderOutline = true;  
+                        unit_mesh.meshUnderPointer.outlineWidth = 0.1;
+                    }
+                  }
+                  
+                  var mouseOutUnit = function(unit_mesh) {
+                    if (unit_mesh.source !== null) {
+                        unit_mesh.source.renderOutline = false; 
+                        unit_mesh.source.outlineWidth = 0.1;
+                    }
+                  }
 
+                  // var container = BABYLON.Mesh.CreateBox("Container", 6, scene);
+                  // container.material = material;
+                  // var material = new BABYLON.StandardMaterial('wireframe', scene);
+                  // material.wireframe = true;
 
-                  var box1 = BABYLON.Mesh.CreateBox("Container", 0.3, scene);
+                  // //x , y, z = width, depth, height
+                  // // console.log(lBox);
+                  var container = BABYLON.Mesh.CreatePlane("ground", 0, scene);
+                  container.rotation.x = Math.PI / 2;
+                  container.scaling.x = 6;
+                  container.scaling.y = 2.4
+                  // var box1 = BABYLON.MeshBuilder.CreateBox("box1",  {width: .3 ,height: .3,depth:.3}, scene);
+                  // box1.position = new BABYLON.Vector3(3-.15, 0+.15, 1.2-.15);
+                  // var box2 = BABYLON.MeshBuilder.CreateBox("box2",  {width: .3 ,height: .3,depth:.3}, scene);
+                  // box2.position = new BABYLON.Vector3(3-.15, 0+.15+.3, 1.2-.15);
+                  // var box3 = BABYLON.MeshBuilder.CreateBox("box3",  {width: .3 ,height: .3,depth:.3}, scene);
+                  // box3.position = new BABYLON.Vector3(3-.15, 0+.15+.6, 1.2-.15);
+                  // var box4 = BABYLON.MeshBuilder.CreateBox("box4",  {width: .3 ,height: .2,depth:.2}, scene);
+                  // box4.position = new BABYLON.Vector3(3-.15, 0.1+.9, 1.2-.1);
+                  // var box5 = BABYLON.MeshBuilder.CreateBox("box5",  {width: .3 ,height: .1,depth:.3}, scene);
+                  // box5.position = new BABYLON.Vector3(3-.15, .05, 1.2-.15-0.3);
+                  var action_mouse_over = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, mouseOverUnit);
+                  var action_mouse_out = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, mouseOutUnit);
 
-                  console.log(lBox);
-                  // var box2 = BABYLON.Mesh.CreateBox("Box2", 6.0, scene);
-                  // var box3 = BABYLON.Mesh.CreateBox("Box3", 6.0, scene);
-                  // var box4 = BABYLON.Mesh.CreateBox("Box4", 6.0, scene);
-                  // var box5 = BABYLON.Mesh.CreateBox("Box5", 6.0, scene);
-                  // var box6 = BABYLON.Mesh.CreateBox("Box6", 6.0, scene);
-                  // var box7 = BABYLON.Mesh.CreateBox("Box7", 6.0, scene);
+                  var box = []
+                  for (var i = 1; i <= Object.keys(dBox).length; i++) {
+                      box[i-1] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: dBox[i].length ,height: dBox[i].height,depth:dBox[i].width}, scene);
+                      box[i-1].position = new BABYLON.Vector3(3-((dBox[i].length/2)+dBox[i].x1),(dBox[i].height/2)+dBox[i].z1,1.2-((dBox[i].width/2)+dBox[i].y1));
+                      box[i-1].actionManager = new BABYLON.ActionManager(scene);  
+                      box[i-1].actionManager.registerAction(action_mouse_over);
+                      box[i-1].actionManager.registerAction(action_mouse_out);
+                  }
 
+                  // box1.actionManager = new BABYLON.ActionManager(scene);  
+                  // box1.actionManager.registerAction(action);
+                  // box1.actionManager.registerAction(action2);
+
+                  // box2.actionManager = new BABYLON.ActionManager(scene); 
+                  // box2.actionManager.registerAction(action);
+                  // box2.actionManager.registerAction(action2);
+
+                  // box3.actionManager = new BABYLON.ActionManager(scene); 
+                  // box3.actionManager.registerAction(action);
+                  // box3.actionManager.registerAction(action2);
+
+                  // box4.actionManager = new BABYLON.ActionManager(scene); 
+                  // box4.actionManager.registerAction(action);
+                  // box4.actionManager.registerAction(action2);
+
+                  // box5.actionManager = new BABYLON.ActionManager(scene); 
+                  // box5.actionManager.registerAction(action);
+                  // box5.actionManager.registerAction(action2);
                   // //Moving boxes on the x axis
                   // box1.position.x = -20;
                   // box2.position.x = -10;
