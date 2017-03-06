@@ -237,9 +237,22 @@ class Index extends CI_Controller {
 					[.3,.3,.1,30]
 					],
 
+					[
+					[.4,.3,.3,50],
+					[.3,.4,.4,60],
+					[.4,.3,.45,50],
+					[.3,.3,.4,50],
+					[.2,.3,.1,25],
+					[.2,.2,.4,30],
+					[.2,.3,.3,40],
+					[.1,.2,.2,25],
+					[.6,.4,.4,60],
+					[.2,.2,.4,50]
+					],
+
 					];
 
-				foreach ($array[6] as $temp) {
+				foreach ($array[7] as $temp) {
 					list($length, $width, $height, $weight) = $temp;
 					$this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile); 
 				}
