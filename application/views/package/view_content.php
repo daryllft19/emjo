@@ -1,6 +1,6 @@
 
         <script type="text/javascript">
-          var dBox = {};
+          var dBox = [];
         </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Package</h1>
@@ -19,11 +19,11 @@
                 </ul>
               </div>
           <div class="table-responsive"">
-            <table class="table table-striped">
+            <table class="table table-hover">
               <?php 
 
               if (empty($package)){
-                 echo '<h3>No package.</h3>';
+                 echo '<h4>No package.</h4>';
                 } 
               else{
               ?>
@@ -50,11 +50,10 @@
                     <?php 
                       foreach ($address as $address_item) {
                         if ($address_item['id'] == $package_item['container']){
-                          echo "<tr data-cluster='".$address_item['cluster']."'>";
+                          echo "<tr data-cluster='".$address_item['cluster']."' id='package-".$package_item['id']."'>";
                           break;
                         }
                       }
-
                       echo "<td>".$package_item['id']."</td>";
                       echo "<td>".$package_item['container']."</td>";
                       echo "<td>".$package_item['length']."</td>";
@@ -77,7 +76,7 @@
                       }
                       echo "</tr>";
                       echo "<script>";
-                      echo "dBox[".$package_item['id']."] = {";
+                      echo "dBox.push({";
                       echo "'id':".$package_item['id'].",";
                       echo "'container':".$package_item['container'].",";
                       echo "'length':".$package_item['length'].",";
@@ -87,7 +86,7 @@
                       echo "'x1':".$package_item['x1'].",";
                       echo "'y1':".$package_item['y1'].",";
                       echo "'z1':".$package_item['z1']."";
-                      echo "};";
+                      echo "});";
                       echo "</script>";
                     ?>
               <?php endforeach; ?>
@@ -98,9 +97,21 @@
           </div>
 
           <?php if (!empty($package)){ ?>
-          <div id='canvas' style="margin:0 auto;display:table;">
-            <canvas id='package_canvas' style="width:70vw;height:50vh;">
-            </canvas>
+          <div class='row'>
+            <div class='col-sm-4' id='box-info'>
+              <h1>Details</h1>
+              <h4>ID: <small><span id='box-info-id'>N/A<span></small></h4>
+              <h4>Address:<small><span id='box-info-address'>N/A<span></small></h4>
+              <h4>Length:<small><span id='box-info-length'>N/A<span></small></h4>
+              <h4>Width:<small><span id='box-info-width'>N/A<span></small></h4>
+              <h4>Height:<small><span id='box-info-height'>N/A<span></small></h4>
+              <h4>Weight:<small><span id='box-info-weight'>N/A</span></small></h4>
+
+            </div>
+            <div class='col-sm-8' id='canvas' style="margin:0 auto;display:table;float:right;">
+              <canvas id='package_canvas' style="height:50vh;">
+              </canvas>
+            </div>
           </div>
           <?php } ?>
         </div>
@@ -125,104 +136,100 @@
 
                   var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI, Math.PI / 8, 5, BABYLON.Vector3.Zero(), scene);
 
-                  camera.attachControl(canvas, false);
-
+                  camera.attachControl(canvas, true);
                   var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
+
+                  var material = new BABYLON.StandardMaterial('wireframe', scene);
+                  material.wireframe = true;
+
+                  var pinkMat = new BABYLON.StandardMaterial("pink", scene);
+                  pinkMat.emissiveColor = new BABYLON.Color3(.5, .2, .3);
 
                   var mouseOverUnit = function(unit_mesh) {
                     if (unit_mesh.meshUnderPointer !== null) {
-                        // $('tr.')
+                        // console.log(box_hovered);
+                        // console.log(tooltip);
+
+                        // console.log($('#package'+unit_mesh.source));
+                        // console.log($('#package'+unit_mesh.source.name.replace('box', '')));
+                        // console.log(unit_mesh);
+                        id = $('#box-info-id');
+                        address = $('#box-info-address');
+                        length = $('#box-info-length');
+                        width = $('#box-info-width');
+                        height = $('#box-info-height');
+                        weight = $('#box-info-weight');
+                        box = dBox[unit_mesh.source.name.replace('box', '')];
+                        id.prop('innerText',box.id);
+                        address.prop('innerText',box.container);
+                        length.prop('innerText',box.length);
+                        width.prop('innerText',box.width);
+                        height.prop('innerText',box.height);
+                        weight.prop('innerText',box.weight);
+                        unit_mesh.source.material = material;
                         unit_mesh.meshUnderPointer.renderOutline = true;  
-                        unit_mesh.meshUnderPointer.outlineWidth = 0.1;
+                        // unit_mesh.meshUnderPointer.outlineWidth = 0.1;
                     }
                   }
                   
                   var mouseOutUnit = function(unit_mesh) {
                     if (unit_mesh.source !== null) {
+
+                        id = $('#box-info-id');
+                        address = $('#box-info-address');
+                        length = $('#box-info-length');
+                        width = $('#box-info-width');
+                        height = $('#box-info-height');
+                        weight = $('#box-info-weight');
+                        box = dBox[unit_mesh.source.name.replace('box', '')];
+                        id.prop('innerText','N/A');
+                        address.prop('innerText','N/A');
+                        length.prop('innerText','N/A');
+                        width.prop('innerText','N/A');
+                        height.prop('innerText','N/A');
+                        weight.prop('innerText','N/A');
+
+                        unit_mesh.source.material = pinkMat;
                         unit_mesh.source.renderOutline = false; 
-                        unit_mesh.source.outlineWidth = 0.1;
+                        // unit_mesh.source.outlineWidth = 0.1;
                     }
                   }
 
                   // var container = BABYLON.Mesh.CreateBox("Container", 6, scene);
-                  // container.material = material;
-                  // var material = new BABYLON.StandardMaterial('wireframe', scene);
-                  // material.wireframe = true;
 
                   // //x , y, z = width, depth, height
                   // // console.log(lBox);
                   var container = BABYLON.Mesh.CreatePlane("ground", 0, scene);
+                  // container.material = material;
                   container.rotation.x = Math.PI / 2;
                   container.scaling.x = 6;
                   container.scaling.y = 2.4
-                  // var box1 = BABYLON.MeshBuilder.CreateBox("box1",  {width: .3 ,height: .3,depth:.3}, scene);
-                  // box1.position = new BABYLON.Vector3(3-.15, 0+.15, 1.2-.15);
-                  // var box2 = BABYLON.MeshBuilder.CreateBox("box2",  {width: .3 ,height: .3,depth:.3}, scene);
-                  // box2.position = new BABYLON.Vector3(3-.15, 0+.15+.3, 1.2-.15);
-                  // var box3 = BABYLON.MeshBuilder.CreateBox("box3",  {width: .3 ,height: .3,depth:.3}, scene);
-                  // box3.position = new BABYLON.Vector3(3-.15, 0+.15+.6, 1.2-.15);
-                  // var box4 = BABYLON.MeshBuilder.CreateBox("box4",  {width: .3 ,height: .2,depth:.2}, scene);
-                  // box4.position = new BABYLON.Vector3(3-.15, 0.1+.9, 1.2-.1);
-                  // var box5 = BABYLON.MeshBuilder.CreateBox("box5",  {width: .3 ,height: .1,depth:.3}, scene);
-                  // box5.position = new BABYLON.Vector3(3-.15, .05, 1.2-.15-0.3);
+
                   var action_mouse_over = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, mouseOverUnit);
                   var action_mouse_out = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, mouseOutUnit);
 
-                  var box = []
-                  for (var i = 1; i <= Object.keys(dBox).length; i++) {
-                      box[i-1] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: dBox[i].length ,height: dBox[i].height,depth:dBox[i].width}, scene);
-                      box[i-1].position = new BABYLON.Vector3(3-((dBox[i].length/2)+dBox[i].x1),(dBox[i].height/2)+dBox[i].z1,1.2-((dBox[i].width/2)+dBox[i].y1));
-                      box[i-1].actionManager = new BABYLON.ActionManager(scene);  
-                      box[i-1].actionManager.registerAction(action_mouse_over);
-                      box[i-1].actionManager.registerAction(action_mouse_out);
-                  }
+                  var box = {}
+                  // for (var i = 1; i <= 4; i++) {
+                  // for (var i = 1; i <= Object.keys(dBox).length; i++) {
+                  dBox.forEach(function(b, i){
 
-                  // box1.actionManager = new BABYLON.ActionManager(scene);  
-                  // box1.actionManager.registerAction(action);
-                  // box1.actionManager.registerAction(action2);
-
-                  // box2.actionManager = new BABYLON.ActionManager(scene); 
-                  // box2.actionManager.registerAction(action);
-                  // box2.actionManager.registerAction(action2);
-
-                  // box3.actionManager = new BABYLON.ActionManager(scene); 
-                  // box3.actionManager.registerAction(action);
-                  // box3.actionManager.registerAction(action2);
-
-                  // box4.actionManager = new BABYLON.ActionManager(scene); 
-                  // box4.actionManager.registerAction(action);
-                  // box4.actionManager.registerAction(action2);
-
-                  // box5.actionManager = new BABYLON.ActionManager(scene); 
-                  // box5.actionManager.registerAction(action);
-                  // box5.actionManager.registerAction(action2);
-                  // //Moving boxes on the x axis
-                  // box1.position.x = -20;
-                  // box2.position.x = -10;
-                  // box3.position.x = 0;
-                  // box4.position.x = 15;
-                  // box5.position.x = 30;
-                  // box6.position.x = 45;
-
-                  // //Rotate box around the x axis
-                  // box1.rotation.x = Math.PI / 6;
-
-                  // //Rotate box around the y axis
-                  // box2.rotation.y = Math.PI / 3;
-
-                  // //Scaling on the x axis
-                  // box4.scaling.x = 2;
-
-                  // //Scaling on the y axis
-                  // box5.scaling.y = 2;
-
-                  // //Scaling on the z axis
-                  // box6.scaling.z = 2;
-
-                  // //Moving box7 relatively to box1
-                  // box7.parent = box1;
-                  // box7.position.z = -10;
-
+                      box[i] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width ,height: b.height,depth:b.length}, scene);
+                      box[i].material = pinkMat;
+                      x = 3-((b.width/2)+b.x1);//if(x<=0)x-=b.width/2;
+                      // // if(i==7||i==9)console.log(x);
+                      y = (b.height/2)+b.z1;//if(y<=0)y-=b.height/2;
+                      // // if(i==7||i==9)console.log(y);
+                      z = 1.2-((b.length/2)+b.y1);//if(z<=0)z-=b.length/2;
+                      // if(i==10||i==9)console.log(z);
+                      // x = ((b.width/2)+b.x1);//if(x<=0)x-=b.width/2;
+                      // y = (b.height/2)+b.z1;//if(y<=0)y-=b.height/2;
+                      // z = ((b.length/2)+b.y1);//if(b.length+b.y1>=1.2)z+=1.2;  
+                      box[i].position = new BABYLON.Vector3(x,y,z);
+                      box[i].actionManager = new BABYLON.ActionManager(scene);  
+                      box[i].actionManager.registerAction(action_mouse_over);
+                      box[i].actionManager.registerAction(action_mouse_out);
+                  });
+                  console.log(box);
                   return scene;
               }
 
