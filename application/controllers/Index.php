@@ -43,9 +43,9 @@ class Index extends CI_Controller {
 
 	public function cluster()
 	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
+		// if (!$this->tank_auth->is_logged_in()) {
+		// 	redirect('/auth/login/');
+		// }
 
 		$data['cluster']=$this->Cluster_model->get_cluster();
 		$this->load->view('template/view_header');
@@ -58,9 +58,9 @@ class Index extends CI_Controller {
 
 	public function address()
 	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
+		// if (!$this->tank_auth->is_logged_in()) {
+		// 	redirect('/auth/login/');
+		// }
 
 		$order = array(
 				0 =>array(
@@ -79,9 +79,9 @@ class Index extends CI_Controller {
 
 	public function package()
 	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
+		// if (!$this->tank_auth->is_logged_in()) {
+		// 	redirect('/auth/login/');
+		// }
 
 		$data['package']=$this->Package_model->get_package();
 		$data['cluster']=$this->Cluster_model->get_cluster();
@@ -96,9 +96,9 @@ class Index extends CI_Controller {
 
 	public function form()
 	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
+		// if (!$this->tank_auth->is_logged_in()) {
+		// 	redirect('/auth/login/');
+		// }
 
 		$order = array(
 				0 =>array(
@@ -154,9 +154,9 @@ class Index extends CI_Controller {
 
 	public function add($container_id, $length, $width, $height,  $weight, $fragile)
 	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
+		// if (!$this->tank_auth->is_logged_in()) {
+		// 	redirect('/auth/login/');
+		// }
 
 		$this->load->helper('form');
   //       $this->load->library('form_validation');
@@ -335,9 +335,9 @@ class Index extends CI_Controller {
 
 	public function analytics()
 	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
+		// if (!$this->tank_auth->is_logged_in()) {
+		// 	redirect('/auth/login/');
+		// }
 
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
@@ -348,9 +348,9 @@ class Index extends CI_Controller {
 
 	public function export()
 	{
-		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
-		}
+		// if (!$this->tank_auth->is_logged_in()) {
+		// 	redirect('/auth/login/');
+		// }
 		
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
