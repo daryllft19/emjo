@@ -17,7 +17,7 @@ class Auth extends CI_Controller
 		if ($message = $this->session->flashdata('message')) {
 			$this->load->view('auth/general_message', array('message' => $message));
 		} else {
-			redirect('/auth/login/');
+			redirect('/auth/login');
 		}
 	}
 
@@ -103,7 +103,7 @@ class Auth extends CI_Controller
 	function logout()
 	{
 		$this->tank_auth->logout();
-
+		redirect('index');
 		$this->_show_message($this->lang->line('auth_message_logged_out'));
 	}
 
