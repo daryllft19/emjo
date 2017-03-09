@@ -11,7 +11,7 @@
         {
 
         ?>
-          <a href="<?php echo site_url('auth/logout')?>" class="btn btn-danger pull-right" role="button">Logout</a>
+          <a href="<?php echo site_url('auth/logout?redirect='.$_SERVER["REQUEST_URI"])?>" class="btn btn-danger pull-right" role="button">Logout</a>
           <div class="navbar-text pull-right">
           Logged in as: <?php echo $this->tank_auth->get_username(); ?>
           </div>
@@ -21,7 +21,7 @@
         }else{
           
         ?>
-          <a href="<?php echo site_url('auth/login')?>" class="btn btn-danger pull-right" role="button">Login</a>
+          <a href="<?php echo site_url('auth/login?redirect='.$_SERVER["REQUEST_URI"])?>" class="btn btn-danger pull-right" role="button">Login</a>
         <?php
         }
         ?>
