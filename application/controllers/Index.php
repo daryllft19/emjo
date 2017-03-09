@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+// defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Index extends CI_Controller {
 
@@ -68,7 +68,26 @@ class Index extends CI_Controller {
 					'type' => 'asc', 
 					)
 				);
-		$data['address']=$this->Address_model->get_address(-1,-1,$order);
+		$address=$this->Address_model->get_address(-1,-1,$order);
+        foreach ($address as $key => $value) {
+            $clstr = $this->Cluster_model->get_cluster($value['cluster']);
+            $address[$key]['cluster'] = $clstr;
+        }
+
+        $ret = array();
+        $temp=$this->Address_model->get_address(-1,-1,$order);
+        foreach ($temp as $key => $value) {
+        	$clstr = $this->Cluster_model->get_cluster($value['cluster']);
+        	if(!isset($ret[$clstr['id']]))
+        		$ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
+
+        	array_push($ret[$clstr['id']]['location'], $value);
+        	// array_push($ret, array($this->Cluster_model->get_cluster($value['cluster'])['name']=> 1));
+        	// array_push($ret, array(1=>$this->Cluster_model->get_cluster($value['cluster'])['name']));
+
+        }
+		$data['address']=$address;
+		$data['ret']=$ret;
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
 		$this->load->view('template/view_menu');
