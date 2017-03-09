@@ -4,19 +4,17 @@
         </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Package</h1>
-              <div class="dropdown package-drpdwn">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                All
-                <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                <?php
-                  echo '<li value="0"><a href="#">All</a></li>';
-                  foreach ($cluster as $cluster_item): 
-                    echo '<li value="'.$cluster_item['id'].'"><a href="#">'. $cluster_item['name'] .'</a></li>';
-                  endforeach
+              <div class='input-group'>
+                <label for="cluster-select">Cluster:</label>
+                <select class="form-control" id="cluster-select">
+                  <option value='-1'>NONE</option>
+                  <?php
+                  foreach ($ret as $key => $value) {
+                    echo "<option value='".$key."'>".$value['name']."</option>";
+                  }
+                  
                   ?>
-                </ul>
+                </select>
               </div>
           <div class="table-responsive"">
             <table class="table table-hover">
@@ -49,13 +47,13 @@
 
                     <?php 
                       foreach ($address as $address_item) {
-                        if ($address_item['id'] == $package_item['container']){
+                        if ($address_item['id'] == $package_item['address']){
                           echo "<tr data-cluster='".$address_item['cluster']."' id='package-".$package_item['id']."'>";
                           break;
                         }
                       }
                       echo "<td>".$package_item['id']."</td>";
-                      echo "<td>".$package_item['container']."</td>";
+                      echo "<td>".$package_item['address']."</td>";
                       echo "<td>".$package_item['length']."</td>";
                       echo "<td>".$package_item['width']."</td>";
                       echo "<td>".$package_item['height']."</td>";
@@ -75,25 +73,45 @@
                         echo "<td>False</td>";
                       }
                       echo "</tr>";
-                      echo "<script>";
-                      echo "dBox.push({";
-                      echo "'id':".$package_item['id'].",";
-                      echo "'container':".$package_item['container'].",";
-                      echo "'length':".$package_item['length'].",";
-                      echo "'width':".$package_item['width'].",";
-                      echo "'height':".$package_item['height'].",";
-                      echo "'weight':".$package_item['weight'].",";
-                      echo "'x1':".$package_item['x1'].",";
-                      echo "'y1':".$package_item['y1'].",";
-                      echo "'z1':".$package_item['z1']."";
-                      echo "});";
-                      echo "</script>";
+                      // echo "<script>";
+                      // echo "dBox.push({";
+                      // echo "'id':".$package_item['id'].",";
+                      // echo "'address':".$package_item['address'].",";
+                      // echo "'length':".$package_item['length'].",";
+                      // echo "'width':".$package_item['width'].",";
+                      // echo "'height':".$package_item['height'].",";
+                      // echo "'weight':".$package_item['weight'].",";
+                      // echo "'x1':".$package_item['x1'].",";
+                      // echo "'y1':".$package_item['y1'].",";
+                      // echo "'z1':".$package_item['z1']."";
+                      // echo "});";
+                      // echo "</script>";
                     ?>
               <?php endforeach; ?>
 
               </tbody>
             </table>
             <?php }; //CLOSING ELSE?>
+
+          <div class="table-responsive"">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Address</th>
+                    <th>Length (m)</th>
+                    <th>Width (m)</th>
+                    <th>Height (m)</th>
+                    <th>Weight (kg)</th>
+                    <th>Date Arrived</th>
+                    <th>Fragile</th>
+                  </tr>
+                </thead>
+                <tbody id='package-table'>
+                </tbody>
+              </table>
+            </div>
+
           </div>
 
           <?php if (!empty($package)){ ?>
@@ -120,6 +138,7 @@
       </div>
     </div>
         <script>
+          var dBox = [];
           $(".dropdown-menu li a").click(function(){
             $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
             $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
@@ -161,7 +180,7 @@
                         weight = $('#box-info-weight');
                         box = dBox[unit_mesh.source.name.replace('box', '')];
                         id.prop('innerText',box.id);
-                        address.prop('innerText',box.container);
+                        address.prop('innerText',box.address);
                         length.prop('innerText',box.length);
                         width.prop('innerText',box.width);
                         height.prop('innerText',box.height);
@@ -195,15 +214,15 @@
                     }
                   }
 
-                  // var container = BABYLON.Mesh.CreateBox("Container", 6, scene);
+                  // var address = BABYLON.Mesh.CreateBox("address", 6, scene);
 
                   // //x , y, z = width, depth, height
                   // // console.log(lBox);
-                  var container = BABYLON.Mesh.CreatePlane("ground", 0, scene);
-                  // container.material = material;
-                  container.rotation.x = Math.PI / 2;
-                  container.scaling.x = 6;
-                  container.scaling.y = 2.4
+                  var address = BABYLON.Mesh.CreatePlane("ground", 0, scene);
+                  // address.material = material;
+                  address.rotation.x = Math.PI / 2;
+                  address.scaling.x = 6;
+                  address.scaling.y = 2.4
 
                   var action_mouse_over = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, mouseOverUnit);
                   var action_mouse_out = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, mouseOutUnit);
@@ -215,29 +234,62 @@
 
                       box[i] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width ,height: b.height,depth:b.length}, scene);
                       box[i].material = pinkMat;
-                      x = 3-((b.width/2)+b.x1);//if(x<=0)x-=b.width/2;
-                      // // if(i==7||i==9)console.log(x);
-                      y = (b.height/2)+b.z1;//if(y<=0)y-=b.height/2;
-                      // // if(i==7||i==9)console.log(y);
-                      z = 1.2-((b.length/2)+b.y1);//if(z<=0)z-=b.length/2;
-                      // if(i==10||i==9)console.log(z);
-                      // x = ((b.width/2)+b.x1);//if(x<=0)x-=b.width/2;
-                      // y = (b.height/2)+b.z1;//if(y<=0)y-=b.height/2;
-                      // z = ((b.length/2)+b.y1);//if(b.length+b.y1>=1.2)z+=1.2;  
+                      x = 3-((b.width/2)+b.x1);
+                      y = (b.height/2)+b.z1;
+                      z = 1.2-((b.length/2)+b.y1);
                       box[i].position = new BABYLON.Vector3(x,y,z);
                       box[i].actionManager = new BABYLON.ActionManager(scene);  
                       box[i].actionManager.registerAction(action_mouse_over);
                       box[i].actionManager.registerAction(action_mouse_out);
                   });
-                  console.log(box);
                   return scene;
               }
 
               var scene = createScene();
               engine.runRenderLoop(function(){
                   scene.render();
+ 
               });
 
           });
-          
+
+          $('#cluster-select').on('change', function (e) {
+              var optionSelected = $("option:selected", this);
+              var valueSelected = this.value;
+
+              var row = '';
+              if(valueSelected==-1){
+                
+              }else{
+                $.get( "/package/",{'cluster_id':valueSelected}, function( data ) {
+                    for (key in data){
+                      row += "<tr data-cluster="+valueSelected+">";
+                      row += "<td editable='text' value='" + data[key].id+"'>" + data[key].id + "</td>";
+                      row += "<td editable='text' value='" + data[key].address+"'>" + data[key]['address'].city + "</td>";
+                      row += "<td editable='text' value='" + data[key].length+"'>" + data[key].length + "</td>";
+                      row += "<td editable='text' value='" + data[key].width+"'>" + data[key].width + "</td>";
+                      row += "<td editable='text' value='" + data[key].height+"'>" + data[key].height + "</td>";
+                      row += "<td editable='text' value='" + data[key].weight+"'>" + data[key].weight + "</td>";
+                      row += "<td editable='date' value='" + data[key].arrival_date+"'>" + data[key].arrival_date + "</td>";
+                      row += "<td editable='boolean?' value='" + data[key].is_fragile+"'>" + data[key].is_fragile + "</td>";
+                      row += "</tr>";
+                      dBox.push({
+                        id: data[key].id,
+                        address: data[key]['address'].city,
+                        length: data[key]['length'],
+                        width: data[key]['width'],
+                        height: data[key]['height'],
+                        weight: data[key]['weight'],
+                        x1: data[key]['x1'],
+                        y1: data[key]['y1'],
+                        z1: data[key]['z1']                        
+                      });
+                    }
+                    $('#package-table').html(row);
+
+                });
+              }
+              row = '';
+          });
+
         </script>

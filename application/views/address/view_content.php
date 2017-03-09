@@ -86,62 +86,49 @@
       </div>
     </div>
 <script>
-  <?php
-    if ($this->tank_auth->get_username() != 'admin')
-    {
-  ?>
-    $('td[editable]').removeAttr('editable');
-  <?php 
-    } 
-    else if ($this->tank_auth->get_username() == 'admin')
-    {
-  ?>  
-    $('td[editable]').click(function(event){
-      //event.target.contentEditable = true;
-      //alert(event.target);
-      //t = event.target; 
-      //event.target.html('<input type=number/>')
-    });
-  <?php
-    }
-  ?>
     $('#cluster-select').on('change', function (e) {
         var optionSelected = $("option:selected", this);
         var valueSelected = this.value;
 
-        if(valueSelected==-1)
+        var row = '';
+        if(valueSelected==-1){
           $('#location-select').html("<option value='1'>N/A</option>");
-        else{
-          $.get( "/address/",{'cluster_id':valueSelected}, function( data ) {
-              var options = '';
-              for (var x = 0; x < data.length; x++) {
-                  options += '<option value="' + data[x]['id'] + '">' + data[x]['keywords'] + '</option>';
-              }
-              $('#location-select').html(options);
+          $.get( "/address/", function( data ) {
+              adr = data;
 
-              //                      echo "<tr>";
-              //           // echo "<td>".$address_item['id']."</td>";
-              //           echo "<td editable='text' value='".$address_item["cluster"]['id']."'>".$address_item["cluster"]['name']."</td>";
-              //           echo "<td editable='text' value='".$address_item["city"]."'>".$address_item["city"]."</td>";
-              //           echo "<td editable='text' value='".$address_item["keywords"]."'>".$address_item["keywords"]."</td>";
-              //           echo "<td editable='boolean' value='".$address_item["is_serviceable"]."'>";
-              //           if ($address_item['is_serviceable']){
-              //             echo "True";
-              //           }else{
-              //             echo "False";
-              //           }
-              //           echo "</td>";
-              //           echo "</tr>";
-
-              var row = '';
-              for (var x = 0; x < data.length; x++) {
+              for (key in adr){
                 row += "<tr>";
-                row += "<td editable='text' value='" + data[x]['cluster']+"'>"
+                row += "<td editable='text' value='" + adr[key]['cluster'].name+"'>" + adr[key]['cluster'].name + "</td>"
+                row += "<td editable='text' value='" + adr[key].city+"'>" + adr[key].city + "</td>"
+                row += "<td editable='text' value='" + adr[key].keywords+"'>" + adr[key].keywords + "</td>"
+                row += "<td editable='boolean' value='" + adr[key].is_serviceable+"'>";
+                row += adr[key].is_serviceable=='t'?'True':'False';
+                row += "</td>"
                 row += "</tr>";
               }
-              console.log(data);
+              $('#cluster-table').html(row);
+          });
+        }else{
+          $.get( "/address/",{'cluster_id':valueSelected}, function( data ) {
+              var options = '';
+              adr = data[valueSelected]['location'];
+              for (key in adr){
+                options += '<option value="' + adr[key].id + '">' + adr[key].keywords + '</option>';
+
+                row += "<tr>";
+                row += "<td editable='text' value='" + adr[key].id+"'>" + data[valueSelected]['name'] + "</td>"
+                row += "<td editable='text' value='" + adr[key].city+"'>" + adr[key].city + "</td>"
+                row += "<td editable='text' value='" + adr[key].keywords+"'>" + adr[key].keywords + "</td>"
+                row += "<td editable='boolean' value='" + adr[key].is_serviceable+"'>";
+                row += adr[key].is_serviceable=='t'?'True':'False';
+                row += "</td>"
+                row += "</tr>";
+              }
+              $('#location-select').html(options);
+              $('#cluster-table').html(row);
           });
         }
+        row = '';
     });
 
 </script>
