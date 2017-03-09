@@ -12,7 +12,7 @@ class Package_model extends CI_Model {
 						//cluster = 2
 						$this->db->select('package.*');
 						$this->db->from('package');
-						$this->db->join('container','container.id = container');
+						$this->db->join('address','address.id = address');
 						$this->db->join('cluster','cluster.id = cluster');
 						$this->db->where('cluster',$cluster);
 						$query = $this->db->get();
@@ -35,32 +35,32 @@ class Package_model extends CI_Model {
 
 		public function get_above($dArgs)
 		{
-			$container_list = array();
-			$container = $this->get_package($dArgs['id']);
+			$address_list = array();
+			$address = $this->get_package($dArgs['id']);
 			$level = $dArgs['level'];
-			list($x1,$x2, $y1,$y2, $z) = array($container['x1'],$container['x2'],$container['y1'],$container['y2'],$container['z2']);
+			list($x1,$x2, $y1,$y2, $z) = array($address['x1'],$address['x2'],$address['y1'],$address['y2'],$address['z2']);
 			$query = $this->db->get_where('package', array('x1 >=' => (string)$x1,'x2 <=' => (string)$x2, 'y1 >= ' => (string)$y1, 'y2 <= ' => (string)$y2, 'z1 >=' => (string)$z));
-			$container_list = $query->result_array();
+			$address_list = $query->result_array();
 			$layer = 0;
 			$prev_z = 0; 
 
 			//get all
 			if($level == -1)
 			{
-				foreach ($container_list as $key => $con) {
+				foreach ($address_list as $key => $con) {
 					if($con['z1'] > $prev_z)
 					{
 						$layer++;
 						$prev_z = $con['z1'];
 					} 
-					$container_list[$key]['layer'] = $layer;
+					$address_list[$key]['layer'] = $layer;
 				}
-				// var_dump('container list', $container_list);
+				// var_dump('address list', $address_list);
 			}
 			else
 			{
 				$temp = array();
-				foreach ($container_list as $key => $con) {
+				foreach ($address_list as $key => $con) {
 					if($con['z1'] > $prev_z)
 					{
 						if($layer == $level)
@@ -73,19 +73,19 @@ class Package_model extends CI_Model {
 					$con['layer'] = $layer;
 					array_push($temp, $con);
 				}
-				// var_dump('container list', $temp);
-				$container_list = $temp;
+				// var_dump('address list', $temp);
+				$address_list = $temp;
 			}
-			return $container_list;
+			return $address_list;
 		}
 
 		public function get_below($dArgs)
 		{
-			$container_list = array();
+			$address_list = array();
 			if(isset($dArgs['id']))
 			{	
-				$container = $this->get_package($dArgs['id']);
-				list($x1,$x2, $y1,$y2, $z) = array($container['x1'],$container['x2'],$container['y1'],$container['y2'],$container['z1']);
+				$address = $this->get_package($dArgs['id']);
+				list($x1,$x2, $y1,$y2, $z) = array($address['x1'],$address['x2'],$address['y1'],$address['y2'],$address['z1']);
 			}
 			elseif (isset($dArgs['coordinates'])) {
 				list($x1,$x2, $y1,$y2, $z) = array($dArgs['coordinates']['x1'],$dArgs['coordinates']['x2'],$dArgs['coordinates']['y1'],$dArgs['coordinates']['y2'],$dArgs['coordinates']['z']);
@@ -97,19 +97,19 @@ class Package_model extends CI_Model {
 
 			$query = $this->db->get_where('package', array('x1 <=' => (string)$x1,'x2 >=' => (string)$x2, 'y1 <= ' => (string)$y1, 'y2 >= ' => (string)$y2, 'z2 <=' => (string)$z));
 			$level = $dArgs['level'];
-			$container_list = $query->result_array();
+			$address_list = $query->result_array();
 
-			// var_dump('container_list', $container_list);
+			// var_dump('address_list', $address_list);
 			$layer = 0;
 			$prev_z = $z; 
 
 			$z_temp = array();
-            foreach ($container_list as $key => $row) {
+            foreach ($address_list as $key => $row) {
            		$z_temp[$key] = $row['z2'];
             }
-			array_multisort($z_temp, SORT_DESC, $container_list);
+			array_multisort($z_temp, SORT_DESC, $address_list);
 			
-			if (!empty($container_list) && $container_list[0]['z2'] != (string)$z)
+			if (!empty($address_list) && $address_list[0]['z2'] != (string)$z)
 			{
 				return;
 			}
@@ -117,20 +117,20 @@ class Package_model extends CI_Model {
 			//get all
 			if($level == -1)
 			{
-				foreach ($container_list as $key => $con) {
+				foreach ($address_list as $key => $con) {
 					if($con['z1'] < $prev_z)
 					{
 						$layer++;
 						$prev_z = $con['z1'];
 					} 
-					$container_list[$key]['layer'] = $layer;
+					$address_list[$key]['layer'] = $layer;
 				}
-				// var_dump('container list', $container_list);
+				// var_dump('address list', $address_list);
 			}
 			else
 			{
 				$temp = array();
-				foreach ($container_list as $key => $con) {
+				foreach ($address_list as $key => $con) {
 					if($con['z1'] < $prev_z)
 					{
 						if($layer == $level)
@@ -143,11 +143,11 @@ class Package_model extends CI_Model {
 					$con['layer'] = $layer;
 					array_push($temp, $con);
 				}
-				// var_dump('container list', $temp);
-				$container_list = $temp;
+				// var_dump('address list', $temp);
+				$address_list = $temp;
 			}
 
-			return $container_list;
+			return $address_list;
 		}
 
 		public function get_sibling($id)
@@ -159,31 +159,31 @@ class Package_model extends CI_Model {
 			if(empty($below))
 			{
 				$query = $this->db->get_where('package', array('z1 =' => 0));
-				$container_list = $query->result_array();
+				$address_list = $query->result_array();
 			}
 			//get everything above the package below the indicated package
 			else
 			{	
 				$below = $below[0];
-				$container_list = $this->get_above(array('id'=>$below['id'], 'level'=>1));
+				$address_list = $this->get_above(array('id'=>$below['id'], 'level'=>1));
 
 			}
-			foreach ($container_list as $key => $con) {
+			foreach ($address_list as $key => $con) {
 				if($con['id'] == $id)
 				{
-					unset($container_list[$key]);
+					unset($address_list[$key]);
 				} 
-				unset($container_list[$key]['layer']);
+				unset($address_list[$key]['layer']);
 			}
-			$container_list = array_values($container_list);
-			return $container_list;
+			$address_list = array_values($address_list);
+			return $address_list;
 		}
 
 		public function count_package($cluster=-1)
 		{
 			$this->db->select('count(*)');
 			$this->db->from('package');
-			$this->db->join('container','container.id = container');
+			$this->db->join('address','address.id = address');
 			$this->db->join('cluster','cluster.id = cluster');	
 
 			if ($cluster != -1)
@@ -195,12 +195,12 @@ class Package_model extends CI_Model {
 			return $query->row_array()['count'];
 		}
 
-		public function set_package($container_id, $length, $width, $height, $weight, $fragile)
+		public function set_package($address_id, $length, $width, $height, $weight, $fragile)
 		{
 
 		    $this->load->helper('url');
 		    
-		    // $container_id = $this->input->post('container');
+		    // $address_id = $this->input->post('address');
 		    // $length = $this->input->post('length');
 		    // $width = $this->input->post('width');
 		    // $height = $this->input->post('height');
@@ -216,7 +216,7 @@ class Package_model extends CI_Model {
 		    //0 for STACK
 		    //1 for BASE
 		    $priority = 0;
-		    $valid_package = $this->compute($container_id, (float)$length, (float)$width, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority);
+		    $valid_package = $this->compute($address_id, (float)$length, (float)$width, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority);
 		    if(is_array($valid_package) && !empty($valid_package))
 		    {
 		    	return $valid_package;
@@ -228,7 +228,7 @@ class Package_model extends CI_Model {
 		    if($valid_package)
 		    {
 			    $data = array(
-			        'container' => $container_id,
+			        'address' => $address_id,
 			        'length' => $length,
 			        'width' => $width,
 			        'height' => $height,
@@ -261,7 +261,7 @@ class Package_model extends CI_Model {
 		    return false;
 		}
 
-		public function compute($container_id,$length, $width, $height, $weight, &$x,&$y,&$z, &$orientation, $priority)
+		public function compute($address_id,$length, $width, $height, $weight, &$x,&$y,&$z, &$orientation, $priority)
 		{
 			/*
 			Rules:
@@ -272,14 +272,14 @@ class Package_model extends CI_Model {
 				*
 			*/
 
-			//container/address where package came
-			$container = $this->Address_model->get_address($container_id);
+			//address/address where package came
+			$address = $this->Address_model->get_address($address_id);
 
 			//cluster to be inserted by the new package
-			$cluster = $this->Cluster_model->get_cluster($container['cluster']);
+			$cluster = $this->Cluster_model->get_cluster($address['cluster']);
 
 			//packages in the cluster to be inserted by the new package
-			$packages = $this->Package_model->get_package(-1,$container['cluster']);
+			$packages = $this->Package_model->get_package(-1,$address['cluster']);
 
 
 			$corners = $this->get_corners($packages, true, $priority, $length, $width);
