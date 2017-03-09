@@ -14,17 +14,17 @@ class Address_model extends CI_Model {
                 endforeach;
 
                 if ($cluster != -1){
-                		//$query = $this->db->get('container');
-						$query = $this->db->get_where('container', array('cluster' => $cluster));
+                		//$query = $this->db->get('address');
+						$query = $this->db->get_where('address', array('cluster' => $cluster));
 		                return $query->result_array();
                 }
 		        else if ($id == -1)
 		        {
-						$query = $this->db->get('container');
+						$query = $this->db->get('address');
 		                return $query->result_array();
 		        }
 
-		        $query = $this->db->get_where('container', array('id' => $id));
+		        $query = $this->db->get_where('address', array('id' => $id));
 		        return $query->row_array();
 		}
 
