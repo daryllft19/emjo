@@ -5,17 +5,20 @@ class Package extends CI_Controller {
         {
                 parent::__construct();
                 $this->load->helper('url_helper');
+                $this->load->model('Package_model');
+                $this->load->model('Address_model');
         }
 
-        public function package()
+        public function index()
         {
-            $data['package']=$this->Package_model->get_package();
-            $this->load->view('template/view_header');
-            $this->load->view('template/view_top');
-            $this->load->view('template/view_menu');
-            $this->load->view('package/view_content',$data);
-            $this->load->view('template/view_footer');
-            
+            $cluster_id = $this->input->get('cluster_id');
+            $ret = $this->Package_model->get_package(-1,$cluster_id);
+            foreach ($ret as $key => $value) {
+                $addr = $this->Address_model->get_address($ret[$key]['address']);
+                $ret[$key]['address'] = $addr;
+            }  
+            header('Content-Type: application/json');
+            echo json_encode($ret);
         }
 
 }

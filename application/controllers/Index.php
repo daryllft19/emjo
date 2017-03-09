@@ -82,9 +82,6 @@ class Index extends CI_Controller {
         		$ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
 
         	array_push($ret[$clstr['id']]['location'], $value);
-        	// array_push($ret, array($this->Cluster_model->get_cluster($value['cluster'])['name']=> 1));
-        	// array_push($ret, array(1=>$this->Cluster_model->get_cluster($value['cluster'])['name']));
-
         }
 		$data['address']=$address;
 		$data['ret']=$ret;
@@ -103,8 +100,27 @@ class Index extends CI_Controller {
 		// }
 
 		$data['package']=$this->Package_model->get_package();
-		$data['cluster']=$this->Cluster_model->get_cluster();
+		// $data['cluster']=$this->Cluster_model->get_cluster();
 		$data['address']=$this->Address_model->get_address();
+
+		$order = array(
+				0 =>array(
+					'category' => 'id',
+					'type' => 'asc', 
+					)
+				);
+
+        $ret = array();
+        $temp=$this->Address_model->get_address(-1,-1,$order);
+        foreach ($temp as $key => $value) {
+        	$clstr = $this->Cluster_model->get_cluster($value['cluster']);
+        	if(!isset($ret[$clstr['id']]))
+        		$ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
+
+        	array_push($ret[$clstr['id']]['location'], $value);
+        }
+		$data['ret']=$ret;
+
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
 		$this->load->view('template/view_menu');

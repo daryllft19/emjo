@@ -12,23 +12,38 @@ class Address extends CI_Controller {
 
         public function index()
         {
+            $cluster_id = max($this->input->get('cluster_id'), -1);
+
             $order = array(
                 0 =>array(
                     'category' => 'id',
                     'type' => 'asc', 
                     )
                 );
-            $address=$this->Address_model->get_address(-1,$this->input->get('cluster_id'),$order);
-            foreach ($address as $key => $value) {
-                $clstr = $this->Cluster_model->get_cluster($this->input->get('cluster_id'));
-                if(!isset($ret[$clstr['id']]))
-                    $address[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
+            $address=$this->Address_model->get_address(-1,$cluster_id,$order);
+            $ret = array();
 
-                array_push($address[$clstr['id']]['location'], $value);
+            if($cluster_id > -1)
+            {
+                foreach ($address as $key => $value) {
+                    $clstr = $this->Cluster_model->get_cluster($cluster_id);
+                    if(!isset($ret[$clstr['id']]))
+                        $ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
+
+                    array_push($ret[$clstr['id']]['location'], $value);
+                }
+            }
+            else
+            {
+                foreach ($address as $key => $value) {
+                    $clstr = $this->Cluster_model->get_cluster($value['cluster']);
+                    $address[$key]['cluster'] = $clstr;
+                    $ret = $address;
+                }  
             }
 
             header('Content-Type: application/json');
-            echo json_encode($address);
+            echo json_encode($ret);
         
         }
 }

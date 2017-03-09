@@ -9,7 +9,7 @@ class Cluster extends CI_Controller {
 
         public function cluster()
         {
-            $data['clustfer']=$this->Cluster_model->get_cluster();
+            $data['cluster']=$this->Cluster_model->get_cluster();
             $this->load->view('template/view_header');
             $this->load->view('template/view_top');
             $this->load->view('template/view_menu');
