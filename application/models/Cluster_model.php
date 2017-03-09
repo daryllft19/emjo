@@ -33,10 +33,5 @@ class Cluster_model extends CI_Model {
 		    return $this->db->insert('cluster', $data);
 		}
 
-		public function generate_candidates($packages)
-		{
-			
-		}
-
 
 }
