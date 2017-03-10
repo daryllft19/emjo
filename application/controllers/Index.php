@@ -334,9 +334,9 @@ class Index extends CI_Controller {
 
 					];
 
-				foreach ($array[11] as $temp) {
+				foreach ($array[8] as $temp) {
 					list($length, $width, $height, $weight) = $temp;
-					$this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile); 
+					$this->Package_model->set_package($container_id, $length, $width, $height, $weight, FALSE); 
 				}
 				$return_value = TRUE;
 			}
@@ -359,7 +359,7 @@ class Index extends CI_Controller {
 			// if($return_value)
 			{
 				// redirect(base_url('index.php/index/package'));	
-				redirect(base_url('index.php/index/form'));	
+				redirect(base_url('/index/form'));	
 			}
 			else
 			{
