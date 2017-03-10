@@ -16,82 +16,7 @@
                   ?>
                 </select>
               </div>
-          <div class="table-responsive"">
-            <table class="table table-hover">
-              <?php 
-
-              if (empty($package)){
-                 echo '<h4>No package.</h4>';
-                } 
-              else{
-              ?>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Address</th>
-                  <th>Length (m)</th>
-                  <th>Width (m)</th>
-                  <th>Height (m)</th>
-                  <th>Weight (kg)</th>
-                  <th>X Coordinates</th>
-                  <th>Y Coordinates</th>
-                  <th>Z Coordinates</th>
-                  <th>Orientation</th>
-                  <th>Date Arrived</th>
-                  <th>Fragile</th>
-                </tr>
-              </thead>
-              <tbody>
-
-              <?php foreach ($package as $package_item): ?>
-
-                    <?php 
-                      foreach ($address as $address_item) {
-                        if ($address_item['id'] == $package_item['address']){
-                          echo "<tr data-cluster='".$address_item['cluster']."' id='package-".$package_item['id']."'>";
-                          break;
-                        }
-                      }
-                      echo "<td>".$package_item['id']."</td>";
-                      echo "<td>".$package_item['address']."</td>";
-                      echo "<td>".$package_item['length']."</td>";
-                      echo "<td>".$package_item['width']."</td>";
-                      echo "<td>".$package_item['height']."</td>";
-                      echo "<td>".$package_item['weight']."</td>";
-                      echo "<td>".$package_item['x1']."</td>";
-                      echo "<td>".$package_item['y1']."</td>";
-                      echo "<td>".$package_item['z1']."</td>";
-                      if ($package_item['length'] == $package_item['width']){
-                        echo "<td>Square</td>";
-                      }else{
-                        echo "<td>".$package_item['orientation']."</td>";
-                      }
-                      echo "<td>".$package_item['arrival_date']."</td>";
-                      if ($package_item['is_fragile']){
-                        echo "<td>True</td>";
-                      }else{
-                        echo "<td>False</td>";
-                      }
-                      echo "</tr>";
-                      // echo "<script>";
-                      // echo "dBox.push({";
-                      // echo "'id':".$package_item['id'].",";
-                      // echo "'address':".$package_item['address'].",";
-                      // echo "'length':".$package_item['length'].",";
-                      // echo "'width':".$package_item['width'].",";
-                      // echo "'height':".$package_item['height'].",";
-                      // echo "'weight':".$package_item['weight'].",";
-                      // echo "'x1':".$package_item['x1'].",";
-                      // echo "'y1':".$package_item['y1'].",";
-                      // echo "'z1':".$package_item['z1']."";
-                      // echo "});";
-                      // echo "</script>";
-                    ?>
-              <?php endforeach; ?>
-
-              </tbody>
-            </table>
-            <?php }; //CLOSING ELSE?>
+ 
 
           <div class="table-responsive"">
               <table class="table table-hover">
@@ -108,13 +33,12 @@
                   </tr>
                 </thead>
                 <tbody id='package-table'>
+                <td>NONE</td>
                 </tbody>
               </table>
             </div>
 
-          </div>
 
-          <?php if (!empty($package)){ ?>
           <div class='row'>
             <div class='col-sm-4' id='box-info'>
               <h1>Details</h1>
@@ -131,24 +55,67 @@
               </canvas>
             </div>
           </div>
-          <?php } ?>
+
         </div>
 
 
       </div>
     </div>
         <script>
-          var dBox = [];
+          var canvas = document.getElementById('package_canvas');
+          var engine = new BABYLON.Engine(canvas, true);
+          $('#cluster-select').on('change', function (e) {
+              var optionSelected = $("option:selected", this);
+              var valueSelected = this.value;
+
+              var row = '';
+              if(valueSelected==-1){
+                
+              }else{
+                $.get( "/package/",{'cluster_id':valueSelected}, function( data ) {
+                    var dBox = [];
+                    var cluster = data['cluster']; 
+                    
+                    for (key in data['packages']){
+                      row += "<tr data-cluster="+valueSelected+">";
+                      row += "<td editable='text' value='" + data['packages'][key].id+"'>" + data['packages'][key].id + "</td>";
+                      row += "<td editable='text' value='" + data['packages'][key].address+"'>" + data['packages'][key]['address'].city + "</td>";
+                      row += "<td editable='text' value='" + data['packages'][key].length+"'>" + data['packages'][key].length + "</td>";
+                      row += "<td editable='text' value='" + data['packages'][key].width+"'>" + data['packages'][key].width + "</td>";
+                      row += "<td editable='text' value='" + data['packages'][key].height+"'>" + data['packages'][key].height + "</td>";
+                      row += "<td editable='text' value='" + data['packages'][key].weight+"'>" + data['packages'][key].weight + "</td>";
+                      row += "<td editable='date' value='" + data['packages'][key].arrival_date+"'>" + data['packages'][key].arrival_date + "</td>";
+                      row += "<td editable='boolean' value='" + data['packages'][key].is_fragile+"'>" + ((data['packages'][key].is_fragile=='t')?"True":"False") + "</td>";
+                      row += "</tr>";
+                      dBox.push({
+                        id: data['packages'][key].id,
+                        address: data['packages'][key]['address'].city,
+                        length: parseFloat(data['packages'][key]['length']),
+                        width: parseFloat(data['packages'][key]['width']),
+                        height: parseFloat(data['packages'][key]['height']),
+                        weight: parseFloat(data['packages'][key]['weight']),
+                        x1: parseFloat(data['packages'][key]['x1']),
+                        y1: parseFloat(data['packages'][key]['y1']),
+                        z1: parseFloat(data['packages'][key]['z1'])                       
+                      });
+                    }
+                    $('#package-table').html(row);
+                    // engine.dispose();
+                    draw_canvas(cluster.length, cluster.width, dBox, canvas, engine);
+                });
+              }
+              row = '';
+          });
           $(".dropdown-menu li a").click(function(){
             $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
             $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
             alert($(".dropdown-menu li a").value());
 
           });
+          // $('#cluster-select').on('change', function (e) {  
+          // window.addEventListener('DOMContentLoaded', function(){
+          var draw_canvas = function(cluster_length, cluster_width, dBox, canvas, engine){   
 
-          window.addEventListener('DOMContentLoaded', function(){
-              var canvas = document.getElementById('package_canvas');
-              var engine = new BABYLON.Engine(canvas, true);
 
               var createScene = function () {
                   var scene = new BABYLON.Scene(engine);
@@ -221,8 +188,8 @@
                   var address = BABYLON.Mesh.CreatePlane("ground", 0, scene);
                   // address.material = material;
                   address.rotation.x = Math.PI / 2;
-                  address.scaling.x = 6;
-                  address.scaling.y = 2.4
+                  address.scaling.x = cluster_length;
+                  address.scaling.y = cluster_width;
 
                   var action_mouse_over = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, mouseOverUnit);
                   var action_mouse_out = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, mouseOutUnit);
@@ -230,66 +197,31 @@
                   var box = {}
                   // for (var i = 1; i <= 4; i++) {
                   // for (var i = 1; i <= Object.keys(dBox).length; i++) {
-                  dBox.forEach(function(b, i){
+                  if(dBox.length > 0){
+                    xcalibrate = cluster_length/2;
+                    ycalibrate = cluster_width/2;
+                    dBox.forEach(function(b, i){
+                            box[i] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width ,height: b.height,depth:b.length}, scene);
+                            box[i].material = pinkMat;
+                            x = xcalibrate-((b.width/2)+b.x1);
+                            y = (b.height/2)+b.z1;
+                            z = ycalibrate-((b.length/2)+b.y1);
+                            box[i].position = new BABYLON.Vector3(x,y,z);
+                            box[i].actionManager = new BABYLON.ActionManager(scene);  
+                            box[i].actionManager.registerAction(action_mouse_over);
+                            box[i].actionManager.registerAction(action_mouse_out);
+                    });
+                  }
 
-                      box[i] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width ,height: b.height,depth:b.length}, scene);
-                      box[i].material = pinkMat;
-                      x = 3-((b.width/2)+b.x1);
-                      y = (b.height/2)+b.z1;
-                      z = 1.2-((b.length/2)+b.y1);
-                      box[i].position = new BABYLON.Vector3(x,y,z);
-                      box[i].actionManager = new BABYLON.ActionManager(scene);  
-                      box[i].actionManager.registerAction(action_mouse_over);
-                      box[i].actionManager.registerAction(action_mouse_out);
-                  });
                   return scene;
               }
 
               var scene = createScene();
               engine.runRenderLoop(function(){
                   scene.render();
- 
               });
 
-          });
+          };
 
-          $('#cluster-select').on('change', function (e) {
-              var optionSelected = $("option:selected", this);
-              var valueSelected = this.value;
-
-              var row = '';
-              if(valueSelected==-1){
-                
-              }else{
-                $.get( "/package/",{'cluster_id':valueSelected}, function( data ) {
-                    for (key in data){
-                      row += "<tr data-cluster="+valueSelected+">";
-                      row += "<td editable='text' value='" + data[key].id+"'>" + data[key].id + "</td>";
-                      row += "<td editable='text' value='" + data[key].address+"'>" + data[key]['address'].city + "</td>";
-                      row += "<td editable='text' value='" + data[key].length+"'>" + data[key].length + "</td>";
-                      row += "<td editable='text' value='" + data[key].width+"'>" + data[key].width + "</td>";
-                      row += "<td editable='text' value='" + data[key].height+"'>" + data[key].height + "</td>";
-                      row += "<td editable='text' value='" + data[key].weight+"'>" + data[key].weight + "</td>";
-                      row += "<td editable='date' value='" + data[key].arrival_date+"'>" + data[key].arrival_date + "</td>";
-                      row += "<td editable='boolean?' value='" + data[key].is_fragile+"'>" + data[key].is_fragile + "</td>";
-                      row += "</tr>";
-                      dBox.push({
-                        id: data[key].id,
-                        address: data[key]['address'].city,
-                        length: data[key]['length'],
-                        width: data[key]['width'],
-                        height: data[key]['height'],
-                        weight: data[key]['weight'],
-                        x1: data[key]['x1'],
-                        y1: data[key]['y1'],
-                        z1: data[key]['z1']                        
-                      });
-                    }
-                    $('#package-table').html(row);
-
-                });
-              }
-              row = '';
-          });
 
         </script>
