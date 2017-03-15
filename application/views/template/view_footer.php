@@ -1,3 +1,4 @@
+	</div>
     <!-- FOOTER START -->
     <footer>
       
