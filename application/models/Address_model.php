@@ -28,6 +28,25 @@ class Address_model extends CI_Model {
 		        return $query->row_array();
 		}
 
+		public function search_address($filter=array(), $limit=0)
+		{
+			$this->db->select('*');
+			$this->db->from('address');
+			if ($limit >0)
+				$this->db->limit($limit);
+			$sort = 'city';
+			foreach ($filter as $key => $value) {
+				$this->db->like($key,$value);
+				if(!empty($value))
+					$sort = $key;
+			}
+
+			$this->db->order_by($sort,'asc');
+			$query = $this->db->get();
+			return $query->result_array();
+			
+		}
+
 		public function set_address()
 		{
 
@@ -36,8 +55,8 @@ class Address_model extends CI_Model {
 
 		    $data = array(
 		        'name' => $this->input->post('name'),
-		        'city' => $this->input->post('city'),
-		        'keywords' => $this->input->post('keywords')
+		        'city' => $this->input->post('city')
+		        // 'keywords' => $this->input->post('keywords')
 		    );
 
 		    return $this->db->insert('cluster', $data);
