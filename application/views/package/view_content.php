@@ -87,9 +87,21 @@
                       row += "<td editable='date' value='" + data['packages'][key].arrival_date+"'>" + data['packages'][key].arrival_date + "</td>";
                       row += "<td editable='boolean' value='" + data['packages'][key].is_fragile+"'>" + ((data['packages'][key].is_fragile=='t')?"True":"False") + "</td>";
                       row += "</tr>";
+
+                      addr = '';
+                      
+                      for(attr of ['area', 'street','avenue','district','barangay','city','province'])
+                      {
+                        addr += data['packages'][key]['address'][attr];
+                        if (data['packages'][key]['address'][attr].length != 0 && attr!='province')
+                        {
+                          addr += ', ';
+                        }
+                      }
+
                       dBox.push({
                         id: data['packages'][key].id,
-                        address: data['packages'][key]['address'].city,
+                        address: addr,
                         length: parseFloat(data['packages'][key]['length']),
                         width: parseFloat(data['packages'][key]['width']),
                         height: parseFloat(data['packages'][key]['height']),
