@@ -46,4 +46,19 @@ class Address extends CI_Controller {
             echo json_encode($ret);
         
         }
+
+
+        public function search()
+        {
+            $ret = array('top'=>array());
+            $limit = 0;
+            if(empty($this->input->get('limit')))
+                $limit = 0;
+            else
+                $limit = $this->input->get('limit');
+            array_push($ret['top'], $this->Address_model->search_address($this->input->get('params'), $this->input->get('limit')));
+
+            header('Content-Type: application/json');
+            echo json_encode($ret);     
+        }
 }

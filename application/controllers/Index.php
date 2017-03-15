@@ -43,9 +43,9 @@ class Index extends CI_Controller {
 
 	public function cluster()
 	{
-		// if (!$this->tank_auth->is_logged_in()) {
-		// 	redirect('/auth/login/');
-		// }
+		if (!$this->tank_auth->is_logged_in()) {
+			redirect('/auth/login/');
+		}
 
 		$data['cluster']=$this->Cluster_model->get_cluster();
 		$this->load->view('template/view_header');
@@ -58,9 +58,9 @@ class Index extends CI_Controller {
 
 	public function address()
 	{
-		// if (!$this->tank_auth->is_logged_in()) {
-		// 	redirect('/auth/login/');
-		// }
+		if (!$this->tank_auth->is_logged_in()) {
+			redirect('/auth/login/');
+		}
 
 		$order = array(
 				0 =>array(
@@ -139,31 +139,35 @@ class Index extends CI_Controller {
 				0 =>array(
 					'category' => 'cluster',
 					'type' => 'asc', 
-					),
-				1 =>array(
-					'category' => 'keywords',
-					'type' => 'asc', 
 					)
 				);
-		$data['container']=$this->Address_model->get_address(-1,-1,$order);
-
+		$data['address']=$this->Address_model->get_address(-1,-1,$order);
+		
+		$data['province']=array();
+		foreach ($data['address'] as $key => $value) {
+			if(!in_array($value['province'], $data['province']))
+				array_push($data['province'], $value['province']);
+		}
 
 		$this->load->helper('form');
         $this->load->library('form_validation');
 
-		$this->form_validation->set_rules('container', 'container', 'required');
+		$this->form_validation->set_rules('address_id', 'Address', 'required');
 		$this->form_validation->set_rules('length', 'Length', 'required');
 		$this->form_validation->set_rules('width', 'Width', 'required');
 		$this->form_validation->set_rules('height', 'Height', 'required');
 		$this->form_validation->set_rules('weight', 'Weight', 'required');
 
-		$container_id = $this->input->post('container');
+		$address_id = $this->input->post('address_id');
+		$address = $this->input->post('address');
 		$length = $this->input->post('length');
 		$width = $this->input->post('width');
 		$height = $this->input->post('height');
 		$weight = $this->input->post('weight');
 		$fragile = $this->input->post('fragile');
 		
+		$data['input_address_id'] = $address_id;
+		$data['input_address'] = $address;
 		$data['length'] = $length;
 		$data['width'] = $width;
 		$data['height'] = $height;
@@ -171,7 +175,7 @@ class Index extends CI_Controller {
 		
 		if ($this->form_validation->run() === TRUE)
 		{
-			$this->add($container_id, $length, $width, $height, $weight, $fragile);
+			$this->add($address_id, $length, $width, $height, $weight, $fragile);
 			// echo '<script>alert("Wrong input!")</script>';
 			// $this->index('form');
 		}
@@ -210,7 +214,7 @@ class Index extends CI_Controller {
 		// }
 		// else
 		// {
-			$populate = TRUE;
+			$populate = FALSE;
 			$return_value = FALSE;
 			if ($populate){
 				
@@ -383,9 +387,9 @@ class Index extends CI_Controller {
 
 	public function export()
 	{
-		// if (!$this->tank_auth->is_logged_in()) {
-		// 	redirect('/auth/login/');
-		// }
+		if (!$this->tank_auth->is_logged_in()) {
+			redirect('/auth/login/');
+		}
 		
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
