@@ -38,12 +38,12 @@ CREATE TABLE address(
 	id serial primary key not null,
 	cluster int not null references cluster (id) on delete cascade on update cascade,
 	province varchar default 'Metro Manila',
-	city varchar default null,
-	barangay varchar default null,
-	district varchar default null,
-	area varchar default null,
-	avenue varchar default null,
-	street varchar default null,
+	city varchar default '',
+	barangay varchar default '',
+	district varchar default '',
+	area varchar default '',
+	avenue varchar default '',
+	street varchar default '',
 	is_serviceable boolean default true
 );
 
@@ -531,6 +531,8 @@ CREATE TABLE package(
 	width real not null,
 	height real not null,
 	weight real not null,
+	height_constraint not null,
+	weight_constraint not null,
 	x1 real not null,
 	x2 real not null,
 	y1 real not null,
