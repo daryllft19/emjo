@@ -25,8 +25,8 @@
               </div>
 
               <div class='input-group'>
-                <label for="location-select">Location:</label>
-                <select class="form-control" id="location-select">
+                <label for="city-select">City:</label>
+                <select class="form-control" id="city-select">
                   <option value='1'>N/A</option>
 
                 </select>
@@ -53,20 +53,30 @@
                   <tr>
                     <!-- <th>ID</th> -->
                     <th>Cluster</th>
+                    <th>Province</th>
                     <th>City</th>
-                    <th>Keywords</th>
+                    <th>Barangay</th>
+                    <th>District</th>
+                    <th>Area</th>
+                    <th>Avenue</th>
+                    <th>Street</th>
                     <th>Serviceable</th>
                   </tr>
                 </thead>
                 <tbody id='cluster-table'>
                 <?php foreach ($address as $address_item): ?>
                       <?php 
-                        echo "<tr>";
+                        echo "<tr value='".$address_item["cluster"]['id']."'>";
                         // echo "<td>".$address_item['id']."</td>";
-                        echo "<td editable='text' value='".$address_item["cluster"]['id']."'>".$address_item["cluster"]['name']."</td>";
-                        echo "<td editable='text' value='".$address_item["city"]."'>".$address_item["city"]."</td>";
-                        echo "<td editable='text' value='".$address_item["keywords"]."'>".$address_item["keywords"]."</td>";
-                        echo "<td editable='boolean' value='".$address_item["is_serviceable"]."'>";
+                        echo "<td contenteditable value='".$address_item["cluster"]['name']."'>".$address_item["cluster"]['name']."</td>";
+                        echo "<td contenteditable value='".$address_item["province"]."'>".$address_item["province"]."</td>";
+                        echo "<td contenteditable value='".$address_item["city"]."'>".$address_item["city"]."</td>";
+                        echo "<td contenteditable value='".$address_item["barangay"]."'>".$address_item["barangay"]."</td>";
+                        echo "<td contenteditable value='".$address_item["district"]."'>".$address_item["district"]."</td>";
+                        echo "<td contenteditable value='".$address_item["area"]."'>".$address_item["area"]."</td>";
+                        echo "<td contenteditable value='".$address_item["avenue"]."'>".$address_item["avenue"]."</td>";
+                        echo "<td contenteditable value='".$address_item["street"]."'>".$address_item["street"]."</td>";
+                        echo "<td contenteditable value='".$address_item["is_serviceable"]."'>";
                         if ($address_item['is_serviceable']){
                           echo "True";
                         }else{
@@ -92,16 +102,21 @@
 
         var row = '';
         if(valueSelected==-1){
-          $('#location-select').html("<option value='1'>N/A</option>");
+          $('#city-select').html("<option value='1'>N/A</option>");
           $.get( "/address/", function( data ) {
               adr = data;
 
               for (key in adr){
                 row += "<tr>";
-                row += "<td editable='text' value='" + adr[key]['cluster'].name+"'>" + adr[key]['cluster'].name + "</td>"
-                row += "<td editable='text' value='" + adr[key].city+"'>" + adr[key].city + "</td>"
-                row += "<td editable='text' value='" + adr[key].keywords+"'>" + adr[key].keywords + "</td>"
-                row += "<td editable='boolean' value='" + adr[key].is_serviceable+"'>";
+                row += "<td contenteditable value='" + adr[key].id+"'>" + data[valueSelected]['name'] + "</td>"
+                row += "<td contenteditable value='" + adr[key].province+"'>" + adr[key].province + "</td>"
+                row += "<td contenteditable value='" + adr[key].city+"'>" + adr[key].city + "</td>"
+                row += "<td contenteditable value='" + adr[key].barangay+"'>" + adr[key].barangay + "</td>"
+                row += "<td contenteditable value='" + adr[key].district+"'>" + adr[key].district + "</td>"
+                row += "<td contenteditable value='" + adr[key].area+"'>" + adr[key].area + "</td>"
+                row += "<td contenteditable value='" + adr[key].avenue+"'>" + adr[key].avenue + "</td>"
+                row += "<td contenteditable value='" + adr[key].street+"'>" + adr[key].street + "</td>"
+                row += "<td contenteditable value='" + adr[key].is_serviceable+"'>";
                 row += adr[key].is_serviceable=='t'?'True':'False';
                 row += "</td>"
                 row += "</tr>";
@@ -113,18 +128,23 @@
               var options = '';
               adr = data[valueSelected]['location'];
               for (key in adr){
-                options += '<option value="' + adr[key].id + '">' + adr[key].keywords + '</option>';
+                options += '<option value="' + adr[key].id + '">' + adr[key].province + '</option>';
 
                 row += "<tr>";
-                row += "<td editable='text' value='" + adr[key].id+"'>" + data[valueSelected]['name'] + "</td>"
-                row += "<td editable='text' value='" + adr[key].city+"'>" + adr[key].city + "</td>"
-                row += "<td editable='text' value='" + adr[key].keywords+"'>" + adr[key].keywords + "</td>"
-                row += "<td editable='boolean' value='" + adr[key].is_serviceable+"'>";
+                row += "<td contenteditable value='" + adr[key].id+"'>" + data[valueSelected]['name'] + "</td>"
+                row += "<td contenteditable value='" + adr[key].province+"'>" + adr[key].province + "</td>"
+                row += "<td contenteditable value='" + adr[key].city+"'>" + adr[key].city + "</td>"
+                row += "<td contenteditable value='" + adr[key].barangay+"'>" + adr[key].barangay + "</td>"
+                row += "<td contenteditable value='" + adr[key].district+"'>" + adr[key].district + "</td>"
+                row += "<td contenteditable value='" + adr[key].area+"'>" + adr[key].area + "</td>"
+                row += "<td contenteditable value='" + adr[key].avenue+"'>" + adr[key].avenue + "</td>"
+                row += "<td contenteditable value='" + adr[key].street+"'>" + adr[key].street + "</td>"
+                row += "<td contenteditable value='" + adr[key].is_serviceable+"'>";
                 row += adr[key].is_serviceable=='t'?'True':'False';
                 row += "</td>"
                 row += "</tr>";
               }
-              $('#location-select').html(options);
+              $('#city-select').html(options);
               $('#cluster-table').html(row);
           });
         }
