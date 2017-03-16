@@ -65,7 +65,7 @@
 					</div>
 
 					<div class='row'>
-					<h4>Top Result/s: (Click the address mathing your input)</h4>
+					<h4>Top Result/s: (Click the result below that matches the correct address)</h4>
 						<div id='top-results'>
 
 						</div>
@@ -111,44 +111,12 @@
 
 					<div class="form-group">
 					  <label for="height-constraint">Height Constraint(kg):</label>
-					  <?php if(!$this->tank_auth->is_logged_in())
-					  	{
-					  	?>
-					  <a href="#" data-toggle="tooltip" title="Login as admin to modify constraint.">
-					  <?php
-					  	}
-					  	?>
-
-					  <input type="number" step="1" class="form-control" name='height-constraint' id="height-constraint" value='<?php $height_constraint; ?>'  autocomplete='off' <?php if(!$this->tank_auth->is_logged_in()){?>disabled<?php } ?>>
-
-					  <?php if(!$this->tank_auth->is_logged_in())
-					  	{
-					  	?>
-					  </a>
-						<?php
-					  	}
-					  	?>
+					  <input type="number" step="1" class="form-control" name='height-constraint' id="height-constraint" value='<?php $height_constraint; ?>'  autocomplete='off'>
 					</div>
 
 					<div class="form-group">
 					  <label for="weight-constraint">Weight Constraint(kg):</label>
-					  <?php if(!$this->tank_auth->is_logged_in())
-					  	{
-					  	?>
-					  <a href="#" data-toggle="tooltip" title="Login as admin to modify constraint.">
-					  <?php
-					  	}
-					  	?>
-
-					  <input type="number" step="1" class="form-control" name='weight-constraint' id="weight-constraint" value='<?php $weight_constraint; ?>'  autocomplete='off' <?php if(!$this->tank_auth->is_logged_in()){?>disabled<?php } ?>>
-
-					  <?php if(!$this->tank_auth->is_logged_in())
-					  	{
-					  	?>
-					  </a>
-						<?php
-					  	}
-					  	?>
+					  <input type="number" step="1" class="form-control" name='weight-constraint' id="weight-constraint" value='<?php $weight_constraint; ?>'  autocomplete='off'>
 					</div>
 
 
@@ -415,7 +383,7 @@
 			}).keyup();
 
 			$('#height').keyup(function(){
-				height_constraint = Math.min($('#weight').val(), $('#height').val()) * 3;
+				height_constraint = Math.min($('#length').val(), $('#width').val()) * 3;
 				$('#height-constraint').val(height_constraint);
 			}).keyup();
 
