@@ -11,7 +11,7 @@
         {
 
         ?>
-          <a href="<?php echo site_url('auth/logout?redirect='.$_SERVER["REQUEST_URI"])?>" class="btn btn-danger pull-right" role="button">Logout</a>
+          <a href="<?php echo site_url('AuthHandler/logout?redirect='.$_SERVER["REQUEST_URI"])?>" class="btn btn-danger pull-right" role="button">Logout</a>
           <div class="navbar-text pull-right">
           Logged in as: <?php echo $this->tank_auth->get_username(); ?>
           </div>
@@ -33,7 +33,7 @@
       <form>
         <fieldset>
           <label for="password">Password:</label>
-          <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
+          <input type="password" name="password" id="password" class="text ui-widget-content ui-corner-all">
      
           <!-- Allow form submission with keyboard without duplicating the dialog button -->
           <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
@@ -47,7 +47,16 @@
       function login()
       {
         $.post("/AuthHandler/login", {'password':$('#password').val()}, function(data) {
-            alert(data);
+            if(data['success'] == 1)
+              {
+                alert('Successful!');
+                location.reload();
+              }
+              else
+              {
+                $('#password').val('');
+                alert('Wrong password!');
+              }
         });
       }
 
@@ -78,9 +87,17 @@
         $( "#login-btn" ).button().on( "click", function() {
           dialog.dialog( "open" );
         });
+
+
       });
 
-
+                $('#dialog-form').keypress(function(e){
+                  var key = e.which;
+                  if(key == 13)  // the enter key code
+                    {
+                        login();
+                    }
+                });
 
 
     </script>
