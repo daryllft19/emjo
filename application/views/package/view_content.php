@@ -126,6 +126,8 @@
           });
           // $('#cluster-select').on('change', function (e) {  
           // window.addEventListener('DOMContentLoaded', function(){
+
+
           var draw_canvas = function(cluster_length, cluster_width, dBox, canvas, engine){   
 
 
@@ -165,6 +167,7 @@
                         height.prop('innerText',box.height);
                         weight.prop('innerText',box.weight);
                         unit_mesh.source.material = material;
+                        console.log(unit_mesh);
                         unit_mesh.meshUnderPointer.renderOutline = true;  
                         // unit_mesh.meshUnderPointer.outlineWidth = 0.1;
                     }
@@ -200,8 +203,8 @@
                   var address = BABYLON.Mesh.CreatePlane("ground", 0, scene);
                   // address.material = material;
                   address.rotation.x = Math.PI / 2;
-                  address.scaling.x = cluster_length;
-                  address.scaling.y = cluster_width;
+                  address.scaling.x = cluster_length/100;
+                  address.scaling.y = cluster_width/100;
 
                   var action_mouse_over = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, mouseOverUnit);
                   var action_mouse_out = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, mouseOutUnit);
@@ -210,14 +213,15 @@
                   // for (var i = 1; i <= 4; i++) {
                   // for (var i = 1; i <= Object.keys(dBox).length; i++) {
                   if(dBox.length > 0){
-                    xcalibrate = cluster_length/2;
-                    ycalibrate = cluster_width/2;
+                    xcalibrate = (cluster_length/100)/2;
+                    ycalibrate = (cluster_width/100)/2;
                     dBox.forEach(function(b, i){
-                            box[i] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width ,height: b.height,depth:b.length}, scene);
+                          console.log('created box in '+i);
+                            box[i] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width/100 ,height: b.height/100,depth:b.length/100}, scene);
                             box[i].material = pinkMat;
-                            x = xcalibrate-((b.width/2)+b.x1);
-                            y = (b.height/2)+b.z1;
-                            z = ycalibrate-((b.length/2)+b.y1);
+                            x = xcalibrate-(((b.width/100)/2)+b.x1/100);
+                            y = ((b.height/100)/2)+b.z1;
+                            z = ycalibrate-(((b.length/100)/2)+b.y1/100);
                             box[i].position = new BABYLON.Vector3(x,y,z);
                             box[i].actionManager = new BABYLON.ActionManager(scene);  
                             box[i].actionManager.registerAction(action_mouse_over);
@@ -225,6 +229,23 @@
                     });
                   }
 
+
+                  $('tr').hover(function(){
+                    id = $($(this).find('td')[0]).text()-1;
+                    console.log(id);
+                    if(id>-1)
+                    {
+                      box[id].material = material;
+                      box[id].renderOutline = true;
+                    }
+                  },function (){
+                    id = $($(this).find('td')[0]).text()-1;
+                    if(id>-1)
+                    {
+                      box[id].material = pinkMat;
+                      box[id].renderOutline = false;
+                    }
+                  });
                   return scene;
               }
 
