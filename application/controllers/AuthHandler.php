@@ -20,20 +20,30 @@ class AuthHandler extends CI_Controller
 	function login()
 	{
 		$ret = array();
+		$data['login_by_username'] = ($this->config->item('login_by_username', 'tank_auth') AND
+					$this->config->item('use_username', 'tank_auth'));
+		$data['login_by_email'] = $this->config->item('login_by_email', 'tank_auth');
 
-		// if ($this->tank_auth->login(
-		// 		$this->form_validation->set_value('login'),
-		// 		$this->form_validation->set_value('password'),
-		// 		$this->form_validation->set_value('remember'),
-		// 		$data['login_by_username'],
-		// 		$data['login_by_email'])) {								// success
-		// 			redirect('');
-		// 		}
+		$password = $this->input->post('password');
+		if ($this->tank_auth->login(
+				'admin',
+				$password,
+				0,
+				$data['login_by_username'],
+				$data['login_by_email'])) {								// success
+					$ret['success'] = 1;
+				}
 
 		// $this->get->post
 		// $ret
-		$test = $this->input->post('password');
-        echo json_encode($test);
+		header('Content-Type: application/json');
+        echo json_encode($ret);
+	}
+
+	function logout()
+	{
+		$this->tank_auth->logout();
+		redirect($this->input->get('redirect'));
 	}
 
 }
