@@ -19,9 +19,9 @@ class Package extends CI_Controller {
                 $addr = $this->Address_model->get_address($ret['packages'][$key]['address']);
                 $ret['packages'][$key]['address'] = $addr;
             }  
-            header('Content-Type: application/json');
             $ret['cluster'] = $this->Cluster_model->get_cluster($cluster_id);
             // $ret
+            header('Content-Type: application/json');
             echo json_encode($ret);
         }
 
