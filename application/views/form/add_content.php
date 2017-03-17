@@ -83,25 +83,25 @@
 
 					<div class="form-group">
 					  <label for="length">Length (cm):</label>
-					  <input type="number" step="0.1" min=0 class="form-control" name='length' id="length" value='<?php echo $length; ?>' autofocus autocomplete='off'>
+					  <input type="number" step="1" min=0 class="form-control" name='length' id="length" value='<?php echo $length; ?>' autofocus autocomplete='off'>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('length'); ?></span>
 					</div>
 
 					<div class="form-group">
 					  <label for="width">Width (cm):</label>
-					  <input type="number" step="0.1" min=0 class="form-control" name='width' id="width" value='<?php echo $width; ?>' autocomplete='off'>
+					  <input type="number" step="1" min=0 class="form-control" name='width' id="width" value='<?php echo $width; ?>' autocomplete='off'>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('width'); ?></span>
 					</div>
 
 					<div class="form-group">
 					  <label for="height">Height (cm):</label>
-					  <input type="number" step="0.1" min=0 class="form-control" name='height' id="height" value='<?php echo $height; ?>' autocomplete='off'>
+					  <input type="number" step="1" min=0 class="form-control" name='height' id="height" value='<?php echo $height; ?>' autocomplete='off'>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('height'); ?></span>
 					</div>
 
 					<div class="form-group">
 					  <label for="weight">Weight (kg):</label>
-					  <input type="number" step="1" min=0 class="form-control" name='weight' id="weight" value='<?php $weight; ?>' autocomplete='off'>
+					  <input type="number" step="1" min=0 class="form-control" name='weight' id="weight" value='<?php echo $weight; ?>' autocomplete='off'>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('weight'); ?></span>
 					</div>
 
@@ -371,7 +371,7 @@
 			    $('#address_hidden').val(this.value);
 			    $('#address').val($(this).text());
 			    $('#span-address').html($(this).text());
-
+			    $('#length').focus();
 
 			});
 			$('#weight').keyup(function(){
