@@ -36,7 +36,7 @@ class Index extends CI_Controller {
 		{
 			redirect('index/'.$page);
 		}
-		redirect('index/package');
+		redirect('index/');
 		// $this->$page();
 	}
 
@@ -44,7 +44,7 @@ class Index extends CI_Controller {
 	public function cluster()
 	{
 		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
+			redirect('');
 		}
 
 		$data['cluster']=$this->Cluster_model->get_cluster();
@@ -59,7 +59,7 @@ class Index extends CI_Controller {
 	public function address()
 	{
 		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
+			redirect('');
 		}
 
 		$order = array(
@@ -157,6 +157,8 @@ class Index extends CI_Controller {
 		$this->form_validation->set_rules('width', 'Width', 'required');
 		$this->form_validation->set_rules('height', 'Height', 'required');
 		$this->form_validation->set_rules('weight', 'Weight', 'required');
+		$this->form_validation->set_rules('weight-constraint', 'Weight Constraint', 'required');
+		$this->form_validation->set_rules('height-constraint', 'height Constraint', 'required');
 
 		$address_id = $this->input->post('address_id');
 		$address = $this->input->post('address');
@@ -165,6 +167,8 @@ class Index extends CI_Controller {
 		$height = $this->input->post('height');
 		$weight = $this->input->post('weight');
 		$fragile = $this->input->post('fragile');
+		$height_constraint = $this->input->post('height-constraint');
+		$weight_constraint = $this->input->post('weight-constraint');
 		
 		$data['input_address_id'] = $address_id;
 		$data['input_address'] = $address;
@@ -172,10 +176,12 @@ class Index extends CI_Controller {
 		$data['width'] = $width;
 		$data['height'] = $height;
 		$data['weight'] = $weight;
-		
+		$data['height_constraint'] = $height_constraint;
+		$data['weight_constraint'] = $weight_constraint;
+
 		if ($this->form_validation->run() === TRUE)
 		{
-			$this->add($address_id, $length, $width, $height, $weight, $fragile);
+			$this->add($address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
 			// echo '<script>alert("Wrong input!")</script>';
 			// $this->index('form');
 		}
@@ -191,7 +197,7 @@ class Index extends CI_Controller {
 		
 	}
 
-	public function add($container_id, $length, $width, $height,  $weight, $fragile)
+	public function add($container_id, $length, $width, $height,  $weight, $fragile, $height_constraint, $weight_constraint)
 	{
 		// if (!$this->tank_auth->is_logged_in()) {
 		// 	redirect('/auth/login/');
@@ -214,125 +220,125 @@ class Index extends CI_Controller {
 		// }
 		// else
 		// {
-			$populate = FALSE;
+			$populate = TRUE;
 			$return_value = FALSE;
 			if ($populate){
 				
 				$array = [
 					//0
 					[
-					[.4,.3,.3,50],
-					[.4,.3,.4,60],
-					[.4,.3,.45,50],
-					[.3,.3,.4,50],
-					[.3,.2,.1,25],
-					[.2,.2,.4,30],
-					[.2,.2,.3,40]
+					[40,30,30,50],
+					[40,30,40,60],
+					[40,30,45,50],
+					[30,30,40,50],
+					[30,20,10,25],
+					[20,20,40,30],
+					[20,20,30,40]
 					],
 					//1
 					[
-					[.3,.3,.3,50],
-					[.2,.2,.1,60],
-					[.2,.2,.35,55],
-					[.2,.2,.3,50]
+					[30,30,30,50],
+					[20,20,10,60],
+					[20,20,35,55],
+					[20,20,30,50]
 					],
 					//2
 					[
-					[.3,.3,.5,45],
-					[.3,.3,.5,60],
-					[.3,.3,.3,70],
-					[.3,.3,.2,50],
-					[.3,.3,.2,20]
+					[30,30,50,45],
+					[30,30,50,60],
+					[30,30,30,70],
+					[30,30,20,50],
+					[30,30,20,20]
 					],
 					//3
 					[
-					[.3,.3,.3,45],
-					[.3,.3,.3,60],
-					[.3,.3,.3,50],
-					[.3,.3,.2,50],
-					[.3,.3,.2,30]
+					[30,30,30,45],
+					[30,30,30,60],
+					[30,30,30,50],
+					[30,30,20,50],
+					[30,30,20,30]
 					],
 					//4
 					[
-					[.3,.3,.3,45],
-					[.3,.3,.3,20],
-					[.3,.3,.3,30],
-					[.3,.3,.2,40],
-					[.3,.3,.2,30]
+					[30,30,30,45],
+					[30,30,30,20],
+					[30,30,30,30],
+					[30,30,20,40],
+					[30,30,20,30]
 					],
 					//5
 					[
-					[.3,.3,.3,50],
-					[.3,.3,.3,30],
-					[.3,.3,.3,10],
-					[.3,.3,.2,40],
-					[.3,.3,.2,30]
+					[30,30,30,50],
+					[30,30,30,30],
+					[30,30,30,10],
+					[30,30,20,40],
+					[30,30,20,30]
 					],
 					//6
 					[
-					[.3,.3,.3,50],
-					[.3,.3,.3,30],
-					[.3,.3,.3,30],
-					[.3,.2,.2,40],
-					[.3,.3,.1,30]
+					[30,30,30,50],
+					[30,30,30,30],
+					[30,30,30,30],
+					[30,20,20,40],
+					[30,30,10,30]
 					],
 					//7
 					[
-					[.4,.3,.3,50],
-					[.4,.3,.4,60],
-					[.4,.3,.45,50],
-					[.3,.3,.4,50],
-					[.3,.2,.1,25],
-					[.2,.2,.4,30],
-					[.3,.2,.3,40],
-					[.2,.1,.2,25],
-					[.6,.4,.4,60],
-					[.2,.2,.4,50]
+					[40,30,30,50],
+					[40,30,40,60],
+					[40,30,45,50],
+					[30,30,40,50],
+					[30,20,10,25],
+					[20,20,40,30],
+					[30,20,30,40],
+					[20,10,20,25],
+					[60,40,40,60],
+					[20,20,40,50]
 					],
 					//8
 					[
-					[.4,.3,.3,50],
-					[.4,.3,.4,60],
-					[.4,.3,.45,50],
-					[.3,.3,.4,50],
-					[.3,.2,.1,25],
-					[.2,.2,.4,30],
-					[.2,.2,.3,40],
-					[.1,.2,.2,25],
-					[.6,.5,.4,60],
-					[.2,.2,.4,50]
+					[40,30,30,50],
+					[40,30,40,60],
+					[40,30,45,50],
+					[30,30,40,50],
+					[30,20,10,25],
+					[20,20,40,30],
+					[20,20,30,40],
+					[10,20,20,25]//,
+					// [60,50,40,60],
+					// [20,20,40,50]
 					],
 					//9
 					[
-					[.3,.3,.5,45],
-					[.5,.4,.4,40],
-					[.5,.3,.7,40],
-					[.3,.2,.3,60],
-					[.5,.4,.9,70],
-					[.3,.2,.3,40],
-					[.4,.2,.4,90],
-					[.2,.2,.2,30],
+					[30,30,50,45],
+					[50,40,40,40],
+					[50,30,70,40],
+					[30,20,30,60],
+					[50,40,90,70],
+					[30,20,30,40],
+					[40,20,40,90],
+					[20,20,20,30],
 					],
 					//10
 					[
-					[.6,.5,.3,50],
-					[.3,.3,1.2,90],
-					[.2,.2,.3,30],
-					[.4,.3,.6,60],
-					[.5,.5,.7,90],
-					[.8,.8,1.4,180],
-					[.2,.2,.2,40]
+					[6,5,3,50],
+					[3,3,12,90],
+					[2,2,3,30],
+					[4,3,6,60],
+					[5,5,7,90],
+					[8,8,14,180],
+					[2,2,2,40]
 
 					],
 					//11
 					[
-					[.6,.5,.3,	50],
-					[.3,.3,1.2,	90],
-					[.2,.2,.3,	30],
-					[.4,.3,.6,	60],
-					[.5,.5,.7,	90],
-					[.8,.8,1.4,	180],
-					[.2,.2,.2,	40]
+					[60,50,30,	50],
+					[30,30,12,90],
+					[20,20,30,	30],
+					[40,30,60,	60],
+					[50,50,70,	90],
+					[80,80,14,180],
+					[20,20,20,	40]
 
 					]
 
@@ -340,24 +346,27 @@ class Index extends CI_Controller {
 
 				foreach ($array[8] as $temp) {
 					list($length, $width, $height, $weight) = $temp;
-					$this->Package_model->set_package($container_id, $length, $width, $height, $weight, FALSE); 
+					$this->Package_model->set_package(1, $length, $width, $height, $weight, FALSE, min($length, $width)*3, $weight_constraint*4); 
 				}
 				$return_value = TRUE;
 			}
 			else{
-				$return_value = $this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile); 
+				$return_value = $this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint); 
 			}
 
-			if (in_array('height', $return_value) && !in_array('weight', $return_value)) {
-				echo '<script>alert("Package cannot be accomodated due to excess height!")</script>';	
-				// echo '<script>alert("Package is too heavy!")</script>';	
-			}
-			elseif (in_array('weight', $return_value) && !in_array('height', $return_value)) {
-				echo '<script>alert("Package cannot be accomodated due to excess weight!")</script>';	
-				// echo '<script>alert("Package is too heavy!")</script>';	
-			}
-			elseif (in_array('weight', $return_value) && in_array('height', $return_value)) {
-				echo '<script>alert("Package cannot be accomodated due to excess height and weight!")</script>';	
+			if(is_array($return_value))
+			{	
+				if (in_array('height', $return_value) && !in_array('weight', $return_value)) {
+					echo '<script>alert("Package cannot be accomodated due to excess height!")</script>';	
+					// echo '<script>alert("Package is too heavy!")</script>';	
+				}
+				elseif (in_array('weight', $return_value) && !in_array('height', $return_value)) {
+					echo '<script>alert("Package cannot be accomodated due to excess weight!")</script>';	
+					// echo '<script>alert("Package is too heavy!")</script>';	
+				}
+				elseif (in_array('weight', $return_value) && in_array('height', $return_value)) {
+					echo '<script>alert("Package cannot be accomodated due to excess height and weight!")</script>';	
+				}
 			}
 			elseif($return_value)
 			// if($return_value)
@@ -374,9 +383,9 @@ class Index extends CI_Controller {
 
 	public function analytics()
 	{
-		// if (!$this->tank_auth->is_logged_in()) {
-		// 	redirect('/auth/login/');
-		// }
+		if (!$this->tank_auth->is_logged_in()) {
+			redirect('');
+		}
 
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
@@ -388,7 +397,7 @@ class Index extends CI_Controller {
 	public function export()
 	{
 		if (!$this->tank_auth->is_logged_in()) {
-			redirect('/auth/login/');
+			redirect('');
 		}
 		
 		$this->load->view('template/view_header');
