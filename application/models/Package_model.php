@@ -195,7 +195,7 @@ class Package_model extends CI_Model {
 			return $query->row_array()['count'];
 		}
 
-		public function set_package($address_id, $length, $width, $height, $weight, $fragile)
+		public function set_package($address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint)
 		{
 
 		    $this->load->helper('url');
@@ -212,11 +212,15 @@ class Package_model extends CI_Model {
 		    $y = 0;
 		    $z = 0;
 		    $orientation = '';
-
+		    
 		    //0 for STACK
 		    //1 for BASE
 		    $priority = 0;
-		    $valid_package = $this->compute($address_id, (float)$length, (float)$width, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority);
+		    
+		    if($length < $width)
+		    	$valid_package = $this->compute($address_id, (float)$width, (float)$length, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority, (float)$height_constraint, (float)$weight_constraint);
+		    else
+		    	$valid_package = $this->compute($address_id, (float)$length, (float)$width, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority, (float)$height_constraint, (float)$weight_constraint);
 		    if(is_array($valid_package) && !empty($valid_package))
 		    {
 		    	return $valid_package;
@@ -239,6 +243,8 @@ class Package_model extends CI_Model {
 			        //'y2' => $y+$width,
 			        'z1' => $z,
 			        'z2' => $z+$height,
+			        'height_constraint' => $height_constraint,
+			        'weight_constraint' => $weight_constraint,
 			        'is_fragile' => $fragile
 			    );
 			    
@@ -261,7 +267,7 @@ class Package_model extends CI_Model {
 		    return false;
 		}
 
-		public function compute($address_id,$length, $width, $height, $weight, &$x,&$y,&$z, &$orientation, $priority)
+		public function compute($address_id,$length, $width, $height, $weight, &$x,&$y,&$z, &$orientation, $priority, $height_constraint_value, $weight_constraint_value)
 		{
 			/*
 			Rules:
@@ -447,13 +453,13 @@ class Package_model extends CI_Model {
 		        $constraint = array();
 		        
 				
-		        $weight_constraint = $this->weight_check($packages, $candidates, $length, $width, $weight);
+		        $weight_constraint = $this->weight_check($packages, $candidates, $length, $width, $weight, $weight_constraint_value);
 				if(is_string($weight_constraint) && $weight_constraint == 'weight')
 				{
 					array_push($constraint, $weight_constraint);
 				}
 		        
-		        $height_constraint = $this->height_check($packages, $candidates, $length, $width, $height);
+		        $height_constraint = $this->height_check($packages, $candidates, $length, $width, $height, $height_constraint_value);
 				if(is_string($height_constraint) && $height_constraint == 'height')
 				{
 					array_push($constraint, $height_constraint);
@@ -494,7 +500,7 @@ class Package_model extends CI_Model {
 			}
 
 		}
-		public function weight_check($packages, &$candidates, $length, $width, $weight)
+		public function weight_check($packages, &$candidates, $length, $width, $weight, $weight_constraint)
 		{
 			foreach ($candidates as $ckey=>$candidate) {
 				$x = $candidate['x'] + ($candidate['orientation'] == 'horizontal'? $length:$width);
@@ -532,7 +538,7 @@ class Package_model extends CI_Model {
 						for ($i=$key+1; $i <sizeof($weight_array); $i++) { 
 							$weight_temp += $weight_array[$i]['weight'];
 						}
-						if($weight_temp+$weight > ($val['weight']*4))
+						if($weight_temp+$weight > $weight_constraint)
 						{
 							// var_dump('wa', $weight_array);
 							// var_dump('wt:', ($weight_temp+$weight),($val['weight']*4));
@@ -559,7 +565,7 @@ class Package_model extends CI_Model {
 			// return $candidates;
 		}
 
-		public function height_check($packages, &$candidates, $length, $width, $height)
+		public function height_check($packages, &$candidates, $length, $width, $height, $height_constraint)
 		{
 			foreach ($candidates as $ckey=>$candidate) {
 				$x = $candidate['x'] + ($candidate['orientation'] == 'horizontal'? $length:$width);
@@ -602,7 +608,7 @@ class Package_model extends CI_Model {
 
 						// var_dump('height_temp+height', ($height_temp+$height));
 						// var_dump('min', (min($val['width'],$val['length'])*3));
-						if($height_temp+$height > (min($val['width'],$val['length'])*3))
+						if($height_temp+$height > $height_constraint)
 						{
 
 							// var_dump('height exceeded at '. $key .' !!!');
