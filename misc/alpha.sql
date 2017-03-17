@@ -15,23 +15,23 @@ CREATE TABLE cluster(
 );
 
 
-INSERT INTO cluster values(default, 'East 1', 7.2, 2.4, 1.52);
-INSERT INTO cluster values(default, 'East 2', 7.2, 2.4, 1.52);
-INSERT INTO cluster values(default, 'East 3', 7.2, 1.2, 1.52);
-INSERT INTO cluster values(default, 'East 4', 7.2, 1.2, 1.52);
-INSERT INTO cluster values(default, 'North 1', 7.2, 1.2, 1.52);
-INSERT INTO cluster values(default, 'North 2', 7.2, 1.2, 1.52);
-INSERT INTO cluster values(default, 'Central 1', 6, 2.4, 1.52);	
-INSERT INTO cluster values(default, 'Central 2', 6, 2.4, 1.52);	
-INSERT INTO cluster values(default, 'West 1', 3.6, 1.2, 1.52);
-INSERT INTO cluster values(default, 'West 2', 3.6, 1.2, 1.52);	
-INSERT INTO cluster values(default, 'South 1', 7.2, 1.2, 1.52);	
-INSERT INTO cluster values(default, 'South 2', 7.2, 1.2, 1.52);	
-INSERT INTO cluster values(default, 'TEST-CLUSTER',6,2.4, 1.52);
--- INSERT INTO cluster values(default, 'South 2', 7.2, 1.2, 1.52);	
--- INSERT INTO cluster values(default, 'BWE',2.4,1.2, 1.52);			
--- INSERT INTO cluster values(default, 'Domestic', 2.4, 1.2, 1.52);	
--- INSERT INTO cluster values(default, 'RSO', 6, 1.2, 1.52);
+INSERT INTO cluster values(default, 'East 1', 720, 240, 120);
+INSERT INTO cluster values(default, 'East 2', 720, 240, 120);
+INSERT INTO cluster values(default, 'East 3', 720, 120, 120);
+INSERT INTO cluster values(default, 'East 4', 720, 120, 120);
+INSERT INTO cluster values(default, 'North 1', 720, 120, 120);
+INSERT INTO cluster values(default, 'North 2', 720, 120, 120);
+INSERT INTO cluster values(default, 'Central 1', 600, 240, 120);	
+INSERT INTO cluster values(default, 'Central 2', 600, 240, 120);	
+INSERT INTO cluster values(default, 'West 1', 360, 120, 120);
+INSERT INTO cluster values(default, 'West 2', 360, 120, 120);	
+INSERT INTO cluster values(default, 'South 1', 720, 120, 120);	
+INSERT INTO cluster values(default, 'South 2', 720, 120, 120);	
+INSERT INTO cluster values(default, 'TEST-CLUSTER',600,240, 120);
+-- INSERT INTO cluster values(default, 'South 2', 7.2, 120, 120);	
+-- INSERT INTO cluster values(default, 'BWE',240,120, 120);			
+-- INSERT INTO cluster values(default, 'Domestic', 240, 120, 120);	
+-- INSERT INTO cluster values(default, 'RSO', 6, 120, 120);
 
 /*creates table for address*/
 CREATE TABLE address(
@@ -343,7 +343,7 @@ INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','169')
 INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','168');
 INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','170');
 INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','171');
-INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','172');
+INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','120');
 INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','173');
 INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','174 (Camarin)');
 INSERT INTO address(cluster,city, barangay) values (4, 'Caloocan (North)','175');
@@ -531,8 +531,8 @@ CREATE TABLE package(
 	width real not null,
 	height real not null,
 	weight real not null,
-	height_constraint not null,
-	weight_constraint not null,
+	height_constraint real not null,
+	weight_constraint real not null,
 	x1 real not null,
 	x2 real not null,
 	y1 real not null,
@@ -544,7 +544,7 @@ CREATE TABLE package(
 	is_fragile boolean default false
 );
 
-/*INSERT INTO package values(default, 1, 1,2, 1,50,0,0,0,now(),default);*/
+/*INSERT INTO package values(default, 1, 120, 1,50,0,0,0,now(),default);*/
 
 /*
 CREATE TABLE corner(
