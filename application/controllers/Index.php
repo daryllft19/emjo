@@ -64,7 +64,7 @@ class Index extends CI_Controller {
 
 		$order = array(
 				0 =>array(
-					'category' => 'id',
+					'category' => 'cluster',
 					'type' => 'asc', 
 					)
 				);
