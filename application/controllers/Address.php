@@ -61,4 +61,64 @@ class Address extends CI_Controller {
             header('Content-Type: application/json');
             echo json_encode($ret);     
         }
+
+        public function modify()
+        {
+            $ret = array('success'=>0);
+
+            $params = $this->input->get('params');
+            
+            $ret['success'] = $this->Address_model->set_address($params);
+            
+            $ret['params'] = $params;
+            header('Content-Type: application/json');
+            echo json_encode($ret); 
+        }
+
+        public function delete()
+        {
+            $ret = array('success'=>0);
+
+            $id = intval($this->input->post('id'));
+            
+            $ret['success'] = $this->Address_model->delete_address($id);
+            header('Content-Type: application/json');
+            echo json_encode($ret); 
+        }
+
+        public function add()
+        {
+            $ret = array('success'=> 0);
+
+            $params = $this->input->post('params');
+
+            if( empty($this->Address_model->search_address($params, 1)))
+            {
+                unset($params['duplicate']);
+                $this->Address_model->set_address($params);
+                $ret['success'] = 1;
+            }
+            header('Content-Type: application/json');
+            echo json_encode($ret); 
+        }
+
+        public function get_tags()
+        {
+            $ret = array();
+            $attr = $this->input->get('attr');
+
+            $all = $this->Address_model->search_address(); 
+            $tags = array();
+            foreach ($all as $key => $value) {
+                if(!in_array($value[$attr], $tags))
+                    array_push($tags, $value[$attr]);
+                if($key == 10)
+                    break;
+            }
+            // array_slice($tags, 0,10);
+            $ret['tags'] = $tags;
+
+            header('Content-Type: application/json');
+            echo json_encode($ret);             
+        }
 }
