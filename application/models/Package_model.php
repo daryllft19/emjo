@@ -199,14 +199,6 @@ class Package_model extends CI_Model {
 		{
 
 		    $this->load->helper('url');
-		    
-		    // $address_id = $this->input->post('address');
-		    // $length = $this->input->post('length');
-		    // $width = $this->input->post('width');
-		    // $height = $this->input->post('height');
-		    // $weight = $this->input->post('weight');
-		    // $fragile = $this->input->post('fragile');
-
 
 		    $x = 0;//$this->Package_model->count_package(1);
 		    $y = 0;
