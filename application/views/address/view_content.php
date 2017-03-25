@@ -1,7 +1,8 @@
 
   
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Address</h1>
+          <h1 class="page-header">Address    <a href='#' onclick='add_address();' class='btn btn-danger' role='button'>Add</a></h1>
+
           <div class="col-md-4">
               <?php
               //IF LOGGED IN
@@ -44,16 +45,16 @@
           </div>
 
           <div class="form-group">
-            <label for="select-district">District:</label>
-            <select class="form-control" name='select-district' id="select-district" >
+            <label for="select-barangay">Barangay:</label>
+            <select class="form-control" name='select-barangay' id="select-barangay" >
               <!-- <option>N/A</option> -->
 
             </select>
           </div>
 
           <div class="form-group">
-            <label for="select-barangay">Barangay:</label>
-            <select class="form-control" name='select-barangay' id="select-barangay" >
+            <label for="select-district">District:</label>
+            <select class="form-control" name='select-district' id="select-district" >
               <!-- <option>N/A</option> -->
 
             </select>
@@ -83,6 +84,7 @@
             </select>
           </div>
 
+
               <?php
               //END BEFORE HERE
               //IF LOGGED OUT OF ADMIN
@@ -104,6 +106,7 @@
                 <thead>
                   <tr>
                     <!-- <th>ID</th> -->
+                    <th></th>
                     <th>Cluster</th>
                     <th>Province</th>
                     <th>City</th>
@@ -120,6 +123,7 @@
                       <?php 
                         echo "<tr data-value='".$address_item['id']."'>";
                         // echo "<td>".$address_item['id']."</td>";
+                        echo "<td data-value='".$address_item['id']."'><a href='#' class='btn btn-danger' role='button'>Delete</a></td>";
                         echo "<td data-value='".$address_item["cluster"]['name']."'>".$address_item["cluster"]['name']."</td>";
                         echo "<td contenteditable data-attr='province' data-value='".$address_item["province"]."'>".$address_item["province"]."</td>";
                         echo "<td contenteditable data-attr='city' data-value='".$address_item["city"]."'>".$address_item["city"]."</td>";
@@ -130,7 +134,7 @@
                         echo "<td contenteditable data-attr='street' data-value='".$address_item["street"]."'>".$address_item["street"]."</td>";
                         echo "<td data-value='".$address_item["is_serviceable"]."' data-attr='is_serviceable'>";
 
-                        if ($address_item['is_serviceable']){
+                        if ($address_item['is_serviceable'] == 't'){
                           echo "<input type='checkbox' checked/>";
                         }else{
                           echo "<input type='checkbox'/>";
@@ -148,15 +152,157 @@
 
       </div>
     </div>
+
+<div id="dialog-delete" title="Delete Address">
+</div>
+
+<div id="dialog-message" title="Content Modification">
+</div>
+
+<div id="dialog-add" title="Add Address">
+  <div class='dialog-input-group'>
+    <label for="dialog-select-cluster">Cluster:</label>
+    <select class="form-control" id="dialog-select-cluster">
+        <?php
+        foreach ($ret as $key => $value) {
+          echo "<option value='".$key."'>".$value['name']."</option>";
+        }                
+        ?>
+    </select>
+  </div>
+  <div class='dialog-input-group'>
+    <label for="dialog-province">Province:</label><br>
+    <input id="dialog-province" data-attr='province' type="text" name="dialog-province">
+  </div>
+  <div class='dialog-input-group'>
+    <label for="dialog-city">City:</label><br>
+    <input id="dialog-city" data-attr='city' type="text" name="dialog-city">
+  </div>
+  <div class='dialog-input-group'>
+    <label for="dialog-barangay">Barangay:</label><br>
+    <input id="dialog-barangay" data-attr='barangay' type="text" name="dialog-barangay">
+  </div>
+  <div class='dialog-input-group'>
+    <label for="dialog-district">District:</label><br>
+    <input id="dialog-district" data-attr='district' type="text" name="dialog-district">
+  </div>
+  <div class='dialog-input-group'>
+    <label for="dialog-area">Area:</label><br>
+    <input id="dialog-area" data-attr='area' type="text" name="dialog-area">
+  </div>
+  <div class='dialog-input-group'>
+    <label for="dialog-avenue">Avenue:</label><br>
+    <input id="dialog-avenue" data-attr='avenue' type="text" name="dialog-avenue">
+  </div>
+  <div class='dialog-input-group'>
+    <label for="dialog-street">Street:</label><br>
+    <input id="dialog-Street" data-attr='street' type="text" name="dialog-street">
+  </div>
+
+
+
+</div>
 <script>
+          $('div[id^=dialog]').hide();
+          $('#table-cluster').on('click','td a', function(){
+            // delete_address();
+            var node = $(this);
+            var id = node.parent().data('value');
+            delete_address(this,id);
+          });
+
+          function delete_address(e,id=-1)
+          {
+            $('#dialog-delete').html('<p>Are you sure you want to delete address?</p>');
+            $( "#dialog-delete" ).dialog({
+                  modal: true,
+                  buttons: {
+                      Yes: function () {
+                          node = $(e).parents('tr');
+                          // console.log(id);
+                          $.post('/address/delete',{'id':id}, function(data){
+                            console.log(data);
+                            if(data.success == 1)
+                            {
+                              alert('Deleted address!');
+                              node.hide(1000);
+                            }
+                          })
+
+                          $(this).dialog("close");
+                      },
+                      No: function () {
+                          $(this).dialog("close");
+                      }
+                  }
+            });
+          }
+          function add_address()
+          {
+                var tags = []
+                $( "#dialog-add" ).dialog({
+                  modal: true,
+                  buttons: {
+                    Save: function(e) {
+                      var input = $('.dialog-input-group select,.dialog-input-group input');
+                      var cluster = $(input[0]).prop('value');
+                      var province = $(input[1]).prop('value');
+                      var city = $(input[2]).prop('value');
+                      var barangay = $(input[3]).prop('value');
+                      var district = $(input[4]).prop('value');
+                      var area = $(input[5]).prop('value');
+                      var avenue = $(input[6]).prop('value');
+                      var street = $(input[7]).prop('value');
+                      // console.log('adding ' + cluster +' '+province+' '+city+' '+barangay+' '+district+' '+area+' '+avenue+' '+street)
+                      var params = {
+                        'cluster':cluster,
+                        'province':province,
+                        'city':city,
+                        'district':district,
+                        'barangay':barangay,
+                        'area':area,
+                        'avenue':avenue,
+                        'street':street,
+                        'duplicate':true
+                      }
+                          $.post( "/address/add",{'params':params}, function(data){
+                            if(data.success == 1)
+                            {
+                              alert('Added address!');
+                              update_table();
+                            }
+                            else
+                              alert('Address exists!');
+                          });
+                    }
+                  }
+                });
+
+                $('input').focus(function(e){
+                  var node = $(this)
+                  var cluster = $('#dialog-select-cluster').val();
+
+                  $.get( "/address/get_tags", {'attr': node.data('attr')}, function( data ) {
+                    tags = data.tags
+                    console.log(tags);
+                    node.autocomplete({
+                      source: tags
+                    })
+                  })
+                })
+           }
           $('table').on('change','input[type=checkbox]', function(){
             var td = $(this).parent();
             var tr = td.parent();
             console.log(tr);
             var col = td.data('attr');
             var id = tr.data('value');
-            var is_serviceable = $(this).prop('checked')
-            modify_address(id, {'is_serviceable':is_serviceable});
+            var is_serviceable = $(this).prop('checked');
+            var params = {};
+            params['id'] = id;
+            params['attr'] = 'is_serviceable';
+            params['is_serviceable'] = is_serviceable;
+            modify_address(params);
           });
           $('td').on('focus', function(){
               $(this).keypress(function(e){
@@ -164,22 +310,49 @@
 
                 if(key == 13)
                 {
-                    // console.log(this);
+                    $('td').prop('contenteditable', false);
+                    var node = $(this);
+                    var id = node.parent().data('value');
+                    var attr = node.data('attr');
+                    var val = node.html().replace(/<br>/g,'');
+                    node.html(val);
+                    // console.log('changing adress id '+id+' with column '+attr+' to value '+val); 
+                    params = {};
+                    params['id'] = id;
+                    params['attr'] = attr;
+                    params[attr] = val;
+
+                    $('table').prop('disabled', true);
+                    modify_address(params);
                     $(this).blur();
                     e.preventDefault();
+                   
                 }
               });
-          }).on('input',function(){
-              modify_address();
           });
 
-          function modify_address(addr_id, data)
+
+          function modify_address(params)
           {
-              console.log('Modifying address: '+addr_id);
-              for(var key in data)
-              {
-                  console.log('changing ' + key + ' to ' + data[key]);
-              }
+              var attr = params['attr'];
+              delete params['attr'];
+                $('#dialog-message').html('<p>Loading...</p>');
+                $( "#dialog-message" ).dialog({
+                  modal: true
+                });
+              $.get( "/address/modify",{'params':params}, function( data ) {
+                $('#dialog-message').html('<p>You have modified ' + attr + ' to ' + (params[attr]==''?'None':params[attr]) +'!</p>');
+                $( "#dialog-message" ).dialog({
+                  modal: true,
+                  buttons: {
+                    Ok: function(e) {
+                      $( this ).dialog( "close" );
+                      $('td').prop('contenteditable', true);
+                      $('#select-cluster').focus();
+                    }
+                  }
+                });
+              });   
           }
 
           function change_cluster()
@@ -205,8 +378,8 @@
                  sel_province.html(elem);
                  change_province();
                  change_city();
-                 change_district();
                  change_barangay();
+                 change_district();
                  change_area();
                  change_avenue();
             });
@@ -235,8 +408,8 @@
                  }
                  sel_city.html(elem);
                  change_city();
-                 change_district();
                  change_barangay();
+                 change_district();
                  change_area();
                  change_avenue();
                  
@@ -248,43 +421,8 @@
             var cluster = $('#select-cluster').find(':selected').val();
             var city = $('#select-city').find(':selected').val();
             var province = $('#select-province').find(':selected').val();
-            var sel_district = $('#select-district');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city}}, function( data ) {
-                 lData = data['top'][0]
-
-                 districts = []
-                 for(d of lData)
-                 {
-                  if(districts.indexOf(d.district)==-1 && d.district!='')
-                    districts.push(d.district); 
-                 }
-
-                 elem = '';
-                 // if(districts.length == 0)
-                 // {
-                  elem += '<option value="">N/A</option>';
-                 // }
-                 for(x of districts.sort())
-                 {
-                  elem += '<option value="'+x+'">'+x+'</option>';
-                 }
-                 sel_district.html(elem);
-                 change_district();
-                 change_barangay();
-                 change_area();
-                 change_avenue();
-                 
-            });
-          }
-
-          function change_district()
-          {
-            var cluster = $('#select-cluster').find(':selected').val();
-            var province = $('#select-province').find(':selected').val();
-            var city = $('#select-city').find(':selected').val();
-            var district = $('#select-district').find(':selected').val();
             var sel_barangay = $('#select-barangay');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'district':district}}, function( data ) {
+            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city}}, function( data ) {
                  lData = data['top'][0]
 
                  barangays = []
@@ -305,21 +443,55 @@
                  }
                  sel_barangay.html(elem);
                  change_barangay();
+                 change_district();
                  change_area();
                  change_avenue();
                  
             });
           }
-
           function change_barangay()
           {
             var cluster = $('#select-cluster').find(':selected').val();
             var province = $('#select-province').find(':selected').val();
             var city = $('#select-city').find(':selected').val();
-            var district = $('#select-district').find(':selected').val();
             var barangay = $('#select-barangay').find(':selected').val();
+            var sel_district = $('#select-district');
+            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'barangay':barangay}}, function( data ) {  
+                 lData = data['top'][0]
+
+                 districts = []
+                 for(d of lData)
+                 {
+                  if(districts.indexOf(d.district)==-1 && d.district!='')
+                    districts.push(d.district); 
+                 }
+
+                 elem = '';
+                 // if(districts.length == 0)
+                 // {
+                  elem += '<option value="">N/A</option>';
+                 // }
+                 for(x of districts.sort())
+                 {
+                  elem += '<option value="'+x+'">'+x+'</option>';
+                 }
+                 sel_district.html(elem);
+                 change_district();
+                 change_area();
+                 change_avenue();                 
+            });
+          }
+
+          function change_district()
+          {
+            var cluster = $('#select-cluster').find(':selected').val();
+            var province = $('#select-province').find(':selected').val();
+            var city = $('#select-city').find(':selected').val();
+            var barangay = $('#select-barangay').find(':selected').val();
+            var district = $('#select-district').find(':selected').val();
             var sel_area = $('#select-area');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'district':district,'barangay':barangay}}, function( data ) {
+            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'barangay':barangay, 'district':district}}, function( data ) {
+ 
                  lData = data['top'][0]
 
                  areas = []
@@ -344,6 +516,7 @@
                  
             });
           }
+
 
           function change_area()
           {
@@ -415,25 +588,31 @@
           $(document).ready(function(){
             change_cluster();
           });
-          $('#select-cluster').on('change',change_cluster);
-          $('#select-province').on('change',change_province);
-          $('#select-city').on('change',change_city);
-          $('#select-district').on('change',change_district);
-          $('#select-barangay').on('change',change_barangay);
-          $('#select-area').on('change',change_area);
-          $('#select-avenue').on('change',change_avenue);
-          $('select').on('change',function(){
 
+          function update_table()
+          {
             var cluster = $('#select-cluster').find(':selected').val();
             var province = $('#select-province').find(':selected').val();
             var city = $('#select-city').find(':selected').val();
-            var district = $('#select-district').find(':selected').val();
             var barangay = $('#select-barangay').find(':selected').val();
+            var district = $('#select-district').find(':selected').val();
             var area = $('#select-area').find(':selected').val();
             var avenue = $('#select-avenue').find(':selected').val();
             var street = $('#select-street').find(':selected').val();
             var table_cluster = $('#table-cluster');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province, 'city':city, 'district': district,'barangay':barangay, 'area':area, 'avenue': avenue, 'street':street}}, function( data ) {
+
+            params={
+                'cluster':cluster,
+                'province':province,
+                'city':city,
+                'barangay':barangay,
+                'district': district,
+                'area':area,
+                'avenue': avenue,
+                'street':street
+            }
+            // console.log('params',params);
+            $.get( "/address/search",{'params':params}, function( data ) {
                  elem = '';
                  lData = data['top'][0]
 
@@ -441,6 +620,7 @@
                  {
                  //  addr = '';
                     elem += '<tr data-value="'+ d.id +'">';
+                    elem += '<td data-value=' + d.id + '><a href="#" class="btn btn-danger" role="button">Delete</a></td>';
                     elem += '<td data-value="'+ d.cluster +'">'+ d.cluster +'</td>';
                     elem += '<td data-attr="province" contenteditable data-value="'+ d.province +'">'+ d.province +'</td>';
                     elem += '<td data-attr="city" contenteditable data-value="'+ d.city +'">'+ d.city +'</td>';
@@ -449,13 +629,29 @@
                     elem += '<td data-attr="area" contenteditable data-value="'+ d.area +'">'+ d.area +'</td>';
                     elem += '<td data-attr="avenue" contenteditable data-value="'+ d.avenue +'">'+ d.avenue +'</td>';
                     elem += '<td data-attr="street" contenteditable data-value="'+ d.street+'">'+ d.street +'</td>';
-                    elem += '<td data-attr="is_serviceable" data-value="'+ d.is_serviceable +'"><input type="checkbox"'+ (d.is_serviceable?'checked':'') +'/></td>';
+                    elem += '<td data-attr="is_serviceable" data-value="'+ d.is_serviceable +'"><input type="checkbox"'+ (d.is_serviceable=='t'?'checked':'') +'/></td>';
                     elem += '</tr>';
-                    table_cluster.html(elem);
                  }
+                table_cluster.html(elem);
 
             });
           
+          
+          }
+          $('#table-cluster').on('mouseover','tr td:not(:first-child)',function(){
+            var node = $(this);
+            node.css('border','1px solid rgb(30,144,255)');
+          }).on('mouseout','tr td:not(:first-child)',function(){
+            var node = $(this);
+            node.css('border','none');
           });
+          $('#select-cluster').on('change',change_cluster);
+          $('#select-province').on('change',change_province);
+          $('#select-city').on('change',change_city);
+          $('#select-barangay').on('change',change_barangay);
+          $('#select-district').on('change',change_district);
+          $('#select-area').on('change',change_area);
+          $('#select-avenue').on('change',change_avenue);
+          $('select').on('change',update_table);
 
 </script>
