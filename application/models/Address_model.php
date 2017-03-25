@@ -32,8 +32,16 @@ class Address_model extends CI_Model {
 		public function search_address($filter=array(), $limit=0)
 		{
 			$query = '';
+			$duplicate = FALSE;
+
+			if(isset($filter['duplicate']) && $filter['duplicate'] == 'true')
+			{
+				unset($filter['duplicate']);
+				$duplicate = TRUE;
+			}
 			if(isset($filter['cluster']) && $filter['cluster'] == -1)
 			{
+				$this->db->order_by('id','asc');
 				$query = $this->db->get('address');
 			}
 			else
@@ -42,7 +50,7 @@ class Address_model extends CI_Model {
 				$this->db->from('address');
 				if ($limit >0)
 					$this->db->limit($limit);
-				$sort = 'city';
+				$sort = 'province';
 				foreach ($filter as $key => $value) {
 					if($key == 'cluster')
 					{
@@ -50,9 +58,14 @@ class Address_model extends CI_Model {
 					}
 					else
 					{
-						$this->db->like($key,$value);
-						if(!empty($value))
-							$sort = $key;
+						if($duplicate == TRUE)
+							$this->db->ilike($key,$value,'none');
+						else
+						{
+							$this->db->ilike($key,$value);
+							if(!empty($value))
+								$sort = $key;
+						}
 					}
 
 				}
@@ -72,19 +85,50 @@ class Address_model extends CI_Model {
 			
 		}
 
-		public function set_address()
+		public function set_address($data)
 		{
 
 			/*MALI!*/
 		    $this->load->helper('url');
+		    
+		    $id = 0;
+		    if(isset($data['id'])){
+		    	$id = $data['id'];
+		    	unset($data['id']);
+		    }
+		    try{
+			    if($id > 0){
+			    	$this->db->where('id',$id);
+			    	$this->db->update('address',$data);
+			    }
+			    else{
+			    	$this->db->insert('address', $data);
+			    }
+			    return 1;
+		    }
+		    catch(Exception $e)
+		    {
+		    	return 0;
+		    }
+		}
 
-		    $data = array(
-		        'name' => $this->input->post('name'),
-		        'city' => $this->input->post('city')
-		        // 'keywords' => $this->input->post('keywords')
-		    );
+		public function delete_address($id)
+		{
 
-		    return $this->db->insert('cluster', $data);
+			/*MALI!*/
+		    $this->load->helper('url');
+		    
+
+		    try{
+			    $this->db->where('id',$id);
+			    $this->db->delete('address');
+			    
+			    return 1;
+		    }
+		    catch(Exception $e)
+		    {
+		    	return 0;
+		    }
 		}
 
 }
