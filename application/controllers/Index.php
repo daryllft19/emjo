@@ -350,12 +350,12 @@ class Index extends CI_Controller {
 
 				foreach ($array[8] as $temp) {
 					list($length, $width, $height, $weight) = $temp;
-					$this->Package_model->set_package(1, $length, $width, $height, $weight, FALSE, min($length, $width)*3, $weight_constraint*4); 
+					$this->Package_model->set_package('00000000',1, $length, $width, $height, $weight, FALSE, min($length, $width)*3, $weight_constraint*4); 
 				}
 				$return_value = TRUE;
 			}
 			else{
-				$return_value = $this->Package_model->set_package($container_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint); 
+				$return_value = $this->Package_model->set_package('0000000',$container_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint); 
 			}
 
 			if(is_array($return_value))
