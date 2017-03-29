@@ -198,7 +198,7 @@ class Package_model extends CI_Model {
 			return $query->row_array()['count'];
 		}
 
-		public function set_package($address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint)
+		public function set_package($serial_no='000000', $address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint)
 		{
 
 		    $this->load->helper('url');
@@ -231,6 +231,7 @@ class Package_model extends CI_Model {
 		    if($valid_package)
 		    {
 			    $data = array(
+			    	'serial_no' => $serial_no,
 			        'address' => $address_id,
 			        'length' => $length,
 			        'width' => $width,
@@ -321,6 +322,7 @@ class Package_model extends CI_Model {
 					$corner['orientation']='vertical';
 					array_push($candidates, $corner);
 				}
+				
 				$first_candidate = $this->get_minimum_area($packages, $candidates, $length, $width, $height);
 				if(empty($first_candidate))
 				{
