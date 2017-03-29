@@ -221,7 +221,6 @@
                           node = $(e).parents('tr');
                           // console.log(id);
                           $.post('/address/delete',{'id':id}, function(data){
-                            console.log(data);
                             if(data.success == 1)
                             {
                               alert('Deleted address!');
