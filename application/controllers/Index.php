@@ -64,7 +64,7 @@ class Index extends CI_Controller {
 
 		$order = array(
 				0 =>array(
-					'category' => 'cluster',
+					'category' => 'cluster, province, city, barangay, district, area, avenue, street',
 					'type' => 'asc', 
 					)
 				);
@@ -75,14 +75,18 @@ class Index extends CI_Controller {
         }
 
         $ret = array();
-        $temp=$this->Address_model->get_address(-1,-1,$order);
-        foreach ($temp as $key => $value) {
-        	$clstr = $this->Cluster_model->get_cluster($value['cluster']);
-        	if(!isset($ret[$clstr['id']]))
-        		$ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
-
-        	array_push($ret[$clstr['id']]['location'], $value);
+        $clusters = $this->Cluster_model->get_cluster();
+        foreach ($clusters as $key => $value) {
+        	$ret[$value['id']] = array('name'=>$value['name'], 'location'=>$value);
         }
+        // $temp=$this->Address_model->get_address(-1,-1,$order);
+        // foreach ($temp as $key => $value) {
+        // 	$clstr = $this->Cluster_model->get_cluster($value['cluster']);
+        // 	if(!isset($ret[$clstr['id']]))
+        // 		$ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
+
+        // 	array_push($ret[$clstr['id']]['location'], $value);
+        // }
 		$data['address']=$address;
 		$data['ret']=$ret;
 		$this->load->view('template/view_header');
@@ -220,7 +224,7 @@ class Index extends CI_Controller {
 		// }
 		// else
 		// {
-			$populate = TRUE;
+			$populate = FALSE;
 			$return_value = FALSE;
 			if ($populate){
 				
