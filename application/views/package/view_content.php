@@ -91,7 +91,7 @@
                       confirmation = $('#dialog-erase-input').val();
                       if(confirmation == erase_code){
                       // console.log('adding ' + cluster +' '+province+' '+city+' '+barangay+' '+district+' '+area+' '+avenue+' '+street)
-                          $.get( "/package/erase",{'cluster_id':cluster}, function(data){
+                          $.get( "/cluster/clear",{'cluster_id':cluster}, function(data){
                             if(data.success == 1)
                             {
                               alert('Cleared cluster of packages!');
