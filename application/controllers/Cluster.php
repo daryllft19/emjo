@@ -5,6 +5,7 @@ class Cluster extends CI_Controller {
         {
                 parent::__construct();
                 $this->load->helper('url_helper');
+                $this->load->model('Address_model');
         }
 
         public function cluster()
@@ -16,5 +17,23 @@ class Cluster extends CI_Controller {
             $this->load->view('cluster/view_content',$data);
             $this->load->view('template/view_footer');
             
+        }
+
+        public function clear()
+        {
+            $cluster_id = $this->input->get('cluster_id');
+            $ret = array('success'=>0);
+            $ret['success'] = $this->Cluster_model->clear($cluster_id);
+            header('Content-Type: application/json');
+            echo json_encode($ret);   
+        }
+
+        public function count()
+        {
+            $cluster_id = $this->input->get('cluster_id');
+            $ret = array();
+            $ret = $this->Cluster_model->count($cluster_id);
+            header('Content-Type: application/json');
+            echo json_encode($ret);
         }
 }
