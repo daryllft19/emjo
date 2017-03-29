@@ -253,6 +253,7 @@
                       var area = $(input[5]).prop('value');
                       var avenue = $(input[6]).prop('value');
                       var street = $(input[7]).prop('value');
+                      var node = $(this);
                       // console.log('adding ' + cluster +' '+province+' '+city+' '+barangay+' '+district+' '+area+' '+avenue+' '+street)
                       var params = {
                         'cluster':cluster,
@@ -270,6 +271,10 @@
                             {
                               alert('Added address!');
                               update_table();
+                              node.find('input').each(function(){
+                                $(this).val('');
+                              })
+                              node.dialog('close');
                             }
                             else
                               alert('Address exists!');
