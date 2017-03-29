@@ -70,7 +70,6 @@
                             {
                               alert('Cleared cluster of packages!');
                               node.dialog("close");
-                              cluster_node.html(0);
                             }
                             else
                               alert('Error!');
