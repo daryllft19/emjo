@@ -16,6 +16,7 @@
                   ?>
                 </select>
               </div>
+              <a href='#' onclick='clear_package();' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a>
  
 
           <div class="table-responsive"">
@@ -58,10 +59,56 @@
 
         </div>
 
+<div id="dialog-erase" title="Clear Package">
+</div>
 
       </div>
     </div>
         <script>
+        $('#cluster-select').ready(function(){
+          var btn = $('#btn-clear-package');
+          btn.hide();
+        }).on('change', function(){
+          var btn = $('#btn-clear-package');
+          if($(this).val() == -1)
+          {
+            btn.hide();
+          }
+          else
+            btn.show();
+
+        });
+        function clear_package()
+        {
+          var cluster_node = $('#cluster-select');
+          var erase_code = 'I will erase packages in '+cluster_node.find(':selected').html();
+          $("#dialog-erase").html('Type the sentence in bold letters: "<strong>' + erase_code +'</strong>"<br/><input id="dialog-erase-input" type="text"/>');
+          $( "#dialog-erase" ).dialog({
+                  modal: true,
+                  buttons: {
+                    Erase: function(e) {
+                      cluster = cluster_node.val()
+                      confirmation = $('#dialog-erase-input').val();
+                      if(confirmation == erase_code){
+                      // console.log('adding ' + cluster +' '+province+' '+city+' '+barangay+' '+district+' '+area+' '+avenue+' '+street)
+                          $.get( "/package/erase",{'cluster_id':cluster}, function(data){
+                            if(data.success == 1)
+                            {
+                              alert('Cleared cluster of packages!');
+                              location.reload();
+                            }
+                            else
+                              alert('Error!');
+                          });
+                      }else{
+                        alert('Wrong confirmation!');
+                        $(this).dialog("close");
+                      }
+                    }
+                  }
+                });
+        }
+
           var canvas = document.getElementById('package_canvas');
           var engine = new BABYLON.Engine(canvas, true);
           $('#cluster-select').on('change', function (e) {
@@ -78,14 +125,14 @@
                     
                     for (key in data['packages']){
                       row += "<tr data-cluster="+valueSelected+">";
-                      row += "<td editable='text' value='" + data['packages'][key].id+"'>" + data['packages'][key].id + "</td>";
-                      row += "<td editable='text' value='" + data['packages'][key].address+"'>" + data['packages'][key]['address'].city + "</td>";
-                      row += "<td editable='text' value='" + data['packages'][key].length+"'>" + data['packages'][key].length + "</td>";
-                      row += "<td editable='text' value='" + data['packages'][key].width+"'>" + data['packages'][key].width + "</td>";
-                      row += "<td editable='text' value='" + data['packages'][key].height+"'>" + data['packages'][key].height + "</td>";
-                      row += "<td editable='text' value='" + data['packages'][key].weight+"'>" + data['packages'][key].weight + "</td>";
-                      row += "<td editable='date' value='" + data['packages'][key].arrival_date+"'>" + data['packages'][key].arrival_date + "</td>";
-                      row += "<td editable='boolean' value='" + data['packages'][key].is_fragile+"'>" + ((data['packages'][key].is_fragile=='t')?"True":"False") + "</td>";
+                      row += "<td data-value='" + data['packages'][key].id+"'>" + data['packages'][key].id + "</td>";
+                      row += "<td data-value='" + data['packages'][key].address+"'>" + data['packages'][key]['address'].city + "</td>";
+                      row += "<td data-value='" + data['packages'][key].length+"'>" + data['packages'][key].length + "</td>";
+                      row += "<td data-value='" + data['packages'][key].width+"'>" + data['packages'][key].width + "</td>";
+                      row += "<td data-value='" + data['packages'][key].height+"'>" + data['packages'][key].height + "</td>";
+                      row += "<td data-value='" + data['packages'][key].weight+"'>" + data['packages'][key].weight + "</td>";
+                      row += "<td data-value='" + data['packages'][key].arrival_date+"'>" + data['packages'][key].arrival_date + "</td>";
+                      row += "<td data-value='" + data['packages'][key].is_fragile+"'>" + ((data['packages'][key].is_fragile=='t')?"True":"False") + "</td>";
                       row += "</tr>";
 
                       addr = '';
@@ -167,7 +214,7 @@
                         height.prop('innerText',box.height);
                         weight.prop('innerText',box.weight);
                         unit_mesh.source.material = material;
-                        console.log(unit_mesh);
+                        // console.log(unit_mesh);
                         unit_mesh.meshUnderPointer.renderOutline = true;  
                         // unit_mesh.meshUnderPointer.outlineWidth = 0.1;
                     }
@@ -216,36 +263,38 @@
                     xcalibrate = (cluster_length/100)/2;
                     ycalibrate = (cluster_width/100)/2;
                     dBox.forEach(function(b, i){
-                          console.log('created box in '+i);
-                            box[i] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width/100 ,height: b.height/100,depth:b.length/100}, scene);
-                            box[i].material = pinkMat;
+                            box[b.id] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width/100 ,height: b.height/100,depth:b.length/100}, scene);
+                          console.log('created box in '+i +' | id:'+b.id);
+                          // console.log('created box in '+i +' | id:'+b.id, box[i]);
+                            box[b.id].material = pinkMat;
                             x = xcalibrate-(((b.width/100)/2)+b.x1/100);
-                            y = ((b.height/100)/2)+b.z1;
+                            y = ((b.height/100)/2)+b.z1/100;
                             z = ycalibrate-(((b.length/100)/2)+b.y1/100);
-                            box[i].position = new BABYLON.Vector3(x,y,z);
-                            box[i].actionManager = new BABYLON.ActionManager(scene);  
-                            box[i].actionManager.registerAction(action_mouse_over);
-                            box[i].actionManager.registerAction(action_mouse_out);
+                            box[b.id].position = new BABYLON.Vector3(x,y,z);
+                            // console.log(box[i].position.y);
+                            box[b.id].actionManager = new BABYLON.ActionManager(scene);  
+                            box[b.id].actionManager.registerAction(action_mouse_over);
+                            box[b.id].actionManager.registerAction(action_mouse_out);
                     });
                   }
 
 
-                  $('tr').hover(function(){
-                    id = $($(this).find('td')[0]).text()-1;
-                    console.log(id);
-                    if(id>-1)
-                    {
-                      box[id].material = material;
-                      box[id].renderOutline = true;
-                    }
-                  },function (){
-                    id = $($(this).find('td')[0]).text()-1;
-                    if(id>-1)
-                    {
-                      box[id].material = pinkMat;
-                      box[id].renderOutline = false;
-                    }
-                  });
+                  // $('tr').hover(function(){
+                  //   id = $($(this).find('td')[0]).text()-1;
+                  //   console.log(id);
+                  //   if(id>-1)
+                  //   {
+                  //     box[id].material = material;
+                  //     box[id].renderOutline = true;
+                  //   }
+                  // },function (){
+                  //   id = $($(this).find('td')[0]).text()-1;
+                  //   if(id>-1)
+                  //   {
+                  //     box[id].material = pinkMat;
+                  //     box[id].renderOutline = false;
+                  //   }
+                  // });
                   return scene;
               }
 
