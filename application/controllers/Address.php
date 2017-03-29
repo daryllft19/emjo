@@ -91,7 +91,9 @@ class Address extends CI_Controller {
             $ret = array('success'=> 0);
 
             $params = $this->input->post('params');
-
+            if(!isset($params['duplicate']))
+                $params['duplicate'] = TRUE;
+            
             if( empty($this->Address_model->search_address($params, 1)))
             {
                 unset($params['duplicate']);
