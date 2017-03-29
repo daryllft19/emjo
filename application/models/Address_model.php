@@ -33,7 +33,12 @@ class Address_model extends CI_Model {
 		{
 			$query = '';
 			$duplicate = FALSE;
-
+			$tags = FALSE;
+			if(isset($filter['tags']) && $filter['tags'] == TRUE)
+			{
+				unset($filter['tags']);
+				$tags = TRUE;
+			}
 			if(isset($filter['duplicate']) && $filter['duplicate'] == 'true')
 			{
 				unset($filter['duplicate']);
@@ -44,13 +49,25 @@ class Address_model extends CI_Model {
 				$this->db->order_by('id','asc');
 				$query = $this->db->get('address');
 			}
+			elseif ($tags) {
+				$this->db->distinct();
+				foreach ($filter as $key => $value) {
+					$this->db->select($key);
+					$this->db->ilike($key,$value);
+				}
+				if ($limit >0)
+					$this->db->limit($limit);
+				$this->db->from('address');
+				$query = $this->db->get();
+				return $query->result_array();
+			}
 			else
 			{
 				$this->db->select('*');
 				$this->db->from('address');
 				if ($limit >0)
 					$this->db->limit($limit);
-				$sort = 'province';
+				$sort = 'cluster, province, city, barangay, district, area, avenue, street';
 				foreach ($filter as $key => $value) {
 					if($key == 'cluster')
 					{
@@ -63,8 +80,8 @@ class Address_model extends CI_Model {
 						else
 						{
 							$this->db->ilike($key,$value);
-							if(!empty($value))
-								$sort = $key;
+							// if(!empty($value))
+							// 	$sort = $key;
 						}
 					}
 
