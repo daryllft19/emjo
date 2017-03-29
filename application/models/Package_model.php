@@ -303,8 +303,9 @@ class Package_model extends CI_Model {
 				$x2 = $length;				
 				$y2 = $width; 
 				$z2 = $height;
+
 				//check if valid candidate
-				if($x2 <= $cluster_length && $y2 <= $cluster_width && $z <= $cluster_height)
+				if($x2 <= $cluster_length && $y2 <= $cluster_width && $z2 <= $cluster_height)
 				{
 					$corner['orientation']='horizontal';
 					array_push($candidates, $corner);
@@ -317,12 +318,29 @@ class Package_model extends CI_Model {
 				$z2 = $height; 
 
 				//check if valid candidate
-				if($x2 <= $cluster_length && $y2 <= $cluster_width && $z <= $cluster_height)
+				if($x2 <= $cluster_length && $y2 <= $cluster_width && $z2 <= $cluster_height)
 				{
 					$corner['orientation']='vertical';
 					array_push($candidates, $corner);
 				}
+
+		        $constraint = array();
 				
+		        $height_constraint = $this->height_check($packages, $candidates, $length, $width, $height, $height_constraint_value);
+				if(is_string($height_constraint) && $height_constraint == 'height')
+				{
+					array_push($constraint, $height_constraint);
+				}
+
+				if(!empty($constraint))
+				{
+					return $constraint;
+				}
+
+				if(empty($candidates))
+					return false;
+
+
 				$first_candidate = $this->get_minimum_area($packages, $candidates, $length, $width, $height);
 				if(empty($first_candidate))
 				{
@@ -478,10 +496,10 @@ class Package_model extends CI_Model {
 		            array_multisort($z_temp, SORT_ASC, $candidates);
 	        	}
 
+	        	// var_dump('constraint',$constraint);
 				// var_dump('candidates', $candidates);
 		        // var_dump('best', $this->get_minimum_area($packages, $candidates, $length, $width, $height));
-				// return 'STOP';
-
+				// return false;
 				if(!empty($constraint))
 				{
 					return $constraint;
@@ -508,12 +526,14 @@ class Package_model extends CI_Model {
 				$y = $candidate['y'] + ($candidate['orientation'] == 'horizontal'? $width:$length);
 				$z = $candidate['z'] ;
 		
-				$packages_below = $this->get_below(array('coordinates'=>array('x1'=>$candidate['x'], 'x2'=>$x,'y1'=>$candidate['y'], 'y2'=>$y, 'z'=>$z),'level'=>-1));
+				$coordinates = array('x1'=>$candidate['x'], 'x2'=>$x,'y1'=>$candidate['y'], 'y2'=>$y, 'z'=>$z);
+				$packages_below = $this->get_below(array('coordinates'=>$coordinates,'level'=>-1));
+
+				// var_dump('$coordinates', $coordinates);
 
 				//all candidates that are placed at the base are automatically allowed
 				if(empty($packages_below))
 				{
-					// var_dump('empty below');
 					continue;
 				}
 				//only compute weight if package will be put above another package
@@ -530,7 +550,7 @@ class Package_model extends CI_Model {
 		            }
 		            array_multisort($pb_z, SORT_ASC, $packages_below);
 					foreach ( $packages_below as $pb) {
-						array_push($weight_array, array('z'=>$pb['z1'], 'weight'=>$pb['weight']));
+						array_push($weight_array, array('z'=>$pb['z1'], 'weight'=>$pb['weight'],'constraint'=>$pb['weight_constraint']));
 					}
 
 					foreach ($weight_array as $key=>$val) {
@@ -539,7 +559,9 @@ class Package_model extends CI_Model {
 						for ($i=$key+1; $i <sizeof($weight_array); $i++) { 
 							$weight_temp += $weight_array[$i]['weight'];
 						}
-						if($weight_temp+$weight > $weight_constraint)
+
+						if($weight_temp+$weight > $val['constraint'])
+						// if($weight_temp+$weight > ($val['weight']*4))
 						{
 							// var_dump('wa', $weight_array);
 							// var_dump('wt:', ($weight_temp+$weight),($val['weight']*4));
@@ -593,7 +615,7 @@ class Package_model extends CI_Model {
 		            }
 		            array_multisort($pb_z, SORT_ASC, $packages_below);
 					foreach ( $packages_below as $pb) {
-						array_push($height_array, array('z'=>$pb['z1'], 'height'=>$pb['height'], 'length'=>$pb['length'], 'width'=>$pb['width']));
+						array_push($height_array, array('z'=>$pb['z1'], 'height'=>$pb['height'], 'constraint'=>$pb['height_constraint']));
 					}
 					$height_temp = 0;
 					foreach ($height_array as $ha) {
@@ -609,7 +631,7 @@ class Package_model extends CI_Model {
 
 						// var_dump('height_temp+height', ($height_temp+$height));
 						// var_dump('min', (min($val['width'],$val['length'])*3));
-						if($height_temp+$height > $height_constraint)
+						if($height_temp+$height > $val['constraint'])
 						{
 
 							// var_dump('height exceeded at '. $key .' !!!');
