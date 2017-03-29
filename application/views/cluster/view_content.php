@@ -62,13 +62,14 @@
                     Erase: function(e) {
                       cluster = id
                       confirmation = $('#dialog-erase-input').val();
+                      node = $(this);
                       if(confirmation == erase_code){
                       // console.log('adding ' + cluster +' '+province+' '+city+' '+barangay+' '+district+' '+area+' '+avenue+' '+street)
                           $.get( "/cluster/clear",{'cluster_id':cluster}, function(data){
                             if(data.success == 1)
                             {
                               alert('Cleared cluster of packages!');
-                              $(this).dialog("close");
+                              node.dialog("close");
                               cluster_node.html(0);
                             }
                             else
