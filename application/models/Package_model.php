@@ -4,7 +4,10 @@ class Package_model extends CI_Model {
         public function __construct()
         {
                 $this->load->database();
+				$this->load->model('Address_model');
         }
+
+
 
 		public function get_package($id = -1,$cluster=-1, $x=-1, $y=-1, $z=-1)
 		{
@@ -209,8 +212,12 @@ class Package_model extends CI_Model {
 		    //1 for BASE
 		    $priority = 0;
 		    
-		    if($length < $width)
+		    if($length < $width){
 		    	$valid_package = $this->compute($address_id, (float)$width, (float)$length, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority, (float)$height_constraint, (float)$weight_constraint);
+		    	$length_temp = $length;
+		    	$length = $width;
+		    	$width = $length_temp;
+		    }
 		    else
 		    	$valid_package = $this->compute($address_id, (float)$length, (float)$width, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority, (float)$height_constraint, (float)$weight_constraint);
 		    if(is_array($valid_package) && !empty($valid_package))
