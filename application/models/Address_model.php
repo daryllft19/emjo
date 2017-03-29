@@ -71,7 +71,8 @@ class Address_model extends CI_Model {
 				foreach ($filter as $key => $value) {
 					if($key == 'cluster')
 					{
-						$this->db->where($key,$value);
+						if($duplicate == FALSE)
+							$this->db->where($key,$value);
 					}
 					else
 					{
