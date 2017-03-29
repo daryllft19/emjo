@@ -110,7 +110,7 @@
 					</div>
 
 					<div class="form-group">
-					  <label for="height-constraint">Height Constraint(kg):</label>
+					  <label for="height-constraint">Height Constraint(cm):</label>
 					  <input type="number" step="1" class="form-control" name='height-constraint' id="height-constraint" value='<?php $height_constraint; ?>'  autocomplete='off'>
 					</div>
 
@@ -378,8 +378,8 @@
 				weight_constraint = $(this).val()*4;
 				$('#weight-constraint').val(weight_constraint);
 
-				height_constraint = Math.min($('#weight').val(), $('#height').val()) * 3;
-				$('#height-constraint').val(height_constraint);
+				weight_constraint = $('#weight').val() * 4;
+				$('#weight_constraint').val(weight_constraint);
 			}).keyup();
 
 			$('#height').keyup(function(){
