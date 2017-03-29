@@ -106,16 +106,19 @@ class Address extends CI_Controller {
         {
             $ret = array();
             $attr = $this->input->get('attr');
+            $value = $this->input->get('value');
 
-            $all = $this->Address_model->search_address(); 
+            $all = $this->Address_model->search_address(array($attr=>$value,'tags'=>TRUE),10); 
+            $ret['params'] = array($attr=>$value);
             $tags = array();
+                    // array_push($tags, $all);
             foreach ($all as $key => $value) {
-                if(!in_array($value[$attr], $tags))
+                if(!in_array($value[$attr], $tags) && !empty($value[$attr]))
                     array_push($tags, $value[$attr]);
-                if($key == 10)
-                    break;
+                // if($key > 10)
+                //     break;
             }
-            // array_slice($tags, 0,10);
+            // $tags = array_slice($tags, 0,5);
             $ret['tags'] = $tags;
 
             header('Content-Type: application/json');
