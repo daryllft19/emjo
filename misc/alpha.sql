@@ -526,6 +526,7 @@ INSERT INTO address(cluster,city) values(12,'Muntinlupa');
 /*creates table for package*/
 CREATE TABLE package(
 	id serial primary key not null,
+	serial_no varchar, 
 	address int not null references address (id) on delete cascade on update cascade,
 	length real not null,
 	width real not null,
