@@ -82,7 +82,7 @@
         {
           var cluster_node = $('#cluster-select');
           var erase_code = 'I will erase packages in '+cluster_node.find(':selected').html();
-          $("#dialog-erase").html('Type the sentence in bold letters: "<strong>' + erase_code +'</strong>"<br/><input id="dialog-erase-input" type="text"/>');
+          $("#dialog-erase").html('Type the sentence in bold letters: "<strong>' + erase_code +'</strong>"<br/><input id="dialog-erase-input" type="text" autocomplete="off"/>');
           $( "#dialog-erase" ).dialog({
                   modal: true,
                   buttons: {
@@ -125,7 +125,7 @@
                     
                     for (key in data['packages']){
                       row += "<tr data-cluster="+valueSelected+">";
-                      row += "<td data-value='" + data['packages'][key].id+"'>" + data['packages'][key].id + "</td>";
+                      row += "<td data-value='" + data['packages'][key].serial_no+"'>" + data['packages'][key].serial_no + "</td>";
                       row += "<td data-value='" + data['packages'][key].address+"'>" + data['packages'][key]['address'].city + "</td>";
                       row += "<td data-value='" + data['packages'][key].length+"'>" + data['packages'][key].length + "</td>";
                       row += "<td data-value='" + data['packages'][key].width+"'>" + data['packages'][key].width + "</td>";
@@ -148,6 +148,7 @@
 
                       dBox.push({
                         id: data['packages'][key].id,
+                        serial_no: data['packages'][key].serial_no,
                         address: addr,
                         length: parseFloat(data['packages'][key]['length']),
                         width: parseFloat(data['packages'][key]['width']),
@@ -155,7 +156,8 @@
                         weight: parseFloat(data['packages'][key]['weight']),
                         x1: parseFloat(data['packages'][key]['x1']),
                         y1: parseFloat(data['packages'][key]['y1']),
-                        z1: parseFloat(data['packages'][key]['z1'])                       
+                        z1: parseFloat(data['packages'][key]['z1']),
+                        orientation: data['packages'][key]['orientation']                 
                       });
                     }
                     $('#package-table').html(row);
@@ -207,7 +209,7 @@
                         height = $('#box-info-height');
                         weight = $('#box-info-weight');
                         box = dBox[unit_mesh.source.name.replace('box', '')];
-                        id.prop('innerText',box.id);
+                        id.prop('innerText',box.serial_no);
                         address.prop('innerText',box.address);
                         length.prop('innerText',box.length);
                         width.prop('innerText',box.width);
@@ -250,6 +252,7 @@
                   var address = BABYLON.Mesh.CreatePlane("ground", 0, scene);
                   // address.material = material;
                   address.rotation.x = Math.PI / 2;
+                  // address.rotation.y = Math.PI / 2;
                   address.scaling.x = cluster_length/100;
                   address.scaling.y = cluster_width/100;
 
@@ -260,18 +263,28 @@
                   // for (var i = 1; i <= 4; i++) {
                   // for (var i = 1; i <= Object.keys(dBox).length; i++) {
                   if(dBox.length > 0){
-                    xcalibrate = (cluster_length/100)/2;
-                    ycalibrate = (cluster_width/100)/2;
                     dBox.forEach(function(b, i){
                             box[b.id] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width/100 ,height: b.height/100,depth:b.length/100}, scene);
                           console.log('created box in '+i +' | id:'+b.id);
                           // console.log('created box in '+i +' | id:'+b.id, box[i]);
                             box[b.id].material = pinkMat;
-                            x = xcalibrate-(((b.width/100)/2)+b.x1/100);
+                            xcalibrate = (cluster_length/100)/2;
+                            ycalibrate = (cluster_width/100)/2;
                             y = ((b.height/100)/2)+b.z1/100;
-                            z = ycalibrate-(((b.length/100)/2)+b.y1/100);
-                            box[b.id].position = new BABYLON.Vector3(x,y,z);
-                            // console.log(box[i].position.y);
+
+                            if(b.orientation == 'vertical')
+                            {
+                              x = xcalibrate-(((b.width/100)/2)+b.x1/100);
+                              z = ycalibrate-(((b.length/100)/2)+b.y1/100);
+                            }
+                            else if(b.orientation == 'horizontal')
+                            {
+                              x = xcalibrate-(((b.length/100)/2)+b.x1/100);
+                              z = ycalibrate-(((b.width/100)/2)+b.y1/100);
+                              box[b.id].rotation.y  = Math.PI / 2;
+                            }
+                            box[b.id].position = new BABYLON.Vector3(x,y,z); 
+                            
                             box[b.id].actionManager = new BABYLON.ActionManager(scene);  
                             box[b.id].actionManager.registerAction(action_mouse_over);
                             box[b.id].actionManager.registerAction(action_mouse_out);
