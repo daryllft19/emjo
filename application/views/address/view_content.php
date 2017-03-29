@@ -278,13 +278,17 @@
                   }
                 });
 
-                $('input').focus(function(e){
+                $('input').keypress(function(e){
                   var node = $(this)
                   var cluster = $('#dialog-select-cluster').val();
 
-                  $.get( "/address/get_tags", {'attr': node.data('attr')}, function( data ) {
-                    tags = data.tags
-                    console.log(tags);
+                  var params ={
+                    'attr': node.data('attr'),
+                    'value': node.val()+e.key
+                  }
+                  $.get( "/address/get_tags", params, function( data ) {
+                    tags = data.tags;
+                  
                     node.autocomplete({
                       source: tags
                     })
@@ -354,7 +358,10 @@
                 });
               });   
           }
-
+          function count(dict)
+          {
+            return Object.keys(dict).length
+          }
           function change_cluster()
           {
             var cluster = $('#select-cluster').find(':selected').val();
@@ -387,10 +394,17 @@
 
           function change_province()
           {
+            var params = {}
             var cluster = $('#select-cluster').find(':selected').val();
+            if(cluster != -1)
+              params['cluster'] = cluster;
             var province = $('#select-province').find(':selected').val();
+            if(province != '')
+              params['province'] = province
+            if(count(params) == 0)
+              params['cluster'] = cluster
             var sel_city = $('#select-city');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province}}, function( data ) {
+            $.get( "/address/search",{'params':params}, function( data ) {
                  lData = data['top'][0]
 
                  cities = []
@@ -418,11 +432,20 @@
 
           function change_city()
           {
+            var params = {}
             var cluster = $('#select-cluster').find(':selected').val();
-            var city = $('#select-city').find(':selected').val();
+            if(cluster != -1) 
+              params['cluster'] = cluster
             var province = $('#select-province').find(':selected').val();
+            if(province != '') 
+              params['province'] = province
+            var city = $('#select-city').find(':selected').val();
+            if(city != '') 
+              params['city'] = city
+            if(count(params) == 0)
+              params['cluster'] = cluster
             var sel_barangay = $('#select-barangay');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city}}, function( data ) {
+            $.get( "/address/search",{'params':params}, function( data ) {
                  lData = data['top'][0]
 
                  barangays = []
@@ -451,12 +474,23 @@
           }
           function change_barangay()
           {
+            var params = {}
             var cluster = $('#select-cluster').find(':selected').val();
+            if(cluster != -1) 
+              params['cluster'] = cluster
             var province = $('#select-province').find(':selected').val();
+            if(province != '') 
+              params['province'] = province
             var city = $('#select-city').find(':selected').val();
+            if(city != '') 
+              params['city'] = city
             var barangay = $('#select-barangay').find(':selected').val();
+            if(barangay != '') 
+              params['barangay'] = barangay
+            if(count(params) == 0)
+              params['cluster'] = cluster
             var sel_district = $('#select-district');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'barangay':barangay}}, function( data ) {  
+            $.get( "/address/search",{'params':params}, function( data ) {  
                  lData = data['top'][0]
 
                  districts = []
@@ -484,13 +518,26 @@
 
           function change_district()
           {
+            var params = {}
             var cluster = $('#select-cluster').find(':selected').val();
+            if(cluster != -1) 
+              params['cluster'] = cluster
             var province = $('#select-province').find(':selected').val();
+            if(province != '') 
+              params['province'] = province
             var city = $('#select-city').find(':selected').val();
+            if(city != '') 
+              params['city'] = city
             var barangay = $('#select-barangay').find(':selected').val();
+            if(barangay != '') 
+              params['barangay'] = barangay
             var district = $('#select-district').find(':selected').val();
+            if(district != '') 
+              params['district'] = district
+            if(count(params) == 0)
+              params['cluster'] = cluster
             var sel_area = $('#select-area');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'barangay':barangay, 'district':district}}, function( data ) {
+            $.get( "/address/search",{'params':params}, function( data ) {
  
                  lData = data['top'][0]
 
@@ -520,14 +567,29 @@
 
           function change_area()
           {
+            var params = {};
             var cluster = $('#select-cluster').find(':selected').val();
+            if(cluster != -1) 
+              params['cluster'] = cluster
             var province = $('#select-province').find(':selected').val();
+            if(province != '') 
+              params['province'] = province
             var city = $('#select-city').find(':selected').val();
-            var district = $('#select-district').find(':selected').val();
+            if(city != '') 
+              params['city'] = city
             var barangay = $('#select-barangay').find(':selected').val();
+            if(barangay != '') 
+              params['barangay'] = barangay
+            var district = $('#select-district').find(':selected').val();
+            if(district != '') 
+              params['district'] = district
             var area = $('#select-area').find(':selected').val();
+            if(area != '') 
+              params['area'] = area
+            if(count(params) == 0)
+              params['cluster'] = cluster
             var sel_avenue = $('#select-avenue');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'district':district,'barangay':barangay,'area':area}}, function( data ) {
+            $.get( "/address/search",{'params':params}, function( data ) {
                  lData = data['top'][0]
 
                  avenues = []
@@ -554,15 +616,32 @@
 
           function change_avenue()
           {
+            var params = {};
             var cluster = $('#select-cluster').find(':selected').val();
+            if(cluster != -1) 
+              params['cluster'] = cluster
             var province = $('#select-province').find(':selected').val();
+            if(province != '') 
+              params['province'] = province
             var city = $('#select-city').find(':selected').val();
-            var district = $('#select-district').find(':selected').val();
+            if(city != '') 
+              params['city'] = city
             var barangay = $('#select-barangay').find(':selected').val();
+            if(barangay != '') 
+              params['barangay'] = barangay
+            var district = $('#select-district').find(':selected').val();
+            if(district != '') 
+              params['district'] = district
             var area = $('#select-area').find(':selected').val();
+            if(area != '') 
+              params['area'] = area
             var avenue = $('#select-avenue').find(':selected').val();
+            if(avenue != '') 
+              params['avenue'] = avenue
+            if(count(params) == 0)
+              params['cluster'] = cluster
             var sel_street = $('#select-street');
-            $.get( "/address/search",{'params':{'cluster':cluster,'province':province,'city':city, 'district':district,'barangay':barangay,'area':area,'avenue':avenue}}, function( data ) {
+            $.get( "/address/search",{'params':params}, function( data ) {
                  lData = data['top'][0]
 
                  streets = []
@@ -582,7 +661,7 @@
                   elem += '<option value="'+x+'">'+x+'</option>';
                  }
                  sel_street.html(elem);
-                 
+                 update_table();
             });
           }
           $(document).ready(function(){
@@ -602,7 +681,6 @@
             var table_cluster = $('#table-cluster');
 
             params={
-                'cluster':cluster,
                 'province':province,
                 'city':city,
                 'barangay':barangay,
@@ -610,6 +688,10 @@
                 'area':area,
                 'avenue': avenue,
                 'street':street
+            }
+            if(cluster != -1)
+            {
+              params['cluster'] = cluster;  
             }
             // console.log('params',params);
             $.get( "/address/search",{'params':params}, function( data ) {
@@ -652,6 +734,6 @@
           $('#select-district').on('change',change_district);
           $('#select-area').on('change',change_area);
           $('#select-avenue').on('change',change_avenue);
-          $('select').on('change',update_table);
+          // $('select[id^=select]').on('change',update_table);
 
 </script>
