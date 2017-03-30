@@ -25,11 +25,11 @@
                   <tr>
                     <th>ID</th>
                     <th>Address</th>
-                    <th>Length (m)</th>
-                    <th>Width (m)</th>
-                    <th>Height (m)</th>
+                    <th>Length (cm)</th>
+                    <th>Width (cm)</th>
+                    <th>Height (cm)</th>
                     <th>Weight (kg)</th>
-                    <th>Date Arrived</th>
+                    <th>Timestamp (UTC)</th>
                     <th>Fragile</th>
                   </tr>
                 </thead>
@@ -108,6 +108,11 @@
                   }
                 });
         }
+        tz = new Date().getTimezoneOffset()/-60;
+        if (tz != 0){
+          header = $('#package-table').prev('thead').find('th:nth-child(7)').html().replace('UTC', ('UTC '+(tz>0?'+'+tz:tz)));
+          $('#package-table').prev('thead').find('th:nth-child(7)').html(header);
+        }
 
           var canvas = document.getElementById('package_canvas');
           var engine = new BABYLON.Engine(canvas, true);
@@ -122,7 +127,6 @@
                 $.get( "/package/",{'cluster_id':valueSelected}, function( data ) {
                     var dBox = [];
                     var cluster = data['cluster']; 
-                    
                     for (key in data['packages']){
                       row += "<tr data-cluster="+valueSelected+">";
                       row += "<td data-value='" + data['packages'][key].serial_no+"'>" + data['packages'][key].serial_no + "</td>";
@@ -131,7 +135,9 @@
                       row += "<td data-value='" + data['packages'][key].width+"'>" + data['packages'][key].width + "</td>";
                       row += "<td data-value='" + data['packages'][key].height+"'>" + data['packages'][key].height + "</td>";
                       row += "<td data-value='" + data['packages'][key].weight+"'>" + data['packages'][key].weight + "</td>";
-                      row += "<td data-value='" + data['packages'][key].arrival_date+"'>" + data['packages'][key].arrival_date + "</td>";
+                      date = data['packages'][key].arrival_date;
+                      client_date = new Date(date).toLocaleString();
+                      row += "<td data-value='" + date+"'>" + client_date + "</td>";
                       row += "<td data-value='" + data['packages'][key].is_fragile+"'>" + ((data['packages'][key].is_fragile=='t')?"True":"False") + "</td>";
                       row += "</tr>";
 
@@ -192,7 +198,7 @@
                   material.wireframe = true;
 
                   var pinkMat = new BABYLON.StandardMaterial("pink", scene);
-                  pinkMat.emissiveColor = new BABYLON.Color3(.5, .2, .3);
+                  
 
                   var mouseOverUnit = function(unit_mesh) {
                     if (unit_mesh.meshUnderPointer !== null) {
@@ -231,7 +237,7 @@
                         width = $('#box-info-width');
                         height = $('#box-info-height');
                         weight = $('#box-info-weight');
-                        box = dBox[unit_mesh.source.name.replace('box', '')];
+                        // box = dBox[unit_mesh.source.name.replace('box', '')];
                         id.prop('innerText','N/A');
                         address.prop('innerText','N/A');
                         length.prop('innerText','N/A');
@@ -239,7 +245,10 @@
                         height.prop('innerText','N/A');
                         weight.prop('innerText','N/A');
 
+                        // console.log(box);
+                        // console.log(id);
                         unit_mesh.source.material = pinkMat;
+                        // unit_mesh.source.material = box[id].material;
                         unit_mesh.source.renderOutline = false; 
                         // unit_mesh.source.outlineWidth = 0.1;
                     }
@@ -267,6 +276,7 @@
                             box[b.id] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width/100 ,height: b.height/100,depth:b.length/100}, scene);
                           console.log('created box in '+i +' | id:'+b.id);
                           // console.log('created box in '+i +' | id:'+b.id, box[i]);
+                            pinkMat.emissiveColor = new BABYLON.Color3((b.weight/100), 0, 0);
                             box[b.id].material = pinkMat;
                             xcalibrate = (cluster_length/100)/2;
                             ycalibrate = (cluster_width/100)/2;
