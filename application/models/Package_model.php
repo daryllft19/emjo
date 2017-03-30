@@ -211,7 +211,7 @@ class Package_model extends CI_Model {
 		    //0 for STACK
 		    //1 for BASE
 		    $priority = 0;
-		    
+
 		    if($length < $width){
 		    	$valid_package = $this->compute($address_id, (float)$width, (float)$length, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority, (float)$height_constraint, (float)$weight_constraint);
 		    	$length_temp = $length;
@@ -470,8 +470,7 @@ class Package_model extends CI_Model {
 		        }
 
 		        $constraint = array();
-		        
-				
+
 		        $weight_constraint = $this->weight_check($packages, $candidates, $length, $width, $weight, $weight_constraint_value);
 				if(is_string($weight_constraint) && $weight_constraint == 'weight')
 				{
@@ -483,7 +482,6 @@ class Package_model extends CI_Model {
 				{
 					array_push($constraint, $height_constraint);
 				}
-
            	
            		//sort candidates depending on priority
             	$z_temp = array();
@@ -529,11 +527,11 @@ class Package_model extends CI_Model {
 				$coordinates = array('x1'=>$candidate['x'], 'x2'=>$x,'y1'=>$candidate['y'], 'y2'=>$y, 'z'=>$z);
 				$packages_below = $this->get_below(array('coordinates'=>$coordinates,'level'=>-1));
 
-				// var_dump('$coordinates', $coordinates);
-
+				
 				//all candidates that are placed at the base are automatically allowed
 				if(empty($packages_below))
 				{
+
 					continue;
 				}
 				//only compute weight if package will be put above another package
@@ -764,6 +762,10 @@ class Package_model extends CI_Model {
 			$corners_hi_priority = array();
 
 			foreach ($packages as $package):
+				
+				if($package['is_fragile'] == 't')
+					continue;
+
 				for ($x=1; $x <=2 ; $x++) { 
 					for ($y=1; $y <=2 ; $y++) { 
 						for ($z=1; $z <=2 ; $z++) { 
