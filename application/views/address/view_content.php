@@ -302,7 +302,7 @@
           $('table').on('change','input[type=checkbox]', function(){
             var td = $(this).parent();
             var tr = td.parent();
-            console.log(tr);
+
             var col = td.data('attr');
             var id = tr.data('value');
             var is_serviceable = $(this).prop('checked');

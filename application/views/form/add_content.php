@@ -114,9 +114,6 @@
 					  <input type="number" step="1" min=0 class="form-control" name='height-constraint' id="height-constraint" value='<?php echo $height_constraint>0?$height_constraint:0; ?>'  autocomplete='off'>
 					</div>
 
-					<?php
-					echo 'fragile: '.$fragile;
-					?>
 					<div class="form-group">
 					  <label for="weight-constraint">Weight Constraint(kg):</label>
 					  <input type="number" step="1" min=0 class="form-control" name='weight-constraint' id="weight-constraint" value='<?php echo $weight_constraint>0?$weight_constraint:0; ?>'  autocomplete='off'>
