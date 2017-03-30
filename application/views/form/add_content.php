@@ -106,17 +106,20 @@
 					</div>
 
 					<div class="checkbox">
-					  <label><input type="checkbox" name='fragile' value="true">Fragile</label>
+					  <label><input type="checkbox" name='fragile' <?php if($fragile) echo 'checked' ?>>Fragile</label>
 					</div>
 
 					<div class="form-group">
 					  <label for="height-constraint">Height Constraint(cm):</label>
-					  <input type="number" step="1" class="form-control" name='height-constraint' id="height-constraint" value='<?php $height_constraint; ?>'  autocomplete='off'>
+					  <input type="number" step="1" min=0 class="form-control" name='height-constraint' id="height-constraint" value='<?php echo $height_constraint>0?$height_constraint:0; ?>'  autocomplete='off'>
 					</div>
 
+					<?php
+					echo 'fragile: '.$fragile;
+					?>
 					<div class="form-group">
 					  <label for="weight-constraint">Weight Constraint(kg):</label>
-					  <input type="number" step="1" class="form-control" name='weight-constraint' id="weight-constraint" value='<?php $weight_constraint; ?>'  autocomplete='off'>
+					  <input type="number" step="1" min=0 class="form-control" name='weight-constraint' id="weight-constraint" value='<?php echo $weight_constraint>0?$weight_constraint:0; ?>'  autocomplete='off'>
 					</div>
 
 
@@ -374,18 +377,35 @@
 			    $('#length').focus();
 
 			});
-			$('#weight').keyup(function(){
-				weight_constraint = $(this).val()*4;
-				$('#weight-constraint').val(weight_constraint);
+			$('input').on('focus', function(){
+				$(this).select();
+			})
+			$('#weight').on('keyup',compute_weight_constraint)
 
-				weight_constraint = $('#weight').val() * 4;
-				$('#weight_constraint').val(weight_constraint);
-			}).keyup();
+			$('#height').on('keyup',compute_height_constraint)
 
-			$('#height').keyup(function(){
+			function compute_weight_constraint()
+			{
+				weight_constraint = $('#weight').val()*4;
+				if($('input[name=weight-constraint]').prop('disabled') == false)
+					$('#weight-constraint').val(weight_constraint);	
+			}
+			function compute_height_constraint()
+			{
 				height_constraint = Math.min($('#length').val(), $('#width').val()) * 3;
-				$('#height-constraint').val(height_constraint);
-			}).keyup();
+				if($('input[name=height-constraint]').prop('disabled') == false)
+					$('#height-constraint').val(height_constraint);	
+			}
 
+			$('input[name=fragile]').on('change',function(){
+				if($('input[name=fragile]').is(':checked')){
+					$('input[name$=constraint').prop('disabled', true).val(0);
+				}
+				else{
+					$('input[name$=constraint]').prop('disabled', false)
+					compute_height_constraint();
+					compute_weight_constraint();
+				}
+			}).trigger('change');
         </script>
 
