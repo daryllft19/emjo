@@ -545,6 +545,7 @@ CREATE TABLE package(
 	is_fragile boolean default false
 );
 
+SET TIME ZONE 'UTC';
 /*INSERT INTO package values(default, 1, 120, 1,50,0,0,0,now(),default);*/
 
 /*
