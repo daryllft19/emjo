@@ -15,23 +15,23 @@ CREATE TABLE cluster(
 );
 
 
-INSERT INTO cluster values(default, 'East 1', 720, 240, 120);
-INSERT INTO cluster values(default, 'East 2', 720, 240, 120);
-INSERT INTO cluster values(default, 'East 3', 720, 120, 120);
-INSERT INTO cluster values(default, 'East 4', 720, 120, 120);
-INSERT INTO cluster values(default, 'North 1', 720, 120, 120);
-INSERT INTO cluster values(default, 'North 2', 720, 120, 120);
-INSERT INTO cluster values(default, 'Central 1', 600, 240, 120);	
-INSERT INTO cluster values(default, 'Central 2', 600, 240, 120);	
-INSERT INTO cluster values(default, 'West 1', 360, 120, 120);
-INSERT INTO cluster values(default, 'West 2', 360, 120, 120);	
-INSERT INTO cluster values(default, 'South 1', 720, 120, 120);	
-INSERT INTO cluster values(default, 'South 2', 720, 120, 120);	
-INSERT INTO cluster values(default, 'TEST-CLUSTER',600,240, 120);
--- INSERT INTO cluster values(default, 'South 2', 7.2, 120, 120);	
--- INSERT INTO cluster values(default, 'BWE',240,120, 120);			
--- INSERT INTO cluster values(default, 'Domestic', 240, 120, 120);	
--- INSERT INTO cluster values(default, 'RSO', 6, 120, 120);
+INSERT INTO cluster values(default, 'East 1', 720, 240, 152);
+INSERT INTO cluster values(default, 'East 2', 720, 240, 152);
+INSERT INTO cluster values(default, 'East 3', 720, 120, 152);
+INSERT INTO cluster values(default, 'East 4', 720, 120, 152);
+INSERT INTO cluster values(default, 'North 1', 720, 120, 152);
+INSERT INTO cluster values(default, 'North 2', 720, 120, 152);
+INSERT INTO cluster values(default, 'Central 1', 600, 240, 152);	
+INSERT INTO cluster values(default, 'Central 2', 600, 240, 152);	
+INSERT INTO cluster values(default, 'West 1', 360, 120, 152);
+INSERT INTO cluster values(default, 'West 2', 360, 120, 152);	
+INSERT INTO cluster values(default, 'South 1', 720, 120, 152);	
+INSERT INTO cluster values(default, 'South 2', 720, 120, 152);	
+INSERT INTO cluster values(default, 'TEST-CLUSTER',600,240, 152);
+-- INSERT INTO cluster values(default, 'South 2', 7.2, 120, 152);	
+-- INSERT INTO cluster values(default, 'BWE',240,120, 152);			
+-- INSERT INTO cluster values(default, 'Domestic', 240, 120, 152);	
+-- INSERT INTO cluster values(default, 'RSO', 6, 120, 152);
 
 /*creates table for address*/
 CREATE TABLE address(
