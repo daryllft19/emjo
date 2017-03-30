@@ -19,19 +19,32 @@ class Cluster_model extends CI_Model {
 		        return $query->row_array();
 		}
 
-		public function set_cluster()
+		public function set_cluster($data)
 		{
 
-			/*MALI!*/
-		    $this->load->helper('url');
+		    try{
+			    $id = 0;
+			    if(isset($data['id'])){
+			    	$id = $data['id'];
+			    	unset($data['id']);
+			    }
 
-		    $data = array(
-		        'name' => $this->input->post('name'),
-		        'city' => $this->input->post('city'),
-		        'keywords' => $this->input->post('keywords')
-		    );
+			    if($this->count($id)['count'] > 0 )
+			    	return array('error'=>'Cannot modify if cluster contains packages.','info'=>$this->count($id));
 
-		    return $this->db->insert('cluster', $data);
+			    if($id > 0){
+			    	$this->db->where('id',$id);
+			    	$this->db->update('cluster',$data);
+			    }
+			    else{
+			    	$this->db->insert('cluster', $data);
+			    }
+			    return 1;
+		    }
+		    catch(Exception $e)
+		    {
+			    return array('error'=>$e);
+		    }
 		}
 
         public function clear($id){

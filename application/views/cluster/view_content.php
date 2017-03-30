@@ -19,10 +19,10 @@
                     <?php 
                       echo "<tr data-cluster=".$cluster_item['id'].">";
                       echo "<td><a href='#' onclick='clear_package(".$cluster_item['id'].");' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a></td>";
-                      echo "<td contenteditable data-value='".$cluster_item['name']."'>".$cluster_item['name']."</td>";
-                      echo "<td contenteditable data-value='".$cluster_item['length']."'>".$cluster_item['length']."</td>";
-                      echo "<td contenteditable data-value='".$cluster_item['width']."'>".$cluster_item['width']."</td>";
-                      echo "<td contenteditable data-value='".$cluster_item['height']."'>".$cluster_item['height']."</td>";
+                      echo "<td contenteditable data-attr='name' data-value='".$cluster_item['name']."'>".$cluster_item['name']."</td>";
+                      echo "<td contenteditable data-attr='length' data-value='".$cluster_item['length']."'>".$cluster_item['length']."</td>";
+                      echo "<td contenteditable data-attr='width' data-value='".$cluster_item['width']."'>".$cluster_item['width']."</td>";
+                      echo "<td contenteditable data-attr='height' data-value='".$cluster_item['height']."'>".$cluster_item['height']."</td>";
                       echo "<td><span class='cluster-package-count'>0</span></td>";
                       echo "</tr>";
                     ?>
@@ -37,6 +37,10 @@
     </div>
 <div id="dialog-erase" title="Clear Package">
 </div>
+
+<div id="dialog-message" title="Content Modification">
+</div>
+
     <script type="text/javascript">
      $(document).on('ready',count);
      function count()
@@ -81,5 +85,59 @@
                     }
                   }
                 });
+        }
+
+        $('td[contenteditable]').on('mouseover',function(){
+          var node = $(this);
+          node.data('border', node.css('border'));
+          node.css('border','1px solid rgb(30,144,255)');
+          node.prop('contenteditable',true);
+        }).on('mouseout',function(){
+          var node = $(this);
+          node.css('border',node.data('border'));
+        }).on('focus',function(){
+          var node = $(this);
+
+          node.keypress(function(e){
+            var key = e.which;
+
+            if(key == 13)
+            {
+              params = {};
+              params['id'] = node.parent('tr').data('cluster');
+              params['attr'] = node.data('attr');
+              params[params['attr']] = node.html();
+              node.prop('contenteditable',false);
+              modify_cluster(params);
+              e.preventDefault();
+              
+            }
+          });
+        });
+
+        function modify_cluster(params)
+        {
+            var dialog_node = $( "#dialog-message" );
+            dialog_node.html('<p>Saving changes...</p>');
+
+            dialog_node.dialog({
+            modal: true,
+            buttons: {
+                Ok: function(e) {
+                  $( this ).dialog( "close" );
+               }
+              }
+            });
+
+            var attr = params['attr']
+            delete params['attr']
+            $.post('/cluster/modify', {'params': params}, function(data){
+              if(data.response == 1)
+                dialog_node.html('<p>Successful...</p>');
+              else{
+                dialog_node.html('<p>'+data.response.error+'</p>');
+              }
+
+            });
         }
     </script>
