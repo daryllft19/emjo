@@ -161,8 +161,8 @@ class Index extends CI_Controller {
 		$this->form_validation->set_rules('width', 'Width', 'required');
 		$this->form_validation->set_rules('height', 'Height', 'required');
 		$this->form_validation->set_rules('weight', 'Weight', 'required');
-		$this->form_validation->set_rules('weight-constraint', 'Weight Constraint', 'required');
-		$this->form_validation->set_rules('height-constraint', 'height Constraint', 'required');
+		// $this->form_validation->set_rules('weight-constraint', 'Weight Constraint', 'required');
+		// $this->form_validation->set_rules('height-constraint', 'height Constraint', 'required');
 
 		$address_id = $this->input->post('address_id');
 		$address = $this->input->post('address');
@@ -171,8 +171,8 @@ class Index extends CI_Controller {
 		$height = $this->input->post('height');
 		$weight = $this->input->post('weight');
 		$fragile = $this->input->post('fragile');
-		$height_constraint = $this->input->post('height-constraint');
-		$weight_constraint = $this->input->post('weight-constraint');
+		$height_constraint = !empty($this->input->post('height-constraint'))?$this->input->post('height-constraint'):0;
+		$weight_constraint = !empty($this->input->post('weight-constraint'))?$this->input->post('weight-constraint'):0;
 		
 		$data['input_address_id'] = $address_id;
 		$data['input_address'] = $address;
@@ -182,9 +182,15 @@ class Index extends CI_Controller {
 		$data['weight'] = $weight;
 		$data['height_constraint'] = $height_constraint;
 		$data['weight_constraint'] = $weight_constraint;
-
+		$data['fragile'] = $fragile;
+		// var_dump();
 		if ($this->form_validation->run() === TRUE)
 		{
+			if($fragile == 'on')
+				$fragile = TRUE;
+			else
+				$fragile = FALSE;
+
 			$this->add($address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
 			// echo '<script>alert("Wrong input!")</script>';
 			// $this->index('form');
@@ -336,21 +342,21 @@ class Index extends CI_Controller {
 					],
 					//11
 					[
-					[60,50,30,	50],
+					[50,60,30,	50],
 					[30,30,12,90],
 					[20,20,30,	30],
-					[40,30,60,	60],
+					[30,40,60,	60],
 					[50,50,70,	90],
-					[80,80,14,180],
+					[80,80,140,180],
 					[20,20,20,	40]
 
 					]
 
 					];
 
-				foreach ($array[8] as $temp) {
+				foreach ($array[9] as $temp) {
 					list($length, $width, $height, $weight) = $temp;
-					$this->Package_model->set_package('00000000',1, $length, $width, $height, $weight, FALSE, min($length, $width)*3, $weight_constraint*4); 
+					$this->Package_model->set_package('00000000',$container_id, $length, $width, $height, $weight, FALSE, min($length, $width)*3, $weight*4); 
 				}
 				$return_value = TRUE;
 			}
