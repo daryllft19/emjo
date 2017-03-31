@@ -40,7 +40,6 @@
         </fieldset>
       </form>
     </div>
-
     <script type="text/javascript">
           // <a id="login-btn" href="<?php echo site_url('auth/login?redirect='.$_SERVER["REQUEST_URI"])?>" class="btn btn-danger pull-right" role="button">Login</a>
 
@@ -99,5 +98,20 @@
                     }
                 });
 
+        var logged_in;
+        setInterval(is_authorized,2000);
 
+        function is_authorized()
+        {
+          $.get('/AuthHandler/is_authorized',function(data){
+            if(logged_in == undefined)
+              logged_in = data.response;
+
+            if(data.response != logged_in){
+              if(data.response == false)
+                alert('Session logged out!');
+              window.location.reload();
+            }
+          })
+        }
     </script>

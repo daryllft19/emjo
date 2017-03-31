@@ -40,6 +40,16 @@ class AuthHandler extends CI_Controller
         echo json_encode($ret);
 	}
 
+	function is_authorized()
+	{
+		$ret = array();
+
+		$ret['response'] = $this->tank_auth->is_logged_in();
+
+		header('Content-Type: application/json');
+        echo json_encode($ret);	
+	}
+
 	function logout()
 	{
 		$this->tank_auth->logout();
