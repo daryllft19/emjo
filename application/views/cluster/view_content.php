@@ -18,12 +18,13 @@
               <?php foreach ($cluster as $cluster_item): ?>
                     <?php 
                       echo "<tr data-cluster=".$cluster_item['id'].">";
-                      echo "<td><a href='#' onclick='clear_package(".$cluster_item['id'].");' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a></td>";
+                      echo "<td><a href='#' onclick='delete_cluster(".$cluster_item['id'].");' class='btn btn-danger' id='btn-clear-package' role='button'>Delete</a></td>";
                       echo "<td contenteditable data-attr='name' data-value='".$cluster_item['name']."'>".$cluster_item['name']."</td>";
                       echo "<td contenteditable data-attr='length' data-value='".$cluster_item['length']."'>".$cluster_item['length']."</td>";
                       echo "<td contenteditable data-attr='width' data-value='".$cluster_item['width']."'>".$cluster_item['width']."</td>";
                       echo "<td contenteditable data-attr='height' data-value='".$cluster_item['height']."'>".$cluster_item['height']."</td>";
                       echo "<td><span class='cluster-package-count'>0</span></td>";
+                      echo "<td><a href='#' onclick='clear_package(".$cluster_item['id'].");' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a></td>";
                       echo "</tr>";
                     ?>
               <?php endforeach; ?>
@@ -36,6 +37,9 @@
       </div>
     </div>
 <div id="dialog-erase" title="Clear Package">
+</div>
+
+<div id="dialog-delete" title="Delete Cluster">
 </div>
 
 <div id="dialog-message" title="Content Modification">
@@ -87,6 +91,46 @@
                 });
         }
 
+      function delete_cluster(id)
+        {
+          packages = parseInt($('tr[data-cluster='+id+']').find('.cluster-package-count').html());
+          if(packages > 0){
+            alert('Cluster has packages!');
+            return;
+          }
+
+          var cluster_node = $('tr[data-cluster='+id+']');
+          var erase_code = 'I will delete cluster '+cluster_node.children('td:nth-child(2)').html();
+          $("#dialog-delete").html('Type the sentence in bold letters: "<strong>' + erase_code +'</strong>"<br/><input id="dialog-delete-input" type="text"/>');
+          $( "#dialog-delete" ).dialog({
+                  modal: true,
+                  buttons: {
+                    Erase: function(e) {
+                      cluster = id
+                      confirmation = $('#dialog-delete-input').val();
+                      node = $(this);
+                      if(confirmation == erase_code){
+                        $.get( "/cluster/delete",{'cluster_id':cluster}, function(data){
+                            if(data.success == 1)
+                            {
+                              cluster_node.fadeOut(3000,function(){
+                                $(this).remove();
+                              });
+                              alert('Cluster deleted!');
+                              node.dialog("close");
+                            }
+                            else
+                              alert('Cannot delete cluster!');
+                          });
+                      }else{
+                        alert('Wrong confirmation!');
+                        $(this).dialog("close");
+                      }
+                    }
+                  }
+                });
+        }
+
         $('td[contenteditable]').on('mouseover',function(){
           var node = $(this);
           node.data('border', node.css('border'));
@@ -97,7 +141,7 @@
           node.css('border',node.data('border'));
         }).on('focus',function(){
           var node = $(this);
-
+          var prev_content = node.html();
           node.keypress(function(e){
             var key = e.which;
 
@@ -107,15 +151,16 @@
               params['id'] = node.parent('tr').data('cluster');
               params['attr'] = node.data('attr');
               params[params['attr']] = node.html();
+              params['old'] = prev_content;
               node.prop('contenteditable',false);
-              modify_cluster(params);
+              modify_cluster(node,params);
               e.preventDefault();
               
             }
           });
         });
 
-        function modify_cluster(params)
+        function modify_cluster(node, params)
         {
             var dialog_node = $( "#dialog-message" );
             dialog_node.html('<p>Saving changes...</p>');
@@ -127,17 +172,33 @@
                   $( this ).dialog( "close" );
                }
               }
+            }).ready(function(){
+              $(this).focus();
             });
 
             var attr = params['attr']
+            var prev_content = params['old']
             delete params['attr']
+            delete params['old']
             $.post('/cluster/modify', {'params': params}, function(data){
               if(data.response == 1)
                 dialog_node.html('<p>Successful...</p>');
               else{
+                node.fadeOut('slow', function(){
+                  node.html(prev_content);
+                  node.fadeIn('slow');
+                });
+                
                 dialog_node.html('<p>'+data.response.error+'</p>');
               }
 
+            }).fail(function(response){
+                node.fadeOut('slow', function(){
+                  node.html(prev_content);
+                  node.fadeIn('slow');
+                });
+
+                dialog_node.html('<p>Error in input!</p>');
             });
         }
     </script>

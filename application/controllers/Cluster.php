@@ -44,9 +44,19 @@ class Cluster extends CI_Controller {
             $params = $this->input->post('params');
             
             $ret['response'] = $this->Cluster_model->set_cluster($params);
-
+            $ret['params'] = $params;
             header('Content-Type: application/json');
             echo json_encode($ret); 
         }
+
+        public function delete()
+        {
+            $cluster_id = $this->input->get('cluster_id');
+            $ret = array();
+            $ret['success'] = $this->Cluster_model->delete($cluster_id);
+            header('Content-Type: application/json');
+            echo json_encode($ret);
+        }
+
 
 }
