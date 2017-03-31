@@ -49,6 +49,10 @@ class Address_model extends CI_Model {
 				$this->db->order_by('id','asc');
 				$query = $this->db->get('address');
 			}
+			elseif (isset($filter['id'])) {
+				$this->db->where('id', $filter['id']);
+				$query = $this->db->get('address');
+			}
 			elseif ($tags) {
 				$this->db->distinct();
 				foreach ($filter as $key => $value) {
@@ -68,31 +72,33 @@ class Address_model extends CI_Model {
 				if ($limit >0)
 					$this->db->limit($limit);
 				$sort = 'cluster, province, city, barangay, district, area, avenue, street';
-				foreach ($filter as $key => $value) {
-					if($key == 'cluster')
-					{
-						if($duplicate == FALSE)
-							$this->db->where($key,$value);
-					}
-					else
-					{
-						if($duplicate == TRUE)
-							$this->db->ilike($key,$value,'none');
+
+				if(!empty($filter))
+					foreach ($filter as $key => $value) {
+						if($key == 'cluster')
+						{
+							if($duplicate == FALSE)
+								$this->db->where($key,$value);
+						}
 						else
 						{
-							$this->db->ilike($key,$value);
-							// if(!empty($value))
-							// 	$sort = $key;
+							if($duplicate == TRUE)
+								$this->db->ilike($key,$value,'none');
+							else
+							{
+								$this->db->ilike($key,$value);
+								// if(!empty($value))
+								// 	$sort = $key;
+							}
 						}
-					}
 
-				}
+					}
 
 				$this->db->order_by($sort,'asc');
 				$query = $this->db->get();
 				// return $query->result_array();
 			}
-
+				
 				$all = $query->result_array();
 				foreach ($all as $key => $value)
 				{

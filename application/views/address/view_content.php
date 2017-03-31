@@ -371,7 +371,7 @@
             var cluster = $('#select-cluster').find(':selected').val();
             var sel_province = $('#select-province');
             $.get( "/address/search",{'params':{'cluster':cluster}}, function( data ) {
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  provinces = []
                  for(d of lData)
@@ -409,7 +409,7 @@
               params['cluster'] = cluster
             var sel_city = $('#select-city');
             $.get( "/address/search",{'params':params}, function( data ) {
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  cities = []
                  for(d of lData)
@@ -450,7 +450,7 @@
               params['cluster'] = cluster
             var sel_barangay = $('#select-barangay');
             $.get( "/address/search",{'params':params}, function( data ) {
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  barangays = []
                  for(d of lData)
@@ -495,7 +495,7 @@
               params['cluster'] = cluster
             var sel_district = $('#select-district');
             $.get( "/address/search",{'params':params}, function( data ) {  
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  districts = []
                  for(d of lData)
@@ -543,7 +543,7 @@
             var sel_area = $('#select-area');
             $.get( "/address/search",{'params':params}, function( data ) {
  
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  areas = []
                  for(d of lData)
@@ -594,7 +594,7 @@
               params['cluster'] = cluster
             var sel_avenue = $('#select-avenue');
             $.get( "/address/search",{'params':params}, function( data ) {
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  avenues = []
                  for(d of lData)
@@ -646,7 +646,7 @@
               params['cluster'] = cluster
             var sel_street = $('#select-street');
             $.get( "/address/search",{'params':params}, function( data ) {
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  streets = []
                  for(d of lData)
@@ -700,7 +700,7 @@
             // console.log('params',params);
             $.get( "/address/search",{'params':params}, function( data ) {
                  elem = '';
-                 lData = data['top'][0]
+                 lData = data['top']
 
                  for(d of lData )
                  {
@@ -726,10 +726,11 @@
           }
           $('#table-cluster').on('mouseover','tr td:not(:first-child)',function(){
             var node = $(this);
+            node.data('border', node.css('border'));
             node.css('border','1px solid rgb(30,144,255)');
           }).on('mouseout','tr td:not(:first-child)',function(){
             var node = $(this);
-            node.css('border','none');
+            node.css('border',node.data('border'));
           });
           $('#select-cluster').on('change',change_cluster);
           $('#select-province').on('change',change_province);

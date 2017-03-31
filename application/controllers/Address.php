@@ -56,7 +56,7 @@ class Address extends CI_Controller {
                 $limit = 0;
             else
                 $limit = $this->input->get('limit');
-            array_push($ret['top'], $this->Address_model->search_address($this->input->get('params'), $this->input->get('limit')));
+            $ret['top'] = $this->Address_model->search_address($this->input->get('params'), $this->input->get('limit'));
 
             header('Content-Type: application/json');
             echo json_encode($ret);     
