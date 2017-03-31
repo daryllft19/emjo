@@ -5,6 +5,12 @@
 			<form role='form' action='<?php echo site_url('index/form')?>' method='POST'>
 			<!-- <div class='row'> -->
 				<div class='col-md-6'>
+					<div class='row'>
+					<h4>Top Result/s: (Click the result below that matches the correct address)</h4>
+						<div id='top-results'>
+
+						</div>
+					</div>
 		          	<div class="form-group">
 					  <label for="select-province">Province:</label>
 					  <select class="form-control" name='select-province' id="select-province">
@@ -64,12 +70,6 @@
 					  </select>
 					</div>
 
-					<div class='row'>
-					<h4>Top Result/s: (Click the result below that matches the correct address)</h4>
-						<div id='top-results'>
-
-						</div>
-					</div>
 				</div>
 				<div class='col-md-6'>
 					<!-- <div class="form-group"> -->
@@ -132,7 +132,8 @@
         		var province = $('#select-province').find(':selected').val();
         		var sel_city = $('#select-city');
 		        $.get( "/address/search",{'params':{'province':province}}, function( data ) {
-		             lData = data['top'][0]
+		             lData = data['top']
+		             current = sel_city.val();
 
 		             cities = []
 		             for(d of lData)
@@ -148,12 +149,14 @@
 		             	elem += '<option value="'+x+'">'+x+"</option>";
 		             }
 		             sel_city.html(elem);
+		             if(current != null && sel_city.find('option[value="'+current+'"]').length>0 )
+		             	sel_city.find('option[value="'+current+'"]').prop('selected', true)
 		             change_city();
 		             change_district();
 		             change_barangay();
 		             change_area();
 		             change_avenue();
-		             get_top_address();
+		             // get_top_address();
 		        });
         	}
 
@@ -163,7 +166,8 @@
         		var province = $('#select-province').find(':selected').val();
         		var sel_district = $('#select-district');
 		        $.get( "/address/search",{'params':{'province':province,'city':city}}, function( data ) {
-		             lData = data['top'][0]
+		             lData = data['top']
+		             current = sel_district.val();
 
 		             districts = []
 		             for(d of lData)
@@ -182,11 +186,13 @@
 		             	elem += '<option value="'+x+'">'+x+'</option>';
 		             }
 		             sel_district.html(elem);
+		             if(current != null && sel_district.find('option[value="'+current+'"]').length>0 )
+		             	sel_district.find('option[value="'+current+'"]').prop('selected', true)
 		             change_district();
 		             change_barangay();
 		             change_area();
 		             change_avenue();
-		             get_top_address();
+		             // get_top_address();
 		        });
         	}
 
@@ -197,7 +203,8 @@
         		var district = $('#select-district').find(':selected').val();
         		var sel_barangay = $('#select-barangay');
 		        $.get( "/address/search",{'params':{'province':province,'city':city, 'district':district}}, function( data ) {
-		             lData = data['top'][0]
+		             lData = data['top']
+		             current = sel_barangay.val();
 
 		             barangays = []
 		             for(d of lData)
@@ -216,10 +223,12 @@
 		             	elem += '<option value="'+x+'">'+x+'</option>';
 		             }
 		             sel_barangay.html(elem);
+		             if(current != null && sel_barangay.find('option[value="'+current+'"]').length>0 )
+		             	sel_barangay.find('option[value="'+current+'"]').prop('selected', true)
 		             change_barangay();
 		             change_area();
 		             change_avenue();
-		             get_top_address();
+		             // get_top_address();
 		        });
         	}
 
@@ -231,8 +240,8 @@
         		var barangay = $('#select-barangay').find(':selected').val();
         		var sel_area = $('#select-area');
 		        $.get( "/address/search",{'params':{'province':province,'city':city, 'district':district,'barangay':barangay}}, function( data ) {
-		             lData = data['top'][0]
-
+		             lData = data['top']
+		             current = sel_area.val();
 		             areas = []
 		             for(d of lData)
 		             {
@@ -250,9 +259,11 @@
 		             	elem += '<option value="'+x+'">'+x+'</option>';
 		             }
 		             sel_area.html(elem);
+		             if(current != null && sel_area.find('option[value="'+current+'"]').length>0 )
+		             	sel_area.find('option[value="'+current+'"]').prop('selected', true)
 		             change_area();
 		             change_avenue();
-		             get_top_address();
+		             // get_top_address();
 		        });
         	}
 
@@ -265,7 +276,8 @@
         		var area = $('#select-area').find(':selected').val();
         		var sel_avenue = $('#select-avenue');
 		        $.get( "/address/search",{'params':{'province':province,'city':city, 'district':district,'barangay':barangay,'area':area}}, function( data ) {
-		             lData = data['top'][0]
+		             lData = data['top']
+		             current = sel_avenue.val();
 
 		             avenues = []
 		             for(d of lData)
@@ -284,8 +296,10 @@
 		             	elem += '<option value="'+x+'">'+x+'</option>';
 		             }
 		             sel_avenue.html(elem);
+		             if(current != null && sel_avenue.find('option[value="'+current+'"]').length>0 )
+		             	sel_avenue.find('option[value="'+current+'"]').prop('selected', true)
 		             change_avenue();
-		             get_top_address();
+		             // get_top_address();
 		        });
         	}
 
@@ -299,7 +313,8 @@
         		var avenue = $('#select-avenue').find(':selected').val();
         		var sel_street = $('#select-street');
 		        $.get( "/address/search",{'params':{'province':province,'city':city, 'district':district,'barangay':barangay,'area':area,'avenue':avenue}}, function( data ) {
-		             lData = data['top'][0]
+		             lData = data['top']
+		             current = sel_street.val();
 
 		             streets = []
 		             for(d of lData)
@@ -318,7 +333,9 @@
 		             	elem += '<option value="'+x+'">'+x+'</option>';
 		             }
 		             sel_street.html(elem);
-		             get_top_address();
+		             if(current != null && sel_street.find('option[value="'+current+'"]').length>0 )
+		             	sel_street.find('option[value="'+current+'"]').prop('selected', true)
+		             // get_top_address();
 		        });
         	}
 
@@ -334,7 +351,7 @@
         		var top_results = $('#top-results');
 		        $.get( "/address/search",{'params':{'province':province, 'city':city, 'district': district,'barangay':barangay, 'area':area, 'avenue': avenue, 'street':street},'limit':3}, function( data ) {
 		             elem = '<ul>';
-		             lData = data['top'][0]
+		             lData = data['top']
 		             for(d of lData )
 		             {
 		             	addr = '';
@@ -359,6 +376,9 @@
         	$(document).ready(function(){
         		get_top_address();
         		change_province();
+        		// $.get('/address/search',function(data){
+        			// console.log(data);
+        		// })
         	});
         	$('#select-province').on('change',change_province);
         	$('#select-city').on('change',change_city);
@@ -372,7 +392,19 @@
 			    $('#address').val($(this).text());
 			    $('#span-address').html($(this).text());
 			    $('#length').focus();
+			    $.get('/address/search',{'params':{'id':this.value}},function(data){
+			    	d = data.top[0]
+			    	keys = Object.keys(d);
+			    	delete keys[0];
+			    	delete keys[1];
+			    	delete keys[9];
 
+			    	keys.forEach(function(i){
+			    		$('#select-'+i).val(d[i]);
+			    		$('#select-'+i).trigger('change');
+			    	})
+			    })
+			    // $('select-province')
 			});
 			$('input').on('focus', function(){
 				$(this).select();
