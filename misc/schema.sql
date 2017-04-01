@@ -105,3 +105,5 @@ TRUNCATE TABLE login_attempts;
 TRUNCATE TABLE user_autologin;
 TRUNCATE TABLE user_profiles;
 TRUNCATE TABLE users;
+
+INSERT INTO users (username,password,email,last_ip,activated) VALUES ('admin','$P$B7yIdHyC6NaaxfM1ejCuIDIFTdOqCG0','admin@localhost.com','127.0.0.1',1);
