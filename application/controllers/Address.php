@@ -8,7 +8,10 @@ class Address extends CI_Controller {
                 $this->load->library('tank_auth');
                 $this->load->model('Address_model');
                 $this->load->model('Cluster_model');
-                if (!$this->tank_auth->is_logged_in()) {
+
+                $name = debug_backtrace()[1]['function'];
+
+                if (!$this->tank_auth->is_logged_in() && ($name == 'delete' || $name == 'modify' || $name == 'add')) {
                     $ret['success'] = 0;
                     $ret['msg'] = 'User not authorized!';
                     header('Content-Type: application/json');
