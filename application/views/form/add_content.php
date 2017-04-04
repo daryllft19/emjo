@@ -151,12 +151,13 @@
 		             sel_city.html(elem);
 		             if(current != null && sel_city.find('option[value="'+current+'"]').length>0 )
 		             	sel_city.find('option[value="'+current+'"]').prop('selected', true)
+		             // $('#select-province').trigger('change');
 		             change_city();
-		             change_district();
-		             change_barangay();
-		             change_area();
-		             change_avenue();
-		             // get_top_address();
+		             // change_district();
+		             // change_barangay();
+		             // change_area();
+		             // change_avenue();
+		             get_top_address();
 		        });
         	}
 
@@ -188,11 +189,12 @@
 		             sel_district.html(elem);
 		             if(current != null && sel_district.find('option[value="'+current+'"]').length>0 )
 		             	sel_district.find('option[value="'+current+'"]').prop('selected', true)
+		             // $('#select-city').trigger('change');
 		             change_district();
-		             change_barangay();
-		             change_area();
-		             change_avenue();
-		             // get_top_address();
+		             // change_barangay();
+		             // change_area();
+		             // change_avenue();
+		             get_top_address();
 		        });
         	}
 
@@ -202,7 +204,12 @@
         		var city = $('#select-city').find(':selected').val();
         		var district = $('#select-district').find(':selected').val();
         		var sel_barangay = $('#select-barangay');
-		        $.get( "/address/search",{'params':{'province':province,'city':city, 'district':district}}, function( data ) {
+        		var params = {
+        			'province':province,
+        			'city':city,
+        			'district':district
+        		}
+		        $.get( "/address/search",{'params':params}, function( data ) {
 		             lData = data['top']
 		             current = sel_barangay.val();
 
@@ -225,10 +232,11 @@
 		             sel_barangay.html(elem);
 		             if(current != null && sel_barangay.find('option[value="'+current+'"]').length>0 )
 		             	sel_barangay.find('option[value="'+current+'"]').prop('selected', true)
+		             // $('#select-district').trigger('change');
 		             change_barangay();
-		             change_area();
-		             change_avenue();
-		             // get_top_address();
+		             // change_area();
+		             // change_avenue();
+		             get_top_address();
 		        });
         	}
 
@@ -261,9 +269,10 @@
 		             sel_area.html(elem);
 		             if(current != null && sel_area.find('option[value="'+current+'"]').length>0 )
 		             	sel_area.find('option[value="'+current+'"]').prop('selected', true)
+		             // $('#select-barangay').trigger('change');
 		             change_area();
-		             change_avenue();
-		             // get_top_address();
+		             // change_avenue();
+		             get_top_address();
 		        });
         	}
 
@@ -298,8 +307,9 @@
 		             sel_avenue.html(elem);
 		             if(current != null && sel_avenue.find('option[value="'+current+'"]').length>0 )
 		             	sel_avenue.find('option[value="'+current+'"]').prop('selected', true)
+		             // $('#select-area').trigger('change');
 		             change_avenue();
-		             // get_top_address();
+		             get_top_address();
 		        });
         	}
 
@@ -335,7 +345,7 @@
 		             sel_street.html(elem);
 		             if(current != null && sel_street.find('option[value="'+current+'"]').length>0 )
 		             	sel_street.find('option[value="'+current+'"]').prop('selected', true)
-		             // get_top_address();
+		             get_top_address();
 		        });
         	}
 
@@ -349,9 +359,19 @@
         		var avenue = $('#select-avenue').find(':selected').val();
         		var street = $('#select-street').find(':selected').val();
         		var top_results = $('#top-results');
-		        $.get( "/address/search",{'params':{'province':province, 'city':city, 'district': district,'barangay':barangay, 'area':area, 'avenue': avenue, 'street':street},'limit':3}, function( data ) {
+        		var params = {
+        			'province':province, 
+        			'city':city, 
+        			'district': district,
+        			'barangay':barangay, 
+        			'area':area, 
+        			'avenue': avenue, 
+        			'street':street
+        		};
+		        $.get( "/address/search",{'params':params,'limit':3}, function( data ) {
 		             elem = '<ul>';
 		             lData = data['top']
+		             
 		             for(d of lData )
 		             {
 		             	addr = '';
@@ -374,44 +394,44 @@
         	}
  
         	$(document).ready(function(){
-        		get_top_address();
-        		change_province();
+        		// get_top_address();
+        		// change_province();
         		// $.get('/address/search',function(data){
         			// console.log(data);
         		// })
+	        	$('#select-province').on('load',change_province()).change(change_province);
+	        	$('#select-city').on('load',change_city()).change(change_city);
+	        	$('#select-district').on('load',change_district()).change(change_district);
+	        	$('#select-barangay').on('load',change_barangay()).change(change_barangay);
+	        	$('#select-area').on('load',change_area()).change(change_area);
+	        	$('#select-avenue').on('load',change_avenue()).change(change_avenue);
+	        	// $('select').on('change', get_top_address);	
+				$('#top-results').on('click', 'li', function(){
+				    $('#address_hidden').val(this.value);
+				    $('#address').val($(this).text());
+				    $('#span-address').html($(this).text());
+				    $('#length').focus();
+				    $.get('/address/search',{'params':{'id':this.value}},function(data){
+				    	d = data.top[0]
+				    	keys = Object.keys(d);
+				    	delete keys[0];
+				    	delete keys[1];
+				    	delete keys[9];
+
+				    	keys.forEach(function(i){
+				    		$('#select-'+i).val(d[i]);
+				    		$('#select-'+i).trigger('change');
+				    	})
+				    })
+				    // $('select-province')
+				});
+				$('input').on('focus', function(){
+					$(this).select();
+				})
+				$('#weight').on('keyup',compute_weight_constraint)
+
+				$('#height').on('keyup',compute_height_constraint)
         	});
-        	$('#select-province').on('change',change_province);
-        	$('#select-city').on('change',change_city);
-        	$('#select-district').on('change',change_district);
-        	$('#select-barangay').on('change',change_barangay);
-        	$('#select-area').on('change',change_area);
-        	$('#select-avenue').on('change',change_avenue);
-        	$('select').on('change', get_top_address);	
-			$('#top-results').on('click', 'li', function(){
-			    $('#address_hidden').val(this.value);
-			    $('#address').val($(this).text());
-			    $('#span-address').html($(this).text());
-			    $('#length').focus();
-			    $.get('/address/search',{'params':{'id':this.value}},function(data){
-			    	d = data.top[0]
-			    	keys = Object.keys(d);
-			    	delete keys[0];
-			    	delete keys[1];
-			    	delete keys[9];
-
-			    	keys.forEach(function(i){
-			    		$('#select-'+i).val(d[i]);
-			    		$('#select-'+i).trigger('change');
-			    	})
-			    })
-			    // $('select-province')
-			});
-			$('input').on('focus', function(){
-				$(this).select();
-			})
-			$('#weight').on('keyup',compute_weight_constraint)
-
-			$('#height').on('keyup',compute_height_constraint)
 
 			function compute_weight_constraint()
 			{
