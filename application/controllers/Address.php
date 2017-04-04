@@ -8,6 +8,13 @@ class Address extends CI_Controller {
                 $this->load->library('tank_auth');
                 $this->load->model('Address_model');
                 $this->load->model('Cluster_model');
+                if (!$this->tank_auth->is_logged_in()) {
+                    $ret['success'] = 0;
+                    $ret['msg'] = 'User not authorized!';
+                    header('Content-Type: application/json');
+                    echo json_encode($ret);
+                    exit();
+                }
         }
 
         public function index()

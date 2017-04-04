@@ -6,6 +6,16 @@ class Cluster extends CI_Controller {
                 parent::__construct();
                 // $this->load->helper('url_helper');
                 $this->load->model('Address_model');
+                $this->load->library('tank_auth');
+
+                if (!$this->tank_auth->is_logged_in()) {
+                    $ret['success'] = 0;
+                    $ret['msg'] = 'User not authorized!';
+                    header('Content-Type: application/json');
+                    echo json_encode($ret);
+                    exit();
+                }
+                // else
         }
 
         // public function cluster()
