@@ -72,6 +72,18 @@
     </div>
         <script>
         $('#cluster-select').ready(function(){
+
+          <?php
+          if (!empty($this->input->get('cluster')))
+          {
+          ?>
+
+          $('option[value=<?php echo $this->input->get('cluster');?>]').prop('selected', true).trigger('change');
+            
+          <?php
+          }
+          ?>
+
           var btn = $('#btn-clear-package');
           btn.hide();
         }).on('change', function(){
