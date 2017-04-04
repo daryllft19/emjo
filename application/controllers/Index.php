@@ -157,10 +157,10 @@ class Index extends CI_Controller {
         $this->load->library('form_validation');
 
 		$this->form_validation->set_rules('address_id', 'Address', 'required');
-		$this->form_validation->set_rules('length', 'Length', 'required');
-		$this->form_validation->set_rules('width', 'Width', 'required');
-		$this->form_validation->set_rules('height', 'Height', 'required');
-		$this->form_validation->set_rules('weight', 'Weight', 'required');
+		$this->form_validation->set_rules('length', 'Length', 'required|greater_than[0]');
+		$this->form_validation->set_rules('width', 'Width', 'required|greater_than[0]');
+		$this->form_validation->set_rules('height', 'Height', 'required|greater_than[0]');
+		$this->form_validation->set_rules('weight', 'Weight', 'required|greater_than[0]');
 		// $this->form_validation->set_rules('weight-constraint', 'Weight Constraint', 'required');
 		// $this->form_validation->set_rules('height-constraint', 'height Constraint', 'required');
 
