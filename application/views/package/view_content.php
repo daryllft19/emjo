@@ -16,8 +16,14 @@
                   ?>
                 </select>
               </div>
+              <?php
+                if($this->tank_auth->is_logged_in())
+                {
+              ?>
               <a href='#' onclick='clear_package();' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a>
- 
+              <?php
+                }
+              ?>
 
           <div class="table-responsive"">
               <table class="table table-hover">
@@ -98,7 +104,7 @@
                               location.reload();
                             }
                             else
-                              alert('Error!');
+                              alert((data.msg!=null)?data.msg:'Error!');
                           });
                       }else{
                         alert('Wrong confirmation!');
