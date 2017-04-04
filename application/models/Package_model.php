@@ -17,6 +17,7 @@ class Package_model extends CI_Model {
 						$this->db->from('package');
 						$this->db->join('address','address.id = address');
 						$this->db->join('cluster','cluster.id = cluster');
+						$this->db->order_by('arrival_date');
 						$this->db->where('cluster',$cluster);
 						$query = $this->db->get();
 						return $query->result_array();
