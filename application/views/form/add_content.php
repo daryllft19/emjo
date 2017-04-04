@@ -79,6 +79,7 @@
 
 					  <span id='span-address'><?php echo (strlen($input_address)>0)?$input_address:'N/A';?></span>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('address_id'); ?></span>
+					  <a href='#' onclick='clear_address();' class='btn btn-danger' id='btn-clear-address' role='button'>Clear Address</a>
 					<!-- </div> -->
 
 					<div class="form-group">
@@ -120,8 +121,8 @@
 					</div>
 
 
-				</div>
 				<button type="submit" name="submit" class="btn btn-default">Submit</button>
+				</div>
 			<!-- </div> -->
 			<?php echo form_close();?>
         </div>
@@ -392,13 +393,30 @@
 		             top_results.html(elem);
 		        });
         	}
- 
+ 			function clear_address(){
+ 				$('#address_hidden').val('');
+ 				$('#address').val('');
+				$('#span-address').html('N/A');
+
+				$('input').prop('disabled', true);
+ 			}
+
         	$(document).ready(function(){
         		// get_top_address();
         		// change_province();
         		// $.get('/address/search',function(data){
         			// console.log(data);
         		// })
+        		if($('#span-address').html() == 'N/A')
+					$('input').prop('disabled', true);
+        		
+        		$('#length, #width, #height, #weight').on('change',function(){
+        			if($(this).val() != '')
+        				$(this).next('.help-block').hide();
+
+        			console.log('val: '+$(this).val());
+        			console.log('html: '+$(this).html());
+        		})
 	        	$('#select-province').on('load',change_province()).change(change_province);
 	        	$('#select-city').on('load',change_city()).change(change_city);
 	        	$('#select-district').on('load',change_district()).change(change_district);
@@ -422,8 +440,9 @@
 				    		$('#select-'+i).val(d[i]);
 				    		$('#select-'+i).trigger('change');
 				    	})
+						$('input').prop('disabled', false);
+						$('#span-address').next('.help-block').html('');
 				    })
-				    // $('select-province')
 				});
 				$('input').on('focus', function(){
 					$(this).select();
