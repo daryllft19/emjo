@@ -72,7 +72,8 @@
 
 				</div>
 				<div class='col-md-6'>
-					<!-- <div class="form-group"> -->
+
+					<div class="form-group">
 					  <label for="length">Address:</label>
 					  <input type="hidden" id="address_hidden" name="address_id" value="<?php echo $input_address_id; ?> ">
 					  <input type="hidden" name='address' id="address" value="<?php echo $input_address; ?>">
@@ -80,11 +81,17 @@
 					  <span id='span-address'><?php echo (strlen($input_address)>0)?$input_address:'N/A';?></span>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('address_id'); ?></span>
 					  <a href='#' onclick='clear_address();' class='btn btn-danger' id='btn-clear-address' role='button'>Clear Address</a>
-					<!-- </div> -->
+					</div>
+
+					<div class="form-group">
+					  <label for="serial">Serial Number:</label>
+					  <input type="text" class="form-control" name='serial' id="serial" value='<?php echo $serial; ?>' autofocus autocomplete='off'>
+					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('serial'); ?></span>
+					</div>
 
 					<div class="form-group">
 					  <label for="length">Length (cm):</label>
-					  <input type="number" step="1" min=0 class="form-control" name='length' id="length" value='<?php echo $length; ?>' autofocus autocomplete='off'>
+					  <input type="number" step="1" min=0 class="form-control" name='length' id="length" value='<?php echo $length; ?>' autocomplete='off'>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('length'); ?></span>
 					</div>
 
@@ -136,6 +143,7 @@
     		$('button[name=submit]').on('click',function(e){
     			var submit_btn = $(this);
     			if(	$('#address_hidden').val() <= 0 ||
+    				$('#serial').val() == '' ||
     				$('#length').val() <= 0 ||
     				$('#width').val() <= 0 ||
     				$('#height').val() <= 0 ||
@@ -149,6 +157,7 @@
     				// 	e.preventDefault();
     				// })
     			var review_form = 	'<p><strong>Address</strong>: '+$('#span-address').html()+'</p>'+
+    								'<p><strong>Serial No</strong>: '+$('#serial').val()+'</p>'+
     								'<p><strong>Length (cm)</strong>: '+$('#length').val()+'</p>'+
     								'<p><strong>Width (cm)</strong>: '+$('#width').val()+'</p>'+
     								'<p><strong>Height (cm)</strong>: '+$('#height').val()+'</p>'+
@@ -164,6 +173,7 @@
                     	// submit_btn.trigger('click');
                     	var params = {
                     		'address' : $('#address_hidden').val(),
+                    		'serial' : $('#serial').val(),
                     		'length' : $('#length').val(),
                     		'width' : $('#width').val(),
                     		'height' : $('#height').val(),
@@ -178,7 +188,7 @@
                     		if(data.success = 1)
                     			$( "#dialog-review" ).html(review_form + '<p style="color:green;"><strong>Successfully added package!</strong></p>');
                     		else
-                    			$( "#dialog-review" ).html(review_form + '<p style="color:red;>Error prcessing package!</p>');
+                    			$( "#dialog-review" ).html(review_form + '<p style="color:red;>Error processing package!</p>');
 
                     		setTimeout(function(){
 	                    		$('#dialog-review').dialog('close');
@@ -189,6 +199,7 @@
                     'Add and view package' : function(){
                     	var params = {
                     		'address' : $('#address_hidden').val(),
+                    		'serial' : $('#serial').val(),
                     		'length' : $('#length').val(),
                     		'width' : $('#width').val(),
                     		'height' : $('#height').val(),
@@ -512,7 +523,7 @@
         		if($('#span-address').html() == 'N/A')
 					$('input').prop('disabled', true);
         		
-        		$('#length, #width, #height, #weight').on('change',function(){
+        		$('#serial, #length, #width, #height, #weight').on('change',function(){
         			if($(this).val() != '')
         				$(this).next('.help-block').hide();
 
