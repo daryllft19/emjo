@@ -34,6 +34,11 @@ class Address_model extends CI_Model {
 			$query = '';
 			$duplicate = FALSE;
 			$tags = FALSE;
+			$convert_cluster = TRUE;
+			if(isset($filter['convert'])){
+				$convert_cluster = $filter['convert'];
+				unset($filter['convert']);
+			}
 			if(isset($filter['tags']) && $filter['tags'] == TRUE)
 			{
 				unset($filter['tags']);
@@ -100,10 +105,12 @@ class Address_model extends CI_Model {
 			}
 				
 				$all = $query->result_array();
-				foreach ($all as $key => $value)
-				{
-					$clstr = $all[$key]['cluster'];
-					$all[$key]['cluster'] = $this->Cluster_model->get_cluster($clstr)['name'];	
+				if($convert_cluster == TRUE){
+					foreach ($all as $key => $value)
+					{
+						$clstr = $all[$key]['cluster'];
+						$all[$key]['cluster'] = $this->Cluster_model->get_cluster($clstr)['name'];	
+					}
 				}
 				return $all;
 			
