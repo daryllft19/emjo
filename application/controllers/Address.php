@@ -66,7 +66,17 @@ class Address extends CI_Controller {
                 $limit = 0;
             else
                 $limit = $this->input->get('limit');
-            $ret['top'] = $this->Address_model->search_address($this->input->get('params'), $this->input->get('limit'));
+            $params = $this->input->get('params');
+
+            if(isset($params['convert']) && $params['convert'] == 'false')
+                $params['convert'] = FALSE;
+            else
+                $params['convert'] = TRUE;
+            $ret['params']=$params['convert'];  
+            
+            $ret['top'] = $this->Address_model->search_address($params, $this->input->get('limit'));
+            // $ret['params']=$this->input->get('params')['convert'];
+            // $params['convert'] = TRUE;
 
             header('Content-Type: application/json');
             echo json_encode($ret);     
