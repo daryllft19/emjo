@@ -163,6 +163,7 @@ class Index extends CI_Controller {
         $this->load->library('form_validation');
 
 		$this->form_validation->set_rules('address_id', 'Address', 'required');
+		$this->form_validation->set_rules('serial', 'Serial Number', 'required');
 		$this->form_validation->set_rules('length', 'Length', 'required|greater_than[0]');
 		$this->form_validation->set_rules('width', 'Width', 'required|greater_than[0]');
 		$this->form_validation->set_rules('height', 'Height', 'required|greater_than[0]');
@@ -171,6 +172,7 @@ class Index extends CI_Controller {
 		// $this->form_validation->set_rules('height-constraint', 'height Constraint', 'required');
 
 		$address_id = $this->input->post('address_id');
+		$serial = $this->input->post('serial');
 		$address = $this->input->post('address');
 		$length = $this->input->post('length');
 		$width = $this->input->post('width');
@@ -182,6 +184,7 @@ class Index extends CI_Controller {
 		
 		$data['input_address_id'] = $address_id;
 		$data['input_address'] = $address;
+		$data['serial'] = $serial;
 		$data['length'] = $length;
 		$data['width'] = $width;
 		$data['height'] = $height;
