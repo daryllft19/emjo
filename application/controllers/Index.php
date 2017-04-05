@@ -97,7 +97,7 @@ class Index extends CI_Controller {
 
 	}
 
-	public function package()
+	public function package($cluster=-1)
 	{
 		// if (!$this->tank_auth->is_logged_in()) {
 		// 	redirect('/auth/login/');
@@ -124,6 +124,12 @@ class Index extends CI_Controller {
         	array_push($ret[$clstr['id']]['location'], $value);
         }
 		$data['ret']=$ret;
+		if($cluster != -1){
+			redirect('/index/package?cluster='.$cluster);
+			// $data['selected']=$cluster;
+		}
+		elseif(!empty($this->input->get('cluster')))
+			$data['selected']=$this->input->get('cluster');
 
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
