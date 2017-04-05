@@ -8,7 +8,9 @@ class Cluster extends CI_Controller {
                 $this->load->model('Address_model');
                 $this->load->library('tank_auth');
 
-                if (!$this->tank_auth->is_logged_in()) {
+                $name = debug_backtrace()[1]['function'];
+
+                if (!$this->tank_auth->is_logged_in() && ($name == 'delete' || $name == 'modify' || $name == 'clear')) {
                     $ret['success'] = 0;
                     $ret['msg'] = 'User not authorized!';
                     header('Content-Type: application/json');
