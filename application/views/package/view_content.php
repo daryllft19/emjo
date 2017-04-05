@@ -6,24 +6,36 @@
           <h1 class="page-header">Package</h1>
               <div class='input-group'>
                 <label for="cluster-select">Cluster:</label>
-                <select class="form-control" id="cluster-select">
-                  <option value='-1'>NONE</option>
-                  <?php
-                  foreach ($ret as $key => $value) {
-                    echo "<option value='".$key."'>".$value['name']."</option>";
-                  }
+                <div class='row'>
+                  <div class='col-sm-6'>
+                    <select class="form-control" id="cluster-select">
+                      <option value='-1'>NONE</option>
+                      <?php
+                      foreach ($ret as $key => $value) {
+                        echo "<option value='".$key."'>".$value['name']."</option>";
+                      }
+                      
+                      ?>
+                    </select>
+                  </div>
+
+                  <div class='col-sm-6'>
+                    <?php
+                      if($this->tank_auth->is_logged_in())
+                      {
+                    ?>
+                    <a href='#' onclick='clear_package();' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a>
+                    <?php
+                      }
+                    ?>
+                  </div>
+                </div>
+                <br>
+                <div class='col-large-6'>
+                  <big>Utilization Value : Max(L) * Max(W) * Max(H) = <strong><span id='utilization-value'>0</span></strong></big>
                   
-                  ?>
-                </select>
+                </div>
               </div>
-              <?php
-                if($this->tank_auth->is_logged_in())
-                {
-              ?>
-              <a href='#' onclick='clear_package();' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a>
-              <?php
-                }
-              ?>
 
           <div class="table-responsive" style='overflow: auto;max-height: 20em;'>
               <table class="table table-hover">
@@ -145,6 +157,9 @@
                 $.get( "/package/",{'cluster_id':valueSelected}, function( data ) {
                     var dBox = [];
                     var cluster = data['cluster']; 
+                    maxL = 0;
+                    maxW = 0;
+                    maxH = 0;
                     for (key in data['packages']){
                       row += "<tr data-cluster="+valueSelected+">";
                       row += "<td data-value='" + data['packages'][key].serial_no+"'>" + data['packages'][key].serial_no + "</td>";
@@ -183,7 +198,15 @@
                         z1: parseFloat(data['packages'][key]['z1']),
                         orientation: data['packages'][key]['orientation']                 
                       });
+
+                      if(data['packages'][key]['length'] > maxL)
+                          maxL = data['packages'][key]['length'];
+                      if(data['packages'][key]['width'] > maxW)
+                          maxW = data['packages'][key]['width'];
+                      if(data['packages'][key]['height'] > maxH)
+                          maxH = data['packages'][key]['height'];
                     }
+                    $('#utilization-value').html(maxL*maxH*maxW);
                     $('#package-table').html(row);
                     // engine.dispose();
                     draw_canvas(cluster.length, cluster.width, dBox, canvas, engine);
