@@ -25,7 +25,7 @@
                 }
               ?>
 
-          <div class="table-responsive"">
+          <div class="table-responsive" style='overflow: auto;max-height: 20em;'>
               <table class="table table-hover">
                 <thead>
                   <tr>
@@ -78,14 +78,14 @@
           {
           ?>
 
+          var btn = $('#btn-clear-package');
+          btn.hide();
           $('option[value=<?php echo $this->input->get('cluster');?>]').prop('selected', true).trigger('change');
             
           <?php
           }
           ?>
 
-          var btn = $('#btn-clear-package');
-          btn.hide();
         }).on('change', function(){
           var btn = $('#btn-clear-package');
           if($(this).val() == -1)
@@ -292,7 +292,7 @@
                   if(dBox.length > 0){
                     dBox.forEach(function(b, i){
                             box[b.id] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width/100 ,height: b.height/100,depth:b.length/100}, scene);
-                          console.log('created box in '+i +' | id:'+b.id);
+                          // console.log('created box in '+i +' | id:'+b.id);
                           // console.log('created box in '+i +' | id:'+b.id, box[i]);
                             pinkMat.emissiveColor = new BABYLON.Color3((b.weight/100), 0, 0);
                             box[b.id].material = pinkMat;
