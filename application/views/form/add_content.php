@@ -2,7 +2,7 @@
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Add Package</h1>
-			<form role='form' action='<?php echo site_url('index/form')?>' method='POST'>
+			<form role='form' id='form-add' action='<?php echo site_url('index/form')?>' method='POST'>
 			<!-- <div class='row'> -->
 				<div class='col-md-6'>
 					<div class='row'>
@@ -121,12 +121,63 @@
 					</div>
 
 
-				<button type="submit" name="submit" class="btn btn-default">Submit</button>
+				<button type="button" name="submit" class="btn btn-default">Submit</button>
 				</div>
 			<!-- </div> -->
-			<?php echo form_close();?>
+			
+			</form>
         </div>
+
+<div id="dialog-review" title="Review Package">
+</div>
+
         <script type="text/javascript">
+
+    		$('button[name=submit]').on('click',function(e){
+    			var submit_btn = $(this);
+    			if(	$('#address_hidden').val() <= 0 ||
+    				$('#length').val() <= 0 ||
+    				$('#width').val() <= 0 ||
+    				$('#height').val() <= 0 ||
+    				$('#weight').val() <= 0
+    				)
+    			{
+                    submit_btn.prop('type','submit');
+                    submit_btn.trigger('click');
+    			}
+    			var review_form = 	'<p><strong>Address</strong>: '+$('#span-address').html()+'</p>'+
+    								'<p><strong>Length (cm)</strong>: '+$('#length').val()+'</p>'+
+    								'<p><strong>Width (cm)</strong>: '+$('#width').val()+'</p>'+
+    								'<p><strong>Height (cm)</strong>: '+$('#height').val()+'</p>'+
+    								'<p><strong>Weight (kg)</strong>: '+$('#weight').val()+'</p>';
+    			$( "#dialog-review" ).html(review_form);
+    			$( "#dialog-review" ).dialog({
+                  modal: true,
+                  buttons: {
+                    'Add another' : function() {
+                    	// $('#form-add').submit();
+                    	console.log(this);
+                    	submit_btn.prop('type','submit');
+                    	submit_btn.trigger('click');
+                    },
+                    'Add and view package (NOT YET WORKING)' : function(){
+                    	var params = {
+                    		'id':$('#address_hidden').val(),
+                    		'convert': false
+                    	}
+                    	console.log(params);
+                    	$.get( "/address/search",{'params':params}, function( data ) {
+                    		console.log(data.top[0]);
+                    		cluster_id = data.top[0].cluster;
+	                    	submit_btn.prop('type','submit');
+	                    	submit_btn.trigger('click');
+                    		window.location = '/index/package?cluster='+cluster_id;
+                    	})
+                    	$(this).dialog('close');
+                    }
+                  }
+                });
+    		})
 
         	function change_province()
         	{
@@ -414,8 +465,6 @@
         			if($(this).val() != '')
         				$(this).next('.help-block').hide();
 
-        			console.log('val: '+$(this).val());
-        			console.log('html: '+$(this).html());
         		})
 	        	$('#select-province').on('load',change_province()).change(change_province);
 	        	$('#select-city').on('load',change_city()).change(change_city);
