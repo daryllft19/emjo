@@ -31,6 +31,7 @@ class Package extends CI_Controller {
             try{
                 $params = $this->input->post('params');
                 $address = $params['address'];
+                $serial = $params['serial'];
                 $length = $params['length'];
                 $width = $params['width'];
                 $height = $params['height'];
@@ -39,11 +40,11 @@ class Package extends CI_Controller {
                 $height_constraint = $params['height_constraint'];
                 $weight_constraint = $params['weight_constraint'];
 
-                if($address <= 0 || $length <= 0 || $width <= 0 || $height <= 0 || $weight <= 0)
+                if($serial == '' || $address <= 0 || $length <= 0 || $width <= 0 || $height <= 0 || $weight <= 0)
                     throw new Exception("Error Processing Request", 1);
                     
 
-                $return_value = $this->Package_model->set_package('0000000',$address, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
+                $return_value = $this->Package_model->set_package($serial,$address, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
                 $ret['success'] = $return_value;
             }
             catch(Exception $e)
