@@ -2,7 +2,7 @@
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Add Package</h1>
-			<form role='form' id='form-add' action='<?php echo site_url('index/form')?>' method='POST'>
+			<form role='form' id='form-add' method='POST'>
 			<!-- <div class='row'> -->
 				<div class='col-md-6'>
 					<div class='row'>
@@ -145,6 +145,9 @@
                     submit_btn.prop('type','submit');
                     submit_btn.trigger('click');
     			}
+    				// $('#form-add').submit(function(e){
+    				// 	e.preventDefault();
+    				// })
     			var review_form = 	'<p><strong>Address</strong>: '+$('#span-address').html()+'</p>'+
     								'<p><strong>Length (cm)</strong>: '+$('#length').val()+'</p>'+
     								'<p><strong>Width (cm)</strong>: '+$('#width').val()+'</p>'+
@@ -156,24 +159,72 @@
                   buttons: {
                     'Add another' : function() {
                     	// $('#form-add').submit();
-                    	console.log(this);
-                    	submit_btn.prop('type','submit');
-                    	submit_btn.trigger('click');
-                    },
-                    'Add and view package (NOT YET WORKING)' : function(){
+                    	// console.log(this);
+                    	// submit_btn.prop('type','submit');
+                    	// submit_btn.trigger('click');
                     	var params = {
-                    		'id':$('#address_hidden').val(),
-                    		'convert': false
+                    		'address' : $('#address_hidden').val(),
+                    		'length' : $('#length').val(),
+                    		'width' : $('#width').val(),
+                    		'height' : $('#height').val(),
+                    		'weight' : $('#weight').val(),
+                    		'fragile' :$('#fragile').is(':checked'),
+                    		'height_constraint' :$('#height-constraint').val(),
+                    		'weight_constraint' :$('#weight-constraint').val()
                     	}
-                    	console.log(params);
-                    	$.get( "/address/search",{'params':params}, function( data ) {
-                    		console.log(data.top[0]);
-                    		cluster_id = data.top[0].cluster;
-	                    	submit_btn.prop('type','submit');
-	                    	submit_btn.trigger('click');
-                    		window.location = '/index/package?cluster='+cluster_id;
+                    	$('button').prop('disabled', true);
+                    	$( "#dialog-review" ).html(review_form + '<p>Processing package...</p>');
+                    	$.post('/package/add',{'params':params},function(data){
+                    		if(data.success = 1)
+                    			$( "#dialog-review" ).html(review_form + '<p style="color:green;"><strong>Successfully added package!</strong></p>');
+                    		else
+                    			$( "#dialog-review" ).html(review_form + '<p style="color:red;>Error prcessing package!</p>');
+
+                    		setTimeout(function(){
+	                    		$('#dialog-review').dialog('close');
+                    			$('button').prop('disabled', false);
+	                    	},2000);
                     	})
-                    	$(this).dialog('close');
+                    },
+                    'Add and view package' : function(){
+                    	var params = {
+                    		'address' : $('#address_hidden').val(),
+                    		'length' : $('#length').val(),
+                    		'width' : $('#width').val(),
+                    		'height' : $('#height').val(),
+                    		'weight' : $('#weight').val(),
+                    		'fragile' :$('#fragile').is(':checked'),
+                    		'height_constraint' :$('#height-constraint').val(),
+                    		'weight_constraint' :$('#weight-constraint').val()
+                    	}
+                    	$('button').prop('disabled', true);
+                    	$( "#dialog-review" ).html(review_form + '<p>Processing package...</p>');
+                    	$.post('/package/add',{'params':params},function(data){
+                    		if(data.success = 1){
+                    			$( "#dialog-review" ).html(review_form + '<p style="color:green;"><strong>Successfully added package! Proceeding to view page!</strong></p>');
+
+		                    	var success_params = {
+		                    		'id': params['address'],
+		                    		'convert': false
+		                    	}
+
+		                    	$.get( "/address/search",{'params':success_params}, function( data ) {
+		                    		cluster_id = data.top[0].cluster;
+
+                    				setTimeout(function(){
+		                    			window.location = '/index/package?cluster='+cluster_id;
+		                    		},3000)
+		                    	})
+
+                    		}
+                    		else
+                    			$( "#dialog-review" ).html(review_form + '<p style="color:red;>Error prcessing package!</p>');
+
+                    		setTimeout(function(){
+	                    		$('#dialog-review').dialog('close');
+                    			$('button').prop('disabled', false);
+	                    	},2000);
+                    	})
                     }
                   }
                 });
