@@ -201,7 +201,6 @@ class Package_model extends CI_Model {
 
 		public function set_package($serial_no='000000', $address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint)
 		{
-
 		    $this->load->helper('url');
 
 		    $x = 0;//$this->Package_model->count_package(1);
@@ -325,22 +324,8 @@ class Package_model extends CI_Model {
 					array_push($candidates, $corner);
 				}
 
-		        $constraint = array();
-				
-		        $height_constraint = $this->height_check($packages, $candidates, $length, $width, $height, $height_constraint_value);
-				if(is_string($height_constraint) && $height_constraint == 'height')
-				{
-					array_push($constraint, $height_constraint);
-				}
-
-				if(!empty($constraint))
-				{
-					return $constraint;
-				}
-
 				if(empty($candidates))
-					return false;
-
+					return array('dimension');
 
 				$first_candidate = $this->get_minimum_area($packages, $candidates, $length, $width, $height);
 				if(empty($first_candidate))
@@ -469,19 +454,29 @@ class Package_model extends CI_Model {
 		            $corners = $this->get_corners($packages, true, $rotating_priority, $length, $width);
 		            // ($packages, true, $priority, $length, $width);
 		        }
-
 		        $constraint = array();
+				if(empty($candidates))
+					array_push($constraint, 'dimension');
+
+		        $candidate_copy = $candidates;
 
 		        $weight_constraint = $this->weight_check($packages, $candidates, $length, $width, $weight, $weight_constraint_value);
 				if(is_string($weight_constraint) && $weight_constraint == 'weight')
 				{
 					array_push($constraint, $weight_constraint);
 				}
-		        
+				if(empty($candidates))
+					$candidates = $candidate_copy;
+
 		        $height_constraint = $this->height_check($packages, $candidates, $length, $width, $height, $height_constraint_value);
 				if(is_string($height_constraint) && $height_constraint == 'height')
 				{
 					array_push($constraint, $height_constraint);
+				}
+
+				if(!empty($constraint))
+				{
+					return $constraint;
 				}
            	
            		//sort candidates depending on priority
@@ -499,15 +494,7 @@ class Package_model extends CI_Model {
 				// var_dump('candidates', $candidates);
 		        // var_dump('best', $this->get_minimum_area($packages, $candidates, $length, $width, $height));
 				// return false;
-				if(!empty($constraint))
-				{
-					return $constraint;
-				}
 
-				if(empty($candidates))
-				{
-					return false;
-				}
 				$candidate = $this->get_minimum_area($packages, $candidates, $length, $width, $height);
 	            $x = $candidate['x'];
 	            $y = $candidate['y'];			
