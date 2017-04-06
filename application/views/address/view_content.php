@@ -349,7 +349,14 @@
                   modal: true
                 });
               $.get( "/address/modify",{'params':params}, function( data ) {
-                $('#dialog-message').html('<p>You have modified ' + attr + ' to ' + (params[attr]==''?'None':params[attr]) +'!</p>');
+                if(attr == 'is_serviceable'){
+                  if(params[attr] == true)
+                    $('#dialog-message').html('<p>Address can now be serviced!</p>');
+                  else
+                    $('#dialog-message').html('<p>Address is now disabled for service!</p>');
+                }
+                else
+                  $('#dialog-message').html('<p>You have modified ' + attr + ' to ' + (params[attr]==''?'None':params[attr]) +'!</p>');
                 $( "#dialog-message" ).dialog({
                   modal: true,
                   buttons: {
