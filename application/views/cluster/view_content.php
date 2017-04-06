@@ -55,9 +55,18 @@
           $.get('/cluster/count',{'cluster_id':cluster_id}, function(data){
 
             $(spans[i]).html(data.count);
+            
+            clear_btn = $($(spans[i]).parents('tr').children('td:last-child').find('a')[0]);
+            if(data.count <= 0 )
+              clear_btn.addClass('disabled');
+            else
+              clear_btn.removeClass('disabled')
           })
+
         });
+
      }
+
      setInterval(count, 5000);
       function clear_package(id)
         {
@@ -142,6 +151,7 @@
         }).on('focus',function(){
           var node = $(this);
           var prev_content = node.html();
+          node.data('prev', prev_content);
           node.keypress(function(e){
             var key = e.which;
 
@@ -158,7 +168,20 @@
               
             }
           });
+        }).on('focusout',function(){
+          var node = $(this);
+
+          params = {};
+          params['id'] = node.parent('tr').data('cluster');
+          params['attr'] = node.data('attr');
+          params[params['attr']] = node.html();
+          params['old'] = node.data('prev');
+          node.prop('contenteditable',false);
+          if(node.data('prev') != node.html())
+            modify_cluster(node,params);
+          node.removeData('prev');
         });
+
 
         function modify_cluster(node, params)
         {
