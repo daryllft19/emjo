@@ -114,7 +114,7 @@
 					</div>
 
 					<div class="checkbox">
-					  <label><input type="checkbox" name='fragile' <?php if($fragile) echo 'checked' ?>>Fragile</label>
+					  <label><input type="checkbox" id='fragile' name='fragile' <?php if($fragile) echo 'checked' ?>>Fragile</label>
 					</div>
 
 					<div class="form-group">
@@ -166,7 +166,7 @@
     			$( "#dialog-review" ).dialog({
                   modal: true,
                   buttons: {
-                    'Add another' : function() {
+                    'Save and Add another' : function() {
                     	// $('#form-add').submit();
                     	// console.log(this);
                     	// submit_btn.prop('type','submit');
@@ -185,18 +185,34 @@
                     	$('button').prop('disabled', true);
                     	$( "#dialog-review" ).html(review_form + '<p>Processing package...</p>');
                     	$.post('/package/add',{'params':params},function(data){
-                    		if(data.success = 1)
-                    			$( "#dialog-review" ).html(review_form + '<p style="color:green;"><strong>Successfully added package!</strong></p>');
-                    		else
-                    			$( "#dialog-review" ).html(review_form + '<p style="color:red;>Error processing package!</p>');
+                    		if(data.success == 1){
+                    			$( "#dialog-review" ).html( review_form+'<p style="color:green;"><strong>Successfully added package!</strong></p>');
+                    			$('input').val('').prop('disabled',true);
+                    			$('#span-address').html('N/A')
+                    		}
+                    		else{
+                    			failed = '';
+                    			if(data.success.indexOf('dimension') >= 0)
+                    				failed += 'Package\'s dimension exceeds cluster.<br/>';
+                    			if(data.success.indexOf('weight')  >= 0)
+                    				failed += 'Package exceeds weight constraint of package below.<br/>';
+                    			if(data.success.indexOf('height') >= 0)
+                    				failed += 'Package exceeds height constraint of package below.<br/>';
+
+                    			err_msg = 	'<p style="color:red;">'+
+                    						'Error processing package!<br/>'+
+                    						failed+
+                    						'</p>'
+                    			$( "#dialog-review" ).html(review_form+err_msg);
+                    		}
 
                     		setTimeout(function(){
 	                    		$('#dialog-review').dialog('close');
                     			$('button').prop('disabled', false);
-	                    	},2000);
+	                    	},2000+2000*(data.success.length || 0));
                     	})
                     },
-                    'Add and view package' : function(){
+                    'Add and View package' : function(){
                     	var params = {
                     		'address' : $('#address_hidden').val(),
                     		'serial' : $('#serial').val(),
@@ -211,7 +227,7 @@
                     	$('button').prop('disabled', true);
                     	$( "#dialog-review" ).html(review_form + '<p>Processing package...</p>');
                     	$.post('/package/add',{'params':params},function(data){
-                    		if(data.success = 1){
+                    		if(data.success == 1){
                     			$( "#dialog-review" ).html(review_form + '<p style="color:green;"><strong>Successfully added package! Proceeding to view page!</strong></p>');
 
 		                    	var success_params = {
@@ -222,19 +238,34 @@
 		                    	$.get( "/address/search",{'params':success_params}, function( data ) {
 		                    		cluster_id = data.top[0].cluster;
 
-                    				setTimeout(function(){
+                    				setTimeout(function(){ 
 		                    			window.location = '/index/package?cluster='+cluster_id;
 		                    		},3000)
 		                    	})
 
                     		}
                     		else
-                    			$( "#dialog-review" ).html(review_form + '<p style="color:red;>Error prcessing package!</p>');
+                    		{
+								failed = '';
+                    			if(data.success.indexOf('dimension') >= 0)
+                    				failed += 'Package\'s dimension exceeds cluster.<br/>';
+                    			if(data.success.indexOf('weight')  >= 0)
+                    				failed += 'Package exceeds weight constraint of package below.<br/>';
+                    			if(data.success.indexOf('height') >= 0)
+                    				failed += 'Package exceeds height constraint of package below.<br/>';
+
+                    			err_msg = 	'<p style="color:red;">'+
+                    						'Error processing package!<br/>'+
+                    						failed+
+                    						'</p>'
+                    			$( "#dialog-review" ).html(review_form+err_msg);
+                    		}
+
 
                     		setTimeout(function(){
 	                    		$('#dialog-review').dialog('close');
                     			$('button').prop('disabled', false);
-	                    	},2000);
+	                    	},2000+2000*(data.success.length || 0));
                     	})
                     }
                   }
@@ -539,7 +570,7 @@
 				    $('#address_hidden').val(this.value);
 				    $('#address').val($(this).text());
 				    $('#span-address').html($(this).text());
-				    $('#length').focus();
+				    $('#serial').focus();
 				    $.get('/address/search',{'params':{'id':this.value}},function(data){
 				    	d = data.top[0]
 				    	keys = Object.keys(d);
