@@ -193,17 +193,18 @@ class Index extends CI_Controller {
 		$data['weight_constraint'] = $weight_constraint;
 		$data['fragile'] = $fragile;
 		// var_dump();
-		if ($this->form_validation->run() === TRUE)
-		{
-			if($fragile == 'on')
-				$fragile = TRUE;
-			else
-				$fragile = FALSE;
+		$this->form_validation->run();
+		// if ($this->form_validation->run() === TRUE)
+		// {
+		// 	if($fragile == 'on')
+		// 		$fragile = TRUE;
+		// 	else
+		// 		$fragile = FALSE;
 
-			$this->add($address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
-			// echo '<script>alert("Wrong input!")</script>';
-			// $this->index('form');
-		}
+		// 	$this->add($address_id, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
+		// 	// echo '<script>alert("Wrong input!")</script>';
+		// 	// $this->index('form');
+		// }
 
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
