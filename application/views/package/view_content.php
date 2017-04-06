@@ -47,6 +47,8 @@
                     <th>Width (cm)</th>
                     <th>Height (cm)</th>
                     <th>Weight (kg)</th>
+                    <th>Height Constraint(cm)</th>
+                    <th>Weight Constraint(kg)</th>
                     <th>Timestamp (UTC)</th>
                     <th>Fragile</th>
                   </tr>
@@ -161,13 +163,15 @@
                     maxW = 0;
                     maxH = 0;
                     for (key in data['packages']){
-                      row += "<tr data-cluster="+valueSelected+">";
+                      row += "<tr data-address="+data['packages'][key].id+" data-cluster="+valueSelected+">";
                       row += "<td data-value='" + data['packages'][key].serial_no+"'>" + data['packages'][key].serial_no + "</td>";
                       row += "<td data-value='" + data['packages'][key].address+"'>" + data['packages'][key]['address'].city + "</td>";
                       row += "<td data-value='" + data['packages'][key].length+"'>" + data['packages'][key].length + "</td>";
                       row += "<td data-value='" + data['packages'][key].width+"'>" + data['packages'][key].width + "</td>";
                       row += "<td data-value='" + data['packages'][key].height+"'>" + data['packages'][key].height + "</td>";
                       row += "<td data-value='" + data['packages'][key].weight+"'>" + data['packages'][key].weight + "</td>";
+                      row += "<td data-value='" + data['packages'][key].height_constraint+"'>" + data['packages'][key].height_constraint + "</td>";
+                      row += "<td data-value='" + data['packages'][key].weight_constraint+"'>" + data['packages'][key].weight_constraint + "</td>";
                       date = data['packages'][key].arrival_date;
                       client_date = new Date(date).toLocaleString();
                       row += "<td data-value='" + date+"'>" + client_date + "</td>";
@@ -209,7 +213,7 @@
                     $('#utilization-value').html(maxL*maxH*maxW);
                     $('#package-table').html(row);
                     // engine.dispose();
-                    draw_canvas(cluster.length, cluster.width, dBox, canvas, engine);
+                    draw_canvas(cluster.length, cluster.width, dBox, canvas, engine, box);
                 });
               }
               row = '';
@@ -222,9 +226,13 @@
           });
           // $('#cluster-select').on('change', function (e) {  
           // window.addEventListener('DOMContentLoaded', function(){
-
-
-          var draw_canvas = function(cluster_length, cluster_width, dBox, canvas, engine){   
+          var box = {}
+          $('table').on('mouseover','tr',function(){
+            address = $(this).data('address')
+            // box[address].
+          })
+          
+          var draw_canvas = function(cluster_length, cluster_width, dBox, canvas, engine, box){   
 
 
               var createScene = function () {
@@ -237,8 +245,6 @@
 
                   var material = new BABYLON.StandardMaterial('wireframe', scene);
                   material.wireframe = true;
-
-                  var pinkMat = new BABYLON.StandardMaterial("pink", scene);
                   
 
                   var mouseOverUnit = function(unit_mesh) {
@@ -263,12 +269,17 @@
                         height.prop('innerText',box.height);
                         weight.prop('innerText',box.weight);
                         unit_mesh.source.material = material;
+                        $('tr[data-address='+box.id+']').addClass('active');
                         // console.log(unit_mesh);
                         unit_mesh.meshUnderPointer.renderOutline = true;  
                         // unit_mesh.meshUnderPointer.outlineWidth = 0.1;
                     }
                   }
-                  
+
+                  var hover_table = function(unit_mesh) {
+                    // console.log(unit_mesh)
+                  }
+
                   var mouseOutUnit = function(unit_mesh) {
                     if (unit_mesh.source !== null) {
 
@@ -279,6 +290,7 @@
                         height = $('#box-info-height');
                         weight = $('#box-info-weight');
                         // box = dBox[unit_mesh.source.name.replace('box', '')];
+                        box = dBox[unit_mesh.source.name.replace('box', '')];
                         id.prop('innerText','N/A');
                         address.prop('innerText','N/A');
                         length.prop('innerText','N/A');
@@ -286,9 +298,9 @@
                         height.prop('innerText','N/A');
                         weight.prop('innerText','N/A');
 
-                        // console.log(box);
+                        $('tr[data-address='+box.id+']').removeClass('active');
                         // console.log(id);
-                        unit_mesh.source.material = pinkMat;
+                        unit_mesh.source.material = box.material;
                         // unit_mesh.source.material = box[id].material;
                         unit_mesh.source.renderOutline = false; 
                         // unit_mesh.source.outlineWidth = 0.1;
@@ -308,17 +320,27 @@
 
                   var action_mouse_over = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, mouseOverUnit);
                   var action_mouse_out = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, mouseOutUnit);
+                  var action_hover_table = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnEveryFrameTrigger, hover_table);
 
-                  var box = {}
+                  // var box = {}
                   // for (var i = 1; i <= 4; i++) {
                   // for (var i = 1; i <= Object.keys(dBox).length; i++) {
+                  var max_weight = Math.max.apply(Math,dBox.map(function(o){return o.weight;}));
+
                   if(dBox.length > 0){
                     dBox.forEach(function(b, i){
                             box[b.id] = BABYLON.MeshBuilder.CreateBox("box"+i,  {width: b.width/100 ,height: b.height/100,depth:b.length/100}, scene);
                           // console.log('created box in '+i +' | id:'+b.id);
                           // console.log('created box in '+i +' | id:'+b.id, box[i]);
-                            pinkMat.emissiveColor = new BABYLON.Color3((b.weight/100), 0, 0);
-                            box[b.id].material = pinkMat;
+                            var mat = new BABYLON.StandardMaterial("color", scene);
+                            // mat.emissiveColor = new BABYLON.Color3((b.weight/500)*200, 150-(b.weight/500)*150, 50);
+                            r = b.weight/max_weight;
+                            g = 1-(b.weight/max_weight)
+
+                            mat.diffuseColor = new BABYLON.Color3(r,g,0.4);
+                            box[b.id].material = mat;
+                            b['material'] = mat;
+
                             xcalibrate = (cluster_length/100)/2;
                             ycalibrate = (cluster_width/100)/2;
                             y = ((b.height/100)/2)+b.z1/100;
@@ -359,6 +381,8 @@
                   //     box[id].renderOutline = false;
                   //   }
                   // });
+                  scene.actionManager = new BABYLON.ActionManager(scene);
+                  // scene.actionManager.registerAction(action_hover_table)
                   return scene;
               }
 
