@@ -8,6 +8,8 @@ class Package extends CI_Controller {
                 $this->load->model('Package_model');
                 $this->load->model('Address_model');
                 $this->load->model('Cluster_model');
+
+                header('Content-Type: application/json');   
         }
 
         public function index()
@@ -50,11 +52,27 @@ class Package extends CI_Controller {
             catch(Exception $e)
             {
                 $ret['success'] = 0;
-                $ret['msg'] = 'Error!';
+                $ret['msg'] = 'Error adding!';
             }
             // $ret
-            header('Content-Type: application/json');
-            echo json_encode($ret);   
+
+            echo json_encode($ret);
+        }
+
+        public function delete()
+        {
+            $ret = array();
+            try{
+                $params = $this->input->post('params');
+
+                $ret['success'] = $this->Package_model->delete_package($params);
+            }
+            catch(Exception $e)
+            {
+                $ret['success'] = 0;
+                $ret['msg'] = 'Error deleting';
+            }
+            echo json_encode($ret);
         }
 
 }
