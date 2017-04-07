@@ -7,6 +7,26 @@ class Package_model extends CI_Model {
 				$this->load->model('Address_model');
         }
 
+        public function modify_package($dArgs)
+        {
+        	try
+        	{
+        		$params = $dArgs['params'];
+        		$data = $dArgs['data'];
+
+        		foreach ($params as $key => $value) {
+        			$this->db->where($key, $value);
+        		}
+				$this->db->update('package',$data);
+
+				return TRUE;
+        	}
+        	catch(Exception $e)
+        	{
+        		return $e;
+        	}
+        }
+
         public function delete_package($dArgs)
         {
         	try{
@@ -18,6 +38,7 @@ class Package_model extends CI_Model {
 				$this->db->join('cluster','cluster.id = cluster');
 				$this->db->where('cluster',$dArgs['cluster']);
 				$this->db->where('arrival_date>',$package['arrival_date']);
+				$this->db->order_by('arrival_date','asc');
 				$packages_to_retain = $this->db->get()->result_array();
 
 				// deletes all package including packages put after
@@ -25,6 +46,7 @@ class Package_model extends CI_Model {
 				$this->db->where_in('id', array_merge_recursive($temp,array($dArgs['id'])));
 		        $this->db->delete('package');
 
+		        // $order = array();
 		        foreach ($packages_to_retain as $key => $p) {
 		        	$serial = $p['serial_no'];
 		        	$address = $p['address'];
@@ -35,7 +57,18 @@ class Package_model extends CI_Model {
 		        	$fragile = $p['is_fragile'];
 		        	$height_constraint = $p['height_constraint'];
 		        	$weight_constraint = $p['weight_constraint'];
-		        	$this->set_package($serial,$address, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
+		        	$arrival_date = $p['arrival_date'];
+		        	$entry = $this->set_package($serial,$address, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
+		        	
+		        	$params = array(
+		        		'id' => $entry
+		        		);
+
+		        	$data = array(
+		        		'arrival_date' => $arrival_date
+		        		);
+
+		        	$this->modify_package(array('params'=>$params,'data'=>$data));
 		        }
 		        return 1;
         	}
@@ -298,7 +331,7 @@ class Package_model extends CI_Model {
 			    }
 
 			    $this->db->insert('package', $data);
-			    return true;
+			    return $this->db->insert_id();
 		    }
 		    return false;
 		}
