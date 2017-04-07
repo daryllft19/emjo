@@ -7,29 +7,21 @@ class Cluster extends CI_Controller {
                 // $this->load->helper('url_helper');
                 $this->load->model('Address_model');
                 $this->load->library('tank_auth');
+                header('Content-Type: application/json');
 
-                $name = debug_backtrace()[1]['function'];
+                $name = $this->router->fetch_method();
 
                 if (!$this->tank_auth->is_logged_in() && ($name == 'delete' || $name == 'modify' || $name == 'clear')) {
                     $ret['success'] = 0;
                     $ret['msg'] = 'User not authorized!';
-                    header('Content-Type: application/json');
                     echo json_encode($ret);
                     exit();
                 }
-                // else
         }
 
-        // public function cluster()
-        // {
-        //     $data['cluster']=$this->Cluster_model->get_cluster();
-        //     $this->load->view('template/view_header');
-        //     $this->load->view('template/view_top');
-        //     $this->load->view('template/view_menu');
-        //     $this->load->view('cluster/view_content',$data);
-        //     $this->load->view('template/view_footer');
-            
-        // }
+        public function index()
+        {
+        }
 
         public function clear()
         {
