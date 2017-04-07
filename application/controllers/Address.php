@@ -9,8 +9,8 @@ class Address extends CI_Controller {
                 $this->load->model('Address_model');
                 $this->load->model('Cluster_model');
 
-                $name = debug_backtrace()[1]['function'];
-
+                $name = $this->router->fetch_method();
+                
                 if (!$this->tank_auth->is_logged_in() && ($name == 'delete' || $name == 'modify' || $name == 'add')) {
                     $ret['success'] = 0;
                     $ret['msg'] = 'User not authorized!';
