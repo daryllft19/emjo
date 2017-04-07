@@ -102,4 +102,25 @@ class Cluster_model extends CI_Model {
 				return array('count'=>0);
 			}
         }
+
+        public function export($id){
+        	$address = $this->Address_model->search_address(array('cluster'=>$id));
+        	$address_id = array();
+
+			try{
+				foreach ($address as $key => $value) {
+					array_push($address_id, $value['id']);
+				}
+				$this->db->select('serial_no, length, width, height, weight, height_constraint, weight_constraint, arrival_date,is_fragile');
+	        	$this->db->where_in('address',$address_id);
+	        	// $this->db->get('package');
+	        	// $query = $this->db->get('package');
+	        	$query = $this->db->get('package');
+	        	return $query->result_array();
+			}
+			catch(Exception $e)
+			{
+				return array('count'=>0);
+			}			
+        }
 }
