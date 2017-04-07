@@ -7,7 +7,43 @@ class Package_model extends CI_Model {
 				$this->load->model('Address_model');
         }
 
+        public function delete_package($dArgs)
+        {
+        	try{
+	        	$package = $this->get_package($dArgs['id']);
+	        	// get packages put after package to be deleted
+	        	$this->db->select('package.*');
+				$this->db->from('package');
+				$this->db->join('address','address.id = address');
+				$this->db->join('cluster','cluster.id = cluster');
+				$this->db->where('cluster',$dArgs['cluster']);
+				$this->db->where('arrival_date>',$package['arrival_date']);
+				$packages_to_retain = $this->db->get()->result_array();
 
+				// deletes all package including packages put after
+				$temp = array_column($packages_to_retain, 'id');
+				$this->db->where_in('id', array_merge_recursive($temp,array($dArgs['id'])));
+		        $this->db->delete('package');
+
+		        foreach ($packages_to_retain as $key => $p) {
+		        	$serial = $p['serial_no'];
+		        	$address = $p['address'];
+		        	$length = $p['length'];
+		        	$width = $p['width'];
+		        	$height = $p['height'];
+		        	$weight = $p['weight'];
+		        	$fragile = $p['is_fragile'];
+		        	$height_constraint = $p['height_constraint'];
+		        	$weight_constraint = $p['weight_constraint'];
+		        	$this->set_package($serial,$address, $length, $width, $height, $weight, $fragile, $height_constraint, $weight_constraint);
+		        }
+		        return 1;
+        	}
+        	catch(Exception $e)
+        	{
+        		return 0;
+        	}
+        }
 
 		public function get_package($id = -1,$cluster=-1, $x=-1, $y=-1, $z=-1)
 		{
