@@ -55,12 +55,15 @@
           $.get('/cluster/count',{'cluster_id':cluster_id}, function(data){
 
             $(spans[i]).html(data.count);
-            
             clear_btn = $($(spans[i]).parents('tr').children('td:last-child').find('a')[0]);
-            if(data.count <= 0 )
+            if(data.count <= 0 ){
+              $($(spans[i])).parents('tr').find('td[contenteditable]').prop('contenteditable',true);
               clear_btn.addClass('disabled');
-            else
+            }
+            else{
+              $($(spans[i])).parents('tr').find('td[contenteditable]').prop('contenteditable',false);
               clear_btn.removeClass('disabled')
+            }
           })
 
         });
@@ -85,6 +88,7 @@
                           $.get( "/cluster/clear",{'cluster_id':cluster}, function(data){
                             if(data.success == 1)
                             {
+                              count();
                               alert('Cleared cluster of packages!');
                               node.dialog("close");
                             }
@@ -143,8 +147,8 @@
         $('td[contenteditable]').on('mouseover',function(){
           var node = $(this);
           node.data('border', node.css('border'));
-          node.css('border','1px solid rgb(30,144,255)');
-          node.prop('contenteditable',true);
+          if(node.prop('contenteditable') == 'true')
+            node.css('border','1px solid rgb(30,144,255)');
         }).on('mouseout',function(){
           var node = $(this);
           node.css('border',node.data('border'));
