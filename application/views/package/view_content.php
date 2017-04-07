@@ -41,6 +41,7 @@
               <table class="table table-hover">
                 <thead>
                   <tr>
+                    <th></th>
                     <th>ID</th>
                     <th>Address</th>
                     <th>Length (cm)</th>
@@ -82,6 +83,9 @@
 <div id="dialog-erase" title="Clear Package">
 </div>
 
+<div id="dialog-delete-package" title="Delete Package">
+</div>
+
       </div>
     </div>
         <script>
@@ -110,6 +114,37 @@
             btn.show();
 
         });
+        function delete_package(id)
+        {
+          console.log(id)
+          $( "#dialog-delete-package" ).html("Delete package?")
+          $( "#dialog-delete-package" ).dialog({
+                  modal: true,
+                  buttons: {
+                    Yes: function(e) {
+                      var params = {
+                        'id' : id,
+                        'cluster' : $('tr[data-address='+id+']').data('cluster')
+                      }
+                      $( "#dialog-delete-package" ).html("Deleting package.Please wait...")
+                      $('button').prop('disabled', true)
+                      $.post('/package/delete',{'params':params}, function(data){
+                        if(data.success == 1){
+                          $( "#dialog-delete-package" ).html("Package deleted!")
+                          window.location.reload();
+                        }else{
+                          $('button').prop('disabled', false);
+                        }
+                      });
+                    },
+                  No: function(){
+
+                      $(this).dialog("close");                    
+                  }
+                  }
+                });
+        }
+
         function clear_package()
         {
           var cluster_node = $('#cluster-select');
@@ -164,6 +199,7 @@
                     maxH = 0;
                     for (key in data['packages']){
                       row += "<tr data-address="+data['packages'][key].id+" data-cluster="+valueSelected+">";
+                      row += "<td><a href='#' onclick='delete_package("+data['packages'][key].id+");' class='btn btn-danger' id='btn-delete-package' role='button'>Delete Package</a></td>";
                       row += "<td data-value='" + data['packages'][key].serial_no+"'>" + data['packages'][key].serial_no + "</td>";
                       row += "<td data-value='" + data['packages'][key].address+"'>" + data['packages'][key]['address'].city + "</td>";
                       row += "<td data-value='" + data['packages'][key].length+"'>" + data['packages'][key].length + "</td>";
