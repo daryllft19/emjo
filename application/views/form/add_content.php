@@ -12,7 +12,7 @@
 						</div>
 					</div>
 		          	<div class="form-group">
-					  <label for="select-province">Province:</label>
+					  <label for="select-province">Search Province:</label>
 					  <select class="form-control" name='select-province' id="select-province">
 					       	<?php 
 					       		foreach ($province as $key => $value){			       		
@@ -24,14 +24,14 @@
 					</div>
 
 					<div class="form-group">
-					  <label for="select-city">City:</label>
+					  <label for="select-city">Search City:</label>
 					  <select class="form-control" name='select-city' id="select-city" >
 							<!-- <option>N/A</option> -->
 					  </select>
 					</div>
 
 					<div class="form-group">
-					  <label for="select-district">District:</label>
+					  <label for="select-district">Search District:</label>
 					  <select class="form-control" name='select-district' id="select-district" >
 							<!-- <option>N/A</option> -->
 
@@ -39,7 +39,7 @@
 					</div>
 
 					<div class="form-group">
-					  <label for="select-barangay">Barangay:</label>
+					  <label for="select-barangay">Search Barangay:</label>
 					  <select class="form-control" name='select-barangay' id="select-barangay" >
 							<!-- <option>N/A</option> -->
 
@@ -47,7 +47,7 @@
 					</div>
 
 					<div class="form-group">
-					  <label for="select-area">Area:</label>
+					  <label for="select-area">Search Area:</label>
 					  <select class="form-control" name='select-area' id="select-area" >
 							<!-- <option>N/A</option> -->
 
@@ -55,7 +55,7 @@
 					</div>
 
 					<div class="form-group">
-					  <label for="select-avenue">Avenue:</label>
+					  <label for="select-avenue">Search Avenue:</label>
 					  <select class="form-control" name='select-avenue' id="select-avenue" >
 							<!-- <option>N/A</option> -->
 
@@ -63,7 +63,7 @@
 					</div>
 
 					<div class="form-group">
-					  <label for="select-street">Street:</label>
+					  <label for="select-street">Search Street:</label>
 					  <select class="form-control" name='select-street' id="select-street" >
 							<!-- <option>N/A</option> -->
 
@@ -78,7 +78,7 @@
 					  <input type="hidden" id="address_hidden" name="address_id" value="<?php echo $input_address_id; ?> ">
 					  <input type="hidden" name='address' id="address" value="<?php echo $input_address; ?>">
 
-					  <span id='span-address'><?php echo (strlen($input_address)>0)?$input_address:'N/A';?></span>
+					  <strong><big><span id='span-address'><?php echo (strlen($input_address)>0)?$input_address:'N/A';?></span></big></strong>
 					  <span class="help-block" style="font-style:italic;color:red;"><?php echo form_error('address_id'); ?></span>
 					  <a href='#' onclick='clear_address();' class='btn btn-danger' id='btn-clear-address' role='button'>Clear Address</a>
 					</div>
@@ -189,6 +189,9 @@
                     			$( "#dialog-review" ).html( review_form+'<p style="color:green;"><strong>Successfully added package!</strong></p>');
                     			$('input').val('').prop('disabled',true);
                     			$('#span-address').html('N/A')
+                    			$('select').val('');
+                    			$('#select-province').val('Metro Manila');
+                    			get_top_address();
                     		}
                     		else{
                     			failed = '';
