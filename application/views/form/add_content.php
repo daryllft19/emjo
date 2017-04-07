@@ -185,9 +185,9 @@
                     	$('button').prop('disabled', true);
                     	$( "#dialog-review" ).html(review_form + '<p>Processing package...</p>');
                     	$.post('/package/add',{'params':params},function(data){
-                    		if(data.success == 1){
+                    		if(data.success >= 1){
                     			$( "#dialog-review" ).html( review_form+'<p style="color:green;"><strong>Successfully added package!</strong></p>');
-                    			$('input').val('').prop('disabled',true);
+                    			$('.form-group input').val('').prop('disabled',true);
                     			$('#span-address').html('N/A')
                     			$('select').val('');
                     			$('#select-province').val('Metro Manila');
@@ -212,7 +212,7 @@
                     		setTimeout(function(){
 	                    		$('#dialog-review').dialog('close');
                     			$('button').prop('disabled', false);
-	                    	},2000+2000*(data.success.length || 0));
+	                    	},2000+1000*(data.success.length || 0));
                     	})
                     },
                     'Add and View package' : function(){
@@ -230,7 +230,7 @@
                     	$('button').prop('disabled', true);
                     	$( "#dialog-review" ).html(review_form + '<p>Processing package...</p>');
                     	$.post('/package/add',{'params':params},function(data){
-                    		if(data.success == 1){
+                    		if(data.success >= 1){
                     			$( "#dialog-review" ).html(review_form + '<p style="color:green;"><strong>Successfully added package! Proceeding to view page!</strong></p>');
 
 		                    	var success_params = {
@@ -268,7 +268,7 @@
                     		setTimeout(function(){
 	                    		$('#dialog-review').dialog('close');
                     			$('button').prop('disabled', false);
-	                    	},2000+2000*(data.success.length || 0));
+	                    	},2000+1000*(data.success.length || 0));
                     	})
                     }
                   }
@@ -545,7 +545,7 @@
  				$('#address').val('');
 				$('#span-address').html('N/A');
 
-				$('input').prop('disabled', true);
+				$('.form-group input').prop('disabled', true);
  			}
 
         	$(document).ready(function(){
@@ -555,7 +555,7 @@
         			// console.log(data);
         		// })
         		if($('#span-address').html() == 'N/A')
-					$('input').prop('disabled', true);
+					$('.form-group input').prop('disabled', true);
         		
         		$('#serial, #length, #width, #height, #weight').on('change',function(){
         			if($(this).val() != '')
@@ -585,7 +585,7 @@
 				    		$('#select-'+i).val(d[i]);
 				    		$('#select-'+i).trigger('change');
 				    	})
-						$('input').prop('disabled', false);
+						$('.form-group input').prop('disabled', false);
 						$('#span-address').next('.help-block').html('');
 				    })
 				});
