@@ -195,6 +195,8 @@
                     		}
                     		else{
                     			failed = '';
+                    			if(data.success.indexOf('general') >= 0)
+                    				failed += 'Package cannot be placed anywhere.<br/>';
                     			if(data.success.indexOf('dimension') >= 0)
                     				failed += 'Package\'s dimension exceeds cluster.<br/>';
                     			if(data.success.indexOf('weight')  >= 0)
@@ -250,6 +252,8 @@
                     		else
                     		{
 								failed = '';
+                    			if(data.success.indexOf('general') >= 0)
+                    				failed += 'Package cannot be placed anywhere.<br/>';
                     			if(data.success.indexOf('dimension') >= 0)
                     				failed += 'Package\'s dimension exceeds cluster.<br/>';
                     			if(data.success.indexOf('weight')  >= 0)
