@@ -331,7 +331,9 @@ class Package_model extends CI_Model {
 			    }
 
 			    $this->db->insert('package', $data);
-			    return $this->db->insert_id();
+			    $id = $this->db->insert_id();
+			    log_message('error', 'Insert package '.$id.' | '.json_encode($data), false);
+		    	return $id;
 		    }
 		    return false;
 		}
@@ -357,11 +359,11 @@ class Package_model extends CI_Model {
 			$packages = $this->Package_model->get_package(-1,$address['cluster']);
 
 
-			$corners = $this->get_corners($packages, true, $priority, $length, $width);
 
 			//if cluster is empty, put at 0,0
 			if(empty($packages))
 			{
+				log_message('error','Initial input of cluster '.json_encode($cluster));
 				$candidates = array();
 				$cluster_length = $cluster['length'];
 				$cluster_width = $cluster['width'];
@@ -378,7 +380,17 @@ class Package_model extends CI_Model {
 				{
 					$corner['orientation']='horizontal';
 					array_push($candidates, $corner);
+					log_message('error','Placing package horizontally | '.json_encode($corner));
 				}
+
+				if($x2 > $cluster_length)
+					log_message('error','Horizontal package exceeded length | '.json_encode($corner));
+					
+				if($y2 > $cluster_width)
+					log_message('error','Horizontal package exceeded width | '.json_encode($corner));
+				
+				if($z2 > $cluster_height)
+					log_message('error','Horizontal package exceeded height | '.json_encode($corner));
 
 				//rotate
 				$corner = array('x' => 0,  'y' => 0, 'z' => 0);
@@ -391,10 +403,22 @@ class Package_model extends CI_Model {
 				{
 					$corner['orientation']='vertical';
 					array_push($candidates, $corner);
+					log_message('error','Placing package vertically | '.json_encode($corner));
 				}
 
-				if(empty($candidates))
+				if($x2 > $cluster_length)
+					log_message('error','Vertical package exceeded length | '.json_encode($corner));
+					
+				if($y2 > $cluster_width)
+					log_message('error','Vertical package exceeded width | '.json_encode($corner));
+				
+				if($z2 > $cluster_height)
+					log_message('error','Vertical package exceeded height | '.json_encode($corner));
+
+				if(empty($candidates)){
+					log_message('error','Package exceeds cluster.');
 					return array('dimension');
+				}
 
 				$first_candidate = $this->get_minimum_area($packages, $candidates, $length, $width, $height);
 				if(empty($first_candidate))
@@ -412,7 +436,34 @@ class Package_model extends CI_Model {
 			//if cluster has packages
 			else
 			{
-				$candidates = array();
+		        $constraint = array();
+
+				$cluster_length = $cluster['length'];
+				$cluster_width = $cluster['width'];
+				$cluster_height = $cluster['height'];
+
+				$x2 = $length;				
+				$y2 = $width; 
+				$z2 = $height;
+				if($x2 <= $cluster_length && $y2 <= $cluster_width && $z2 <= $cluster_height){
+					log_message('error','Horizontal package exceeded cluster dimension');
+					array_push($constraint, 'dimension');
+				}
+
+				$x2 = $width;				
+				$y2 = $length; 
+				$z2 = $height;
+				if($x2 <= $cluster_length && $y2 <= $cluster_width && $z2 <= $cluster_height){
+					log_message('error','Vertical package exceeded cluster dimension');
+					array_push($constraint, 'dimension');
+				}
+				if(!empty($constraint))
+				{
+					return $constraint;
+				}
+		        
+				$corners = $this->get_corners($packages, true, $priority, $length, $width);
+				$candidates = array(); 
 				$cluster_length = (float)$cluster['length'];
 				$cluster_width = (float)$cluster['width'];
 				$cluster_height = (float)$cluster['height'];
@@ -523,9 +574,10 @@ class Package_model extends CI_Model {
 		            $corners = $this->get_corners($packages, true, $rotating_priority, $length, $width);
 		            // ($packages, true, $priority, $length, $width);
 		        }
-		        $constraint = array();
-				if(empty($candidates))
-					array_push($constraint, 'dimension');
+				if(empty($candidates)){
+					array_push($constraint, 'general');
+					return $constraint;
+				}
 
 		        $candidate_copy = $candidates;
 
