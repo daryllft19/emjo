@@ -90,6 +90,8 @@
     </div>
         <script>
         $('#cluster-select').ready(function(){
+          if($('#cluster-select').val() == -1)
+            $('#btn-clear-package').hide();
 
           <?php
           if (!empty($this->input->get('cluster')))
