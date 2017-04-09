@@ -546,6 +546,13 @@ CREATE TABLE package(
 );
 
 SET TIME ZONE 'UTC';
+
+CREATE TABLE admin_settings(
+	id serial primary key,
+	height_multiplier real not null,
+	weight_multiplier real not null
+);
+INSERT INTO admin_settings values(default, 3, 4);
 /*INSERT INTO package values(default, 1, 120, 1,50,0,0,0,now(),default);*/
 
 /*
