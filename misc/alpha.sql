@@ -4,6 +4,7 @@
 DROP TABLE package;
 DROP TABLE address;
 DROP TABLE cluster;
+DROP TABLE admin_settings;
 
 /*Creates table for address and initializes content*/
 CREATE TABLE cluster(
@@ -11,7 +12,8 @@ CREATE TABLE cluster(
 	name varchar not null,	
 	length real not null,
 	width real not null,
-	height real not null default 1.6
+	height real not null default 1.6,
+	priority int not null default 0
 );
 
 
