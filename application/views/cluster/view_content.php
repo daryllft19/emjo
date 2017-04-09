@@ -27,8 +27,9 @@
                       echo "<td contenteditable data-attr='height' data-value='".$cluster_item['height']."'>".$cluster_item['height']."</td>";
                       echo "<td><span class='cluster-package-count'>0</span></td>";
                       echo "<td>";
-                      echo "<input type='radio' data-attr='priority' data-value='stack' value='Stack'/>Stack<br/>";
-                      echo "<input type='radio' data-attr='priority' data-value='base' value='Base'/>Base";
+                      // echo ($cluster_item['priority']==0)?'checked=checked':'1';
+                      echo "<input type='radio' name='priority-".$cluster_item['id']."' data-attr='priority' data-value='0' ".(($cluster_item['priority']==0)?'checked=checked':'')." value=0 autocomplete='off'/>Stack<br/>";
+                      echo "<input type='radio' name='priority-".$cluster_item['id']."' data-attr='priority' data-value='1' ".(($cluster_item['priority']==1)?'checked=checked':'')." value=1 autocomplete='off'/>Base";
                       echo "</td>";
                       echo "<td><a href='#' onclick='clear_package(".$cluster_item['id'].");' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a></td>";
                       echo "</tr>";
@@ -52,7 +53,10 @@
 </div>
 
     <script type="text/javascript">
-     $(document).on('ready',count);
+     $(document).on('ready',function(){
+        count();
+     });
+
      function count()
      {
       var spans = $('span[class="cluster-package-count"]');
@@ -192,6 +196,14 @@
           node.removeData('prev');
         });
 
+        $('input[type=radio]').on('change', function(){
+          var node = $(this);
+          params = {};
+          params['id'] = node.parents('tr').data('cluster');
+          params['attr'] = node.data('attr');
+          params[params['attr']] = node.val();
+          modify_cluster(node, params);
+        });
 
         function modify_cluster(node, params)
         {
