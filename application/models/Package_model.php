@@ -5,6 +5,7 @@ class Package_model extends CI_Model {
         {
                 $this->load->database();
 				$this->load->model('Address_model');
+				$this->load->model('Cluster_model');
         }
 
         public function modify_package($dArgs)
@@ -279,7 +280,8 @@ class Package_model extends CI_Model {
 		    
 		    //0 for STACK
 		    //1 for BASE
-		    $priority = 0;
+		    $priority = $this->Cluster_model->get_cluster($this->Address_model->get_address($address_id)['cluster'])['priority'];
+		    // $priority = 0;
 
 		    if($length < $width){
 		    	$valid_package = $this->compute($address_id, (float)$width, (float)$length, (float)$height, (float)$weight, $x,$y,$z, $orientation, $priority, (float)$height_constraint, (float)$weight_constraint);
@@ -448,23 +450,18 @@ class Package_model extends CI_Model {
 				$cluster_length = $cluster['length'];
 				$cluster_width = $cluster['width'];
 				$cluster_height = $cluster['height'];
+				$flag_constraint = 0;
 
 				$x2 = $length;				
 				$y2 = $width; 
-				$z2 = $height;
 				if($x2 > $cluster_length)
 					log_message('error','Horizontal package exceeded length');
 					
 				if($y2 > $cluster_width)
 					log_message('error','Horizontal package exceeded width');
-				
+
 				if($y2 > $cluster_width || $x2 > $cluster_length)
-					array_push($constraint, 'dimension');
-				
-				if($z2 > $cluster_height){
-					log_message('error','Horizontal package exceeded height');
-					array_push($constraint, 'height');
-				}
+					$flag_constraint = 1;
 
 				$x2 = $width;				
 				$y2 = $length; 
@@ -475,11 +472,11 @@ class Package_model extends CI_Model {
 				if($y2 > $cluster_width)
 					log_message('error','Vertical package exceeded width');
 				
-				if($y2 > $cluster_width || $x2 > $cluster_length)
+				if(($y2 > $cluster_width || $x2 > $cluster_length) && $flag_constraint == 1)
 					array_push($constraint, 'dimension');
 
 				if($z2 > $cluster_height){
-					log_message('error','Vertical package exceeded height');
+					log_message('error','Package exceeded height');
 					array_push($constraint, 'height');
 				}
 				if(!empty($constraint))
