@@ -200,9 +200,9 @@
                     			if(data.success.indexOf('dimension') >= 0)
                     				failed += 'Package\'s dimension exceeds cluster.<br/>';
                     			if(data.success.indexOf('weight')  >= 0)
-                    				failed += 'Package exceeds weight constraint of package below.<br/>';
+                    				failed += 'Package exceeds weight.<br/>';
                     			if(data.success.indexOf('height') >= 0)
-                    				failed += 'Package exceeds height constraint of package below.<br/>';
+                    				failed += 'Package exceeds height.<br/>';
 
                     			err_msg = 	'<p style="color:red;">'+
                     						'Error processing package!<br/>'+
@@ -257,9 +257,9 @@
                     			if(data.success.indexOf('dimension') >= 0)
                     				failed += 'Package\'s dimension exceeds cluster.<br/>';
                     			if(data.success.indexOf('weight')  >= 0)
-                    				failed += 'Package exceeds weight constraint of package below.<br/>';
+                    				failed += 'Package exceeds weight.<br/>';
                     			if(data.success.indexOf('height') >= 0)
-                    				failed += 'Package exceeds height constraint of package below.<br/>';
+                    				failed += 'Package exceeds height.<br/>';
 
                     			err_msg = 	'<p style="color:red;">'+
                     						'Error processing package!<br/>'+
