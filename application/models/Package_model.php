@@ -510,7 +510,7 @@ class Package_model extends CI_Model {
 							round($y2,2) <= round($cluster_width,2) && 
 							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'horizontal', $priority))
 						{
-							log_message('error','Placing it horizontally in | '.$corner, false);
+							log_message('error','Placing it horizontally in | '.json_encode($corner), false);
 							//GET PACKAGE WHERE IT IS ADJACENT AND CHECK IF NEW PACKAGE IS JUST STACKED
 							$package = $this->Package_model->get_package(-1,-1,$x2,$y2,$corner['z']);
 
@@ -526,7 +526,7 @@ class Package_model extends CI_Model {
 								$corner['orientation']='horizontal';
 								// var_dump('HORIZONTAL',$corner);
 								if(!in_array($corner, $candidates)){
-									log_message('error', 'Added as a candidate | '.$corner, false);
+									log_message('error', 'Added as a candidate | '.json_encode($corner), false);
 									array_push($candidates, $corner);
 								}
 								unset($corner['orientation']);	
@@ -549,7 +549,7 @@ class Package_model extends CI_Model {
 							round($y2,2) <= round($cluster_width,2) && 
 							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'vertical', $priority))
 						{
-							log_message('error','Placing it vertically in | '.$corner, false);
+							log_message('error','Placing it vertically in | '.json_encode($corner), false);
 							//GET PACKAGE WHERE IT IS ADJACENT AND CHECK IF NEW PACKAGE IS JUST STACKED
 							$package = $this->Package_model->get_package(-1,-1,$x,$y,$corner['z']);
 							//CHECK FOR OVERHANGING
@@ -573,7 +573,7 @@ class Package_model extends CI_Model {
 								$corner['orientation']='vertical';
 								// var_dump('VERTICAL',$corner);
 								if(!in_array($corner, $candidates)){
-									log_message('error', 'Added as a candidate | '.$corner, false);
+									log_message('error', 'Added as a candidate | '.json_encode($corner), false);
 									array_push($candidates, $corner);
 								}
 								unset($corner['orientation']);	
