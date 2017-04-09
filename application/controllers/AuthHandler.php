@@ -10,6 +10,16 @@ class AuthHandler extends CI_Controller
 		$this->load->library('form_validation');
 		$this->load->library('tank_auth');
 		$this->lang->load('tank_auth');
+		header('Content-Type: application/json');
+
+		$name = $this->router->fetch_method();
+
+		if (!$this->tank_auth->is_logged_in()  && ($name != 'login' && $name != 'is_authorized')) {
+                    $ret['success'] = 0;
+                    $ret['msg'] = 'User not authorized!';
+                    echo json_encode($ret);
+                    exit();
+            }
 	}
 
 	function index()
@@ -36,8 +46,27 @@ class AuthHandler extends CI_Controller
 
 		// $this->get->post
 		// $ret
-		header('Content-Type: application/json');
         echo json_encode($ret);
+	}
+
+	function change()
+	{
+		$ret = array();
+
+		$params = $this->input->post('params');
+		try{
+			// $ret['params'] = $params;
+			if($params['new'] == '')
+				throw new Exception("Blank new password!", 1);
+				
+			$ret['success'] = $this->tank_auth->change_password($params['old'],$params['new']);
+		}
+		catch(Exception $e)
+		{
+			$ret['success'] = 0;
+			$ret['msg'] = $e;
+		}
+        echo json_encode($ret);	
 	}
 
 	function is_authorized()
@@ -46,7 +75,6 @@ class AuthHandler extends CI_Controller
 
 		$ret['response'] = $this->tank_auth->is_logged_in();
 
-		header('Content-Type: application/json');
         echo json_encode($ret);	
 	}
 
