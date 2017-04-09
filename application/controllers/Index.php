@@ -8,6 +8,7 @@ class Index extends CI_Controller {
 	    $this->load->model('Cluster_model');
 	    $this->load->model('Address_model');
 	    $this->load->model('Package_model');
+	    $this->load->model('Setting_model');
 	    $this->load->helper('form');
 	    $this->load->library('tank_auth');
 	}
@@ -192,6 +193,9 @@ class Index extends CI_Controller {
 		$data['height_constraint'] = $height_constraint;
 		$data['weight_constraint'] = $weight_constraint;
 		$data['fragile'] = $fragile;
+		$constraint = $this->Setting_model->get_admin_settings()[0];
+		$data['hconstraint_multiplier'] = $constraint['height_multiplier'];
+		$data['wconstraint_multiplier'] = $constraint['weight_multiplier'];
 		// var_dump();
 		$this->form_validation->run();
 		// if ($this->form_validation->run() === TRUE)
@@ -401,16 +405,19 @@ class Index extends CI_Controller {
 		// }
 	}
 
-	public function analytics()
+	public function settings()
 	{
 		if (!$this->tank_auth->is_logged_in()) {
 			redirect('');
 		}
 
+		$data = array();
+		$data['settings'] = $this->Setting_model->get_admin_settings()[0];
+
 		$this->load->view('template/view_header');
 		$this->load->view('template/view_top');
 		$this->load->view('template/view_menu');
-		$this->load->view('analytics/view_content');
+		$this->load->view('settings/view_content',$data);
 		$this->load->view('template/view_footer');
 	}
 
