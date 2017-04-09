@@ -1,7 +1,7 @@
 
   
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Cluster</h1>
+          <h1 class="page-header">Cluster    <a href='#' onclick='add_address();' class='btn btn-danger' role='button'>Add</a></h1>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
@@ -12,6 +12,8 @@
                   <th>Width (cm)</th>
                   <th>Height (cm)</th>
                   <th>Package Count</th>
+                  <th>Priority</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -24,6 +26,10 @@
                       echo "<td contenteditable data-attr='width' data-value='".$cluster_item['width']."'>".$cluster_item['width']."</td>";
                       echo "<td contenteditable data-attr='height' data-value='".$cluster_item['height']."'>".$cluster_item['height']."</td>";
                       echo "<td><span class='cluster-package-count'>0</span></td>";
+                      echo "<td>";
+                      echo "<input type='radio' data-attr='priority' data-value='stack' value='Stack'/>Stack<br/>";
+                      echo "<input type='radio' data-attr='priority' data-value='base' value='Base'/>Base";
+                      echo "</td>";
                       echo "<td><a href='#' onclick='clear_package(".$cluster_item['id'].");' class='btn btn-danger' id='btn-clear-package' role='button'>Clear Packages</a></td>";
                       echo "</tr>";
                     ?>
