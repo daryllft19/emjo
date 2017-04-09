@@ -603,13 +603,13 @@
 
 			function compute_weight_constraint()
 			{
-				weight_constraint = $('#weight').val()*4;
+				weight_constraint = $('#weight').val()*<?php echo $wconstraint_multiplier; ?>;
 				if($('input[name=weight-constraint]').prop('disabled') == false)
 					$('#weight-constraint').val(weight_constraint);	
 			}
 			function compute_height_constraint()
 			{
-				height_constraint = Math.min($('#length').val(), $('#width').val()) * 3;
+				height_constraint = Math.min($('#length').val(), $('#width').val()) * <?php echo $hconstraint_multiplier; ?>;
 				if($('input[name=height-constraint]').prop('disabled') == false)
 					$('#height-constraint').val(height_constraint);	
 			}
