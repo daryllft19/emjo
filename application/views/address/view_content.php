@@ -115,7 +115,7 @@
                     <th>Area</th>
                     <th>Avenue</th>
                     <th>Street</th>
-                    <th>Serviceable</th>
+                    <!-- <th>Serviceable</th> -->
                   </tr>
                 </thead>
                 <tbody id='table-cluster'>
@@ -132,14 +132,14 @@
                         echo "<td contenteditable data-attr='area' data-value='".$address_item["area"]."'>".$address_item["area"]."</td>";
                         echo "<td contenteditable data-attr='avenue' data-value='".$address_item["avenue"]."'>".$address_item["avenue"]."</td>";
                         echo "<td contenteditable data-attr='street' data-value='".$address_item["street"]."'>".$address_item["street"]."</td>";
-                        echo "<td data-value='".$address_item["is_serviceable"]."' data-attr='is_serviceable'>";
+                        // echo "<td data-value='".$address_item["is_serviceable"]."' data-attr='is_serviceable'>";
 
-                        if ($address_item['is_serviceable'] == 't'){
-                          echo "<input type='checkbox' checked/>";
-                        }else{
-                          echo "<input type='checkbox'/>";
-                        }
-                        echo "</td>";
+                        // if ($address_item['is_serviceable'] == 't'){
+                        //   echo "<input type='checkbox' checked/>";
+                        // }else{
+                        //   echo "<input type='checkbox'/>";
+                        // }
+                        // echo "</td>";
                         echo "</tr>";
                       ?>
                 <?php endforeach; ?>
@@ -305,11 +305,11 @@
 
             var col = td.data('attr');
             var id = tr.data('value');
-            var is_serviceable = $(this).prop('checked');
+            // var is_serviceable = $(this).prop('checked');
             var params = {};
             params['id'] = id;
-            params['attr'] = 'is_serviceable';
-            params['is_serviceable'] = is_serviceable;
+            // params['attr'] = 'is_serviceable';
+            // params['is_serviceable'] = is_serviceable;
             modify_address(params);
           });
           $('td').on('focus', function(){
@@ -332,7 +332,6 @@
 
                     $('table').prop('disabled', true);
                     modify_address(params);
-                    $(this).blur();
                     e.preventDefault();
                    
                 }
@@ -722,7 +721,7 @@
                     elem += '<td data-attr="area" contenteditable data-value="'+ d.area +'">'+ d.area +'</td>';
                     elem += '<td data-attr="avenue" contenteditable data-value="'+ d.avenue +'">'+ d.avenue +'</td>';
                     elem += '<td data-attr="street" contenteditable data-value="'+ d.street+'">'+ d.street +'</td>';
-                    elem += '<td data-attr="is_serviceable" data-value="'+ d.is_serviceable +'"><input type="checkbox"'+ (d.is_serviceable=='t'?'checked':'') +'/></td>';
+                    // elem += '<td data-attr="is_serviceable" data-value="'+ d.is_serviceable +'"><input type="checkbox"'+ (d.is_serviceable=='t'?'checked':'') +'/></td>';
                     elem += '</tr>';
                  }
                 table_cluster.html(elem);
