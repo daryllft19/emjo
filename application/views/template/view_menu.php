@@ -21,7 +21,7 @@
               if ($this->tank_auth->is_logged_in()) {
               ?>
             <li><a href="<?php echo site_url('index/analytics')?>">Analytics</a></li>
-            <li><a href="<?php echo site_url('index/export')?>">Export</a></li>
+            <li><a href="<?php echo site_url('cluster/export/?type=csv')?>">Export</a></li>
             <?php
               }
             ?>
