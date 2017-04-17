@@ -84,6 +84,7 @@
     <script type="text/javascript">
      $(document).on('ready',function(){
         count();
+        $('#dialog-add').hide();
      });
 
      function count()
