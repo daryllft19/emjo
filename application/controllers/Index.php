@@ -119,8 +119,9 @@ class Index extends CI_Controller {
         $temp=$this->Address_model->get_address(-1,-1,$order);
         foreach ($temp as $key => $value) {
         	$clstr = $this->Cluster_model->get_cluster($value['cluster']);
-        	if(!isset($ret[$clstr['id']]))
-        		$ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array());
+        	if(!isset($ret[$clstr['id']])){
+        		$ret[$clstr['id']] = array('name'=>$clstr['name'],'location'=>array(),'priority'=>$clstr['priority']);
+        	}
 
         	array_push($ret[$clstr['id']]['location'], $value);
         }
