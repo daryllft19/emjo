@@ -19,6 +19,20 @@ class Cluster extends CI_Controller {
                 }
         }
 
+        public function add()
+        {
+            $ret = array();
+            try{
+                $params = $this->input->post('params');
+                $ret['success'] = $this->Cluster_model->set_cluster($params);
+                echo json_encode($ret);
+            }
+            catch(Exception $e)
+            {
+
+            }
+        }
+
         public function export()
         {
             $ret = array();
