@@ -12,7 +12,7 @@
                       <option value='-1'>NONE</option>
                       <?php
                       foreach ($ret as $key => $value) {
-                        echo "<option value='".$key."'>".$value['name']."</option>";
+                        echo "<option data-priority='".$value['priority']."' value='".$key."'>".$value['name']."</option>";
                       }
                       
                       ?>
@@ -32,7 +32,7 @@
                 </div>
                 <br>
                 <div class='col-large-6'>
-                  <big>Utilization Value : Max(L) * Max(W) * Max(H) = <strong><span id='utilization-value'>0</span></strong></big>
+                  <big>Priority: <strong><span id='priority'>N/A</span></strong></big>
                   
                 </div>
               </div>
@@ -193,7 +193,14 @@
               if(valueSelected==-1){
                 
               }else{
+                if(optionSelected.data('priority') == 0)
+                  $('#priority').html('Stack');
+                if(optionSelected.data('priority') == 1)
+                  $('#priority').html('Base');
                 $.get( "/package/",{'cluster_id':valueSelected}, function( data ) {
+
+                    window.history.pushState({"html":$('body').html(),"pageTitle":data.pageTitle},"", 'package?cluster='+valueSelected);
+                    // window.
                     var dBox = [];
                     var cluster = data['cluster']; 
                     maxL = 0;
@@ -248,7 +255,6 @@
                       if(data['packages'][key]['height'] > maxH)
                           maxH = data['packages'][key]['height'];
                     }
-                    $('#utilization-value').html(maxL*maxH*maxW);
                     $('#package-table').html(row);
                     // engine.dispose();
                     draw_canvas(cluster.length, cluster.width, dBox, canvas, engine, box);
