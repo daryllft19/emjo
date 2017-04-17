@@ -257,7 +257,7 @@
                     }
                     $('#package-table').html(row);
                     // engine.dispose();
-                    draw_canvas(cluster.length, cluster.width, dBox, canvas, engine, box);
+                    draw_canvas(cluster.length, cluster.width, cluster.height, dBox, canvas, engine, box);
                 });
               }
               row = '';
@@ -276,7 +276,7 @@
             // box[address].
           })
           
-          var draw_canvas = function(cluster_length, cluster_width, dBox, canvas, engine, box){   
+          var draw_canvas = function(cluster_length, cluster_width, cluster_height, dBox, canvas, engine, box){   
 
 
               var createScene = function () {
@@ -355,12 +355,26 @@
 
                   // //x , y, z = width, depth, height
                   // // console.log(lBox);
-                  var address = BABYLON.Mesh.CreatePlane("ground", 0, scene);
+                  var base = BABYLON.Mesh.CreatePlane("ground", 0, scene);
+                  var wall = BABYLON.Mesh.CreatePlane("wall", 0, scene);
+                  var sidewall = BABYLON.Mesh.CreatePlane("sidewall", 0, scene);
                   // address.material = material;
-                  address.rotation.x = Math.PI / 2;
+                  wall.rotation.y = Math.PI / 2;
+                  wall.scaling.x = cluster_width/100;
+                  wall.scaling.y = cluster_height/100;
+                  wall.position.y = cluster_height/200;
+                  wall.position.x = cluster_length/200;
+
+                  sidewall.rotation.z = Math.PI / 2;
+                  sidewall.scaling.y = cluster_length/100;
+                  sidewall.scaling.x = cluster_height/100;
+                  sidewall.position.y = cluster_height/200;
+                  sidewall.position.z = cluster_width/200;
+
+                  base.rotation.x = Math.PI / 2;
                   // address.rotation.y = Math.PI / 2;
-                  address.scaling.x = cluster_length/100;
-                  address.scaling.y = cluster_width/100;
+                  base.scaling.x = cluster_length/100;
+                  base.scaling.y = cluster_width/100;
 
                   var action_mouse_over = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, mouseOverUnit);
                   var action_mouse_out = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOutTrigger, mouseOutUnit);
