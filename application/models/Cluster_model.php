@@ -30,10 +30,11 @@ class Cluster_model extends CI_Model {
 			    	unset($data['id']);
 			    }
 
-			    if($this->count($id)['count'] > 0 )
-			    	return array('error'=>'Cannot modify if cluster contains packages.','info'=>$this->count($id));
 
 			    if($id > 0){
+				    if($this->count($id)['count'] > 0 )
+				    	return array('error'=>'Cannot modify if cluster contains packages.','info'=>$this->count($id));
+
 			    	$this->db->where('id',$id);
 			    	return $this->db->update('cluster',$data);
 			    }
@@ -84,6 +85,9 @@ class Cluster_model extends CI_Model {
 
         public function count($id){
         	$address = $this->Address_model->search_address(array('cluster'=>$id));
+        	if(empty($address))
+				return array('count'=>0);
+
 			$address_id = array();
 
 			try{
