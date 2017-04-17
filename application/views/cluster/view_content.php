@@ -1,7 +1,7 @@
 
   
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Cluster    <a href='#' onclick='add_address();' class='btn btn-danger' role='button'>Add</a></h1>
+          <h1 class="page-header">Cluster    <a href='#' onclick='add_cluster();' class='btn btn-danger' role='button'>Add</a></h1>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
@@ -43,6 +43,35 @@
 
       </div>
     </div>
+<div id="dialog-add" title="Add Cluster">
+  <div class='dialog-input-group'>
+    <label for="dialog-add-name">Name:</label><br>
+    <input id="dialog-add-name" data-attr='name' type="text" name="dialog-add-name">
+  </div>
+
+  <div class='dialog-input-group'>
+    <label for="dialog-add-length">Length (cm):</label><br>
+    <input id="dialog-add-length" data-attr='length' type="number" min=0 value=0 name="dialog-add-length">
+  </div>
+
+  <div class='dialog-input-group'>
+    <label for="dialog-add-width">Width (cm):</label><br>
+    <input id="dialog-add-width" data-attr='width' type="number" min=0 value=0 name="dialog-add-width">
+  </div>
+
+  <div class='dialog-input-group'>
+    <label for="dialog-add-height">Height (cm):</label><br>
+    <input id="dialog-add-height" data-attr='height' type="number" min=0 value=0 name="dialog-add-height">
+  </div>
+
+  <div class='dialog-input-group'>
+    <label for="dialog-add-priority">Priority:</label><br>
+    <input id="dialog-add-priority-stack" data-attr='length' type="radio" value=0 name="dialog-add-priority" autocomplete='off' checked/>Stack<br/>
+    <input id="dialog-add-priority-base" data-attr='length' type="radio" value=1 name="dialog-add-priority" autocomplete='off'/>Base<br/>
+  </div>
+
+</div>
+
 <div id="dialog-erase" title="Clear Package">
 </div>
 
@@ -113,7 +142,75 @@
                   }
                 });
         }
+        
+        function add_cluster()
+          {
+                $( "#dialog-add" ).dialog({
+                  modal: true,
+                  buttons: {
+                    Save: function(e) {
+                      var params = {
+                        'name' : $('#dialog-add-name').val(),
+                        'length' : $('#dialog-add-length').val(),
+                        'width' : $('#dialog-add-width').val(),
+                        'height' : $('#dialog-add-height').val(),
+                        'priority' : $('input[name=dialog-add-priority]:checked').val()
+                      }
+                        flag = false;
+                        flag_str = 'INVALID INPUT:\n';
+                        if(params['name'].trim() == '')
+                        {
+                          flag = true;
+                          flag_str += 'Name is required.\n';
+                        }
+                        
+                        if(params['length'] <= 0)
+                        {
+                          flag = true;
+                          flag_str += 'Length should be positive non-zero.\n';
+                        }
 
+                        if(params['width'] <= 0)
+                        {
+                          flag = true;
+                          flag_str += 'Width should be positive non-zero.\n';
+                        }
+
+                        if(params['height'] <= 0)
+                        {
+                          flag = true;
+                          flag_str += 'Height should be positive non-zero.\n';
+                        }
+
+                        if(params['priority'] == undefined)
+                        {
+                          flag = true;
+                          flag_str += 'Choose a priority.\n';
+                        }
+
+                        if(flag)
+                          alert(flag_str);
+                        else
+                        {
+                          $.post( "/cluster/add",{'params':params}, function(data){
+                            console.log(params);
+                            if(data.success == 1)
+                            {
+                              alert('Added cluster!');
+                              window.location.reload();
+                            }
+                            else if(data.success == 0)
+                              alert('Cluster exists!');
+                            else
+                              alert('Error adding cluster!');
+
+                          });
+                        }
+                    }
+                  }
+                });
+
+           }
       function delete_cluster(id)
         {
           packages = parseInt($('tr[data-cluster='+id+']').find('.cluster-package-count').html());
@@ -196,7 +293,7 @@
           node.removeData('prev');
         });
 
-        $('input[type=radio]').on('change', function(){
+        $('input[name^=priority]').on('change', function(){
           var node = $(this);
           params = {};
           params['id'] = node.parents('tr').data('cluster');
