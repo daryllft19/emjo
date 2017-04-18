@@ -191,6 +191,7 @@
                     			$('#span-address').html('N/A')
                     			$('select').val('');
                     			$('#select-province').val('Metro Manila');
+                    			$('#fragile').prop('checked', false);
                     			get_top_address();
                     		}
                     		else{
