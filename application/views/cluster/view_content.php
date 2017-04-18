@@ -46,22 +46,22 @@
 <div id="dialog-add" title="Add Cluster">
   <div class='dialog-input-group'>
     <label for="dialog-add-name">Name:</label><br>
-    <input id="dialog-add-name" data-attr='name' type="text" name="dialog-add-name">
+    <input id="dialog-add-name" data-attr='name' type="text" name="dialog-add-name" autocomplete="off">
   </div>
 
   <div class='dialog-input-group'>
     <label for="dialog-add-length">Length (cm):</label><br>
-    <input id="dialog-add-length" data-attr='length' type="number" min=0 value=0 name="dialog-add-length">
+    <input id="dialog-add-length" data-attr='length' type="number" min=0 value=0 name="dialog-add-length" autocomplete="off">
   </div>
 
   <div class='dialog-input-group'>
     <label for="dialog-add-width">Width (cm):</label><br>
-    <input id="dialog-add-width" data-attr='width' type="number" min=0 value=0 name="dialog-add-width">
+    <input id="dialog-add-width" data-attr='width' type="number" min=0 value=0 name="dialog-add-width" autocomplete="off">
   </div>
 
   <div class='dialog-input-group'>
     <label for="dialog-add-height">Height (cm):</label><br>
-    <input id="dialog-add-height" data-attr='height' type="number" min=0 value=0 name="dialog-add-height">
+    <input id="dialog-add-height" data-attr='height' type="number" min=0 value=0 name="dialog-add-height" autocomplete="off">
   </div>
 
   <div class='dialog-input-group'>
@@ -115,7 +115,7 @@
         {
           var cluster_node = $('tr[data-cluster='+id+']').children('td:nth-child(2)');
           var erase_code = 'I will erase packages in '+cluster_node.html();
-          $("#dialog-erase").html('Type the sentence in bold letters: "<strong>' + erase_code +'</strong>"<br/><input id="dialog-erase-input" type="text"/>');
+          $("#dialog-erase").html('Type the sentence in bold letters: "<strong>' + erase_code +'</strong>"<br/><input id="dialog-erase-input" type="text" autocomplete="off"/>');
           $( "#dialog-erase" ).dialog({
                   modal: true,
                   buttons: {
