@@ -415,11 +415,12 @@ console.log('focousout',$(this));
                  }
                  sel_province.html(elem);
                  change_province();
-                 change_city();
-                 change_barangay();
-                 change_district();
-                 change_area();
-                 change_avenue();
+                 //change_city();
+                 //change_barangay();
+                 //change_district();
+                 //change_area();
+                 //change_avenue();
+                 update_table();
             });
           }
 
@@ -453,10 +454,11 @@ console.log('focousout',$(this));
                  }
                  sel_city.html(elem);
                  change_city();
-                 change_barangay();
-                 change_district();
-                 change_area();
-                 change_avenue();
+                 //change_barangay();
+                 //change_district();
+                 //change_area();
+                 //change_avenue();
+                 update_table();
                  
             });
           }
@@ -497,9 +499,10 @@ console.log('focousout',$(this));
                  }
                  sel_barangay.html(elem);
                  change_barangay();
-                 change_district();
-                 change_area();
-                 change_avenue();
+                 //change_district();
+                 //change_area();
+                 //change_avenue();
+                 update_table();
                  
             });
           }
@@ -542,8 +545,9 @@ console.log('focousout',$(this));
                  }
                  sel_district.html(elem);
                  change_district();
-                 change_area();
-                 change_avenue();                 
+                 //change_area();
+                 //change_avenue();                 
+                 update_table();
             });
           }
 
@@ -590,7 +594,8 @@ console.log('focousout',$(this));
                  }
                  sel_area.html(elem);
                  change_area();
-                 change_avenue();
+                 //change_avenue();
+                 update_table();
                  
             });
           }
@@ -641,6 +646,7 @@ console.log('focousout',$(this));
                  }
                  sel_avenue.html(elem);
                  change_avenue();
+                 update_table();
                  
             });
           }
@@ -759,13 +765,13 @@ console.log('focousout',$(this));
             var node = $(this);
             node.css('border',node.data('border'));
           });
-          $('#select-cluster').on('change',change_cluster);
-          $('#select-province').on('change',change_province);
-          $('#select-city').on('change',change_city);
-          $('#select-barangay').on('change',change_barangay);
-          $('#select-district').on('change',change_district);
-          $('#select-area').on('change',change_area);
-          $('#select-avenue').on('change',change_avenue);
+          $('#select-cluster').on('load',change_cluster).on('change',change_cluster);
+          $('#select-province').on('load',change_province).on('change',change_province);
+          $('#select-city').on('load',change_city).on('change',change_city);
+          $('#select-barangay').on('load',change_barangay).on('change',change_barangay);
+          $('#select-district').on('load',change_district).on('change',change_district);
+          $('#select-area').on('load',change_area).on('change',change_area);
+          $('#select-avenue').on('load',change_avenue).on('change',change_avenue);
           // $('select[id^=select]').on('change',update_table);
 
 </script>
