@@ -312,7 +312,11 @@
             // params['is_serviceable'] = is_serviceable;
             modify_address(params);
           });
-          $('td').on('focus', function(){
+          $('table').on('focus','td', function(){
+              var prev_content = $(this).html()
+              $(this).data('prev', prev_content);
+console.log('focous',$(this));
+
               $(this).keypress(function(e){
                 var key = e.which;
 
@@ -336,6 +340,23 @@
                    
                 }
               });
+          }).on('focusout','td',function(){
+console.log('focousout',$(this));
+                    var node = $(this);
+                    var id = node.parent().data('value');
+                    var attr = node.data('attr');
+                    var val = node.html().replace(/<br>/g,'');
+                    node.html(val);
+                    // console.log('changing adress id '+id+' with column '+attr+' to value '+val); 
+                    params = {};
+                    params['id'] = id;
+                    params['attr'] = attr;
+                    params[attr] = val;
+
+                    if($(this).data('prev') != $(this).html())
+                        modify_address(params);
+
+                    node.removeData('prev');
           });
 
 
