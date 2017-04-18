@@ -46,6 +46,7 @@ class Package_model extends CI_Model {
 				$temp = array_column($packages_to_retain, 'id');
 				$this->db->where_in('id', array_merge_recursive($temp,array($dArgs['id'])));
 		        $this->db->delete('package');
+		        log_message('error','Successfully deleted package'. json_encode($package));
 
 		        // $order = array();
 		        foreach ($packages_to_retain as $key => $p) {
@@ -494,7 +495,7 @@ class Package_model extends CI_Model {
 				$first_iteration_flag = 1;
 				$rotating_priority = $priority;
 				while(true){	
-
+					log_message('error','Computing using priority: '.$priority);
 		            foreach ($corners as $corner):
 						//check first orientation
 						$x2 = $corner['x'] + $length;				
@@ -507,7 +508,7 @@ class Package_model extends CI_Model {
 							round($y2,2) <= round($cluster_width,2) && 
 							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'horizontal', $priority))
 						{
-							log_message('error','Placing it horizontally in | '.json_encode($corner), false);
+							// log_message('error','Placing it horizontally in | '.json_encode($corner), false);
 							//GET PACKAGE WHERE IT IS ADJACENT AND CHECK IF NEW PACKAGE IS JUST STACKED
 							$package = $this->Package_model->get_package(-1,-1,$x2,$y2,$corner['z']);
 
@@ -546,7 +547,7 @@ class Package_model extends CI_Model {
 							round($y2,2) <= round($cluster_width,2) && 
 							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'vertical', $priority))
 						{
-							log_message('error','Placing it vertically in | '.json_encode($corner), false);
+							// log_message('error','Placing it vertically in | '.json_encode($corner), false);
 							//GET PACKAGE WHERE IT IS ADJACENT AND CHECK IF NEW PACKAGE IS JUST STACKED
 							$package = $this->Package_model->get_package(-1,-1,$x,$y,$corner['z']);
 							//CHECK FOR OVERHANGING
@@ -637,6 +638,7 @@ class Package_model extends CI_Model {
 	            $y = $candidate['y'];			
 	            $z = $candidate['z'];			
 	            $orientation = $candidate['orientation'];
+	            log_message('error', 'Candidate with minimum area: '.json_encode($candidate));
 				//return true inserts package
 				return true;
 			}
@@ -848,7 +850,7 @@ class Package_model extends CI_Model {
 					$prev_x = $temp_x;
 					$min_candidate = $candidate;
 					$min_tick = $candidate['y'];
-
+					log_message('error','New minimum | '.json_encode($candidate).' | '.$min_area);
 				}
 			endforeach;
 			// var_dump('$min_candidate', $min_candidate);
@@ -938,7 +940,7 @@ class Package_model extends CI_Model {
             //loop is to try to cover extra spaces
             foreach ($packages as $package):
             	// var_dump('PACKAGE CHECKPOINT');	
-            	for ($x=$width; $x >= 0 ; $x=round($x-$tick,2)) {
+            	for ($x=$length; $x >= 0 ; $x=round($x-$tick,2)) {
             		if((float)$package['x1']-$x < 0) continue;
             		// var_dump('1: x='.((float)$package['x1']-$x));
             		$corner = array('id' => (int)$package['id'], 'x' => (float)$package['x1']-$x,  'y' => (float)$package['y2'],  'z' => (float)$package['z1']);
@@ -953,7 +955,7 @@ class Package_model extends CI_Model {
 					}
 					// var_dump('1', $corner);
 				}
-				for ($y=$length; $y >= 0 ; $y=round($y-$tick,2)) {
+				for ($y=$width; $y >= 0 ; $y=round($y-$tick,2)) {
             		if((float)$package['y1']-$y < 0) continue;
             		// var_dump('2: y='.((float)$package['y1']-$y));
 					$corner = array('id' => (int)$package['id'], 'x' => (float)$package['x2'],  'y' => (float)$package['y1']-$y,  'z' => (float)$package['z1']);
