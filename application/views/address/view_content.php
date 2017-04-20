@@ -299,25 +299,12 @@
                   })
                 })
            }
-          $('table').on('change','input[type=checkbox]', function(){
-            var td = $(this).parent();
-            var tr = td.parent();
 
-            var col = td.data('attr');
-            var id = tr.data('value');
-            // var is_serviceable = $(this).prop('checked');
-            var params = {};
-            params['id'] = id;
-            // params['attr'] = 'is_serviceable';
-            // params['is_serviceable'] = is_serviceable;
-            modify_address(params);
-          });
-          $('table').on('focus','td', function(){
+          $('#table-cluster').off('focus','td').on('focus','td', function(){
               var prev_content = $(this).html()
               $(this).data('prev', prev_content);
-console.log('focous',$(this));
 
-              $(this).keypress(function(e){
+              $(this).off('keypress').keypress(function(e){
                 var key = e.which;
 
                 if(key == 13)
@@ -335,35 +322,44 @@ console.log('focous',$(this));
                     params[attr] = val;
 
                     $('table').prop('disabled', true);
-                    modify_address(params);
+                    if($(this).data('prev') != $(this).html())
+                      modify_address(params, node, $(this).data('prev'));
                     e.preventDefault();
                    
+                    node.removeData('prev');
+                    node.stop();
+                }
+                else{
+                  $(this).off('focusout').on('focusout',function(){
+                        $('td').prop('contenteditable', false);
+                        var node = $(this);
+                        var id = node.parent().data('value');
+                        var attr = node.data('attr');
+                        var val = node.html().replace(/<br>/g,'');
+                        node.html(val);
+                        // console.log('changing adress id '+id+' with column '+attr+' to value '+val); 
+                        params = {};
+                        params['id'] = id;
+                        params['attr'] = attr;
+                        params[attr] = val;
+
+                        $('table').prop('disabled', true);
+                        if($(this).data('prev') != $(this).html())
+                            modify_address(params, node, $(this).data('prev'));
+
+                        node.removeData('prev');
+                  })
                 }
               });
-          }).on('focusout','td',function(){
-console.log('focousout',$(this));
-                    var node = $(this);
-                    var id = node.parent().data('value');
-                    var attr = node.data('attr');
-                    var val = node.html().replace(/<br>/g,'');
-                    node.html(val);
-                    // console.log('changing adress id '+id+' with column '+attr+' to value '+val); 
-                    params = {};
-                    params['id'] = id;
-                    params['attr'] = attr;
-                    params[attr] = val;
 
-                    if($(this).data('prev') != $(this).html())
-                        modify_address(params);
 
-                    node.removeData('prev');
           });
 
 
-          function modify_address(params)
+          function modify_address(params, node,prev_content)
           {
               var attr = params['attr'];
-              delete params['attr'];
+              // delete params['attr'];
                 $('#dialog-message').html('<p>Loading...</p>');
                 $( "#dialog-message" ).dialog({
                   modal: true
@@ -376,17 +372,30 @@ console.log('focousout',$(this));
                     $('#dialog-message').html('<p>Address is now disabled for service!</p>');
                 }
                 else
-                  $('#dialog-message').html('<p>You have modified ' + attr + ' to ' + (params[attr]==''?'None':params[attr]) +'!</p>');
-                $( "#dialog-message" ).dialog({
-                  modal: true,
-                  buttons: {
-                    Ok: function(e) {
-                      $( this ).dialog( "close" );
-                      $('td').prop('contenteditable', true);
-                      $('#select-cluster').focus();
-                    }
+                {
+                  if(data.success == 1)
+                  {
+                    $('#dialog-message').html('<p>You have modified ' + attr + ' to ' + (params[attr]==''?'None':params[attr]) +'!</p>');
                   }
-                });
+                  else
+                  {
+                    $('#dialog-message').html('<p>Address exists!</p>'); 
+                    node.fadeOut('slow', function(){
+                      node.html(prev_content);
+                      node.fadeIn('slow');
+                    });
+                  }
+                    $( "#dialog-message" ).dialog({
+                      modal: true,
+                      buttons: {
+                        Ok: function(e) {
+                          $( this ).dialog( "close" );
+                          $('td').prop('contenteditable', true);
+                          $('#select-cluster').focus();
+                        }
+                      }
+                    });
+                }
               });   
           }
           function count(dict)
@@ -757,10 +766,11 @@ console.log('focousout',$(this));
           
           
           }
-          $('#table-cluster').on('mouseover','tr td:not(:first-child)',function(){
+          $('#table-cluster').on('mouseover','tr td:not(:nth-child(2), :nth-child(1))',function(){
             var node = $(this);
             node.data('border', node.css('border'));
             node.css('border','1px solid rgb(30,144,255)');
+            node.prop('contenteditable', true)
           }).on('mouseout','tr td:not(:first-child)',function(){
             var node = $(this);
             node.css('border',node.data('border'));
