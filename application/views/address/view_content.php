@@ -309,6 +309,7 @@
 
                 if(key == 13)
                 {
+                    $(this).off('focusout');
                     $('td').prop('contenteditable', false);
                     var node = $(this);
                     var id = node.parent().data('value');
@@ -329,7 +330,7 @@
                     node.removeData('prev');
                     node.stop();
                 }
-                else{
+              });
                   $(this).off('focusout').on('focusout',function(){
                         $('td').prop('contenteditable', false);
                         var node = $(this);
@@ -349,8 +350,6 @@
 
                         node.removeData('prev');
                   })
-                }
-              });
 
 
           });
