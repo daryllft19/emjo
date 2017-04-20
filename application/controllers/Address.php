@@ -87,10 +87,27 @@ class Address extends CI_Controller {
             $ret = array('success'=>0);
 
             $params = $this->input->get('params');
+            $params['convert'] = FALSE;
+            $attr = $params['attr'];
+            unset($params['attr']);
+            $address = $this->Address_model->search_address($params);
+            $id = $address[0]['id'];
+            unset($address[0]['id']);
+            unset($address[0]['cluster']);
+            unset($address[0]['is_serviceable']);
+            $address[0][$attr] = $params[$attr];
+            $address[0]['duplicate'] = TRUE;
+            $exist = $this->Address_model->search_address($address[0]);
+            $ret['exist'] = $exist;
+            $address[0]['id'] = $id;
+            if(empty($exist)){
+                unset($address[0]['duplicate']);
+                $ret['success'] = $this->Address_model->set_address($address[0]);
+            } 
+            // $ret['params'] = $address[0];
+
+            // $ret['success'] = $this->Address_model->set_address($params);
             
-            $ret['success'] = $this->Address_model->set_address($params);
-            
-            $ret['params'] = $params;
             header('Content-Type: application/json');
             echo json_encode($ret); 
         }
