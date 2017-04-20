@@ -495,7 +495,7 @@ class Package_model extends CI_Model {
 				$first_iteration_flag = 1;
 				$rotating_priority = $priority;
 				while(true){	
-					log_message('error','Computing using priority: '.$priority);
+					log_message('error','Computing using priority: '.$rotating_priority);
 		            foreach ($corners as $corner):
 						//check first orientation
 						$x2 = $corner['x'] + $length;				
@@ -506,7 +506,7 @@ class Package_model extends CI_Model {
 						if( round($z2,2) <= round($cluster_height,2) && 
 							round($x2,2) <= round($cluster_length,2) && 
 							round($y2,2) <= round($cluster_width,2) && 
-							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'horizontal', $priority))
+							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'horizontal'))
 						{
 							// log_message('error','Placing it horizontally in | '.json_encode($corner), false);
 							//GET PACKAGE WHERE IT IS ADJACENT AND CHECK IF NEW PACKAGE IS JUST STACKED
@@ -545,7 +545,7 @@ class Package_model extends CI_Model {
 						if( round($z2,2) <= round($cluster_height,2) && 
 							round($x2,2) <= round($cluster_length,2) && 
 							round($y2,2) <= round($cluster_width,2) && 
-							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'vertical', $priority))
+							$this->has_no_collision($packages,$corner, $x2, $y2, $z2, 'vertical'))
 						{
 							// log_message('error','Placing it vertically in | '.json_encode($corner), false);
 							//GET PACKAGE WHERE IT IS ADJACENT AND CHECK IF NEW PACKAGE IS JUST STACKED
@@ -858,7 +858,7 @@ class Package_model extends CI_Model {
 			return $min_candidate;
 		}
 
-		public function has_no_collision($packages,$corner, $x2, $y2, $z2, $orientation, $priority)
+		public function has_no_collision($packages,$corner, $x2, $y2, $z2, $orientation)
 		{
 			foreach ($packages as $package):
 				/*
