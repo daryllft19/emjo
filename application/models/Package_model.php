@@ -33,6 +33,8 @@ class Package_model extends CI_Model {
         	try{
 	        	$package = $this->get_package($dArgs['id']);
 	        	// get packages put after package to be deleted
+	        	/*
+	        	ORIGINAL ACTION: remove package and re-insert all packages placed after  
 	        	$this->db->select('package.*');
 				$this->db->from('package');
 				$this->db->join('address','address.id = address');
@@ -71,6 +73,32 @@ class Package_model extends CI_Model {
 		        		);
 
 		        	$this->modify_package(array('params'=>$params,'data'=>$data));
+
+		        
+		        }
+		        */
+
+		        $above = $this->get_above($dArgs);
+		        log_message('error','Packages above of '. json_encode($dArgs). ' | '.json_encode($above));
+
+				$this->db->where('id', $dArgs['id']);
+		        $this->db->delete('package');
+		        log_message('error','Successfully deleted package'. json_encode($package));
+		        
+		        foreach ($above as $key => $value) {
+		        	$params = array(
+		        		'id' => $value['id']
+		        		);
+		        	$data = array(
+		        		'z1' => ($value['z1']-$package['height']),
+		        		'z2' => ($value['z2']-$package['height'])
+		        		);
+
+		        	$this->modify_package(array('params'=>$params,'data'=>$data));
+			    	// log_message('error', 'Packages above '.$value['serial_no'], false);
+			    	// log_message('error', 'Packages above z1='.($value['z1']-$package['height']), false);
+			    	// log_message('error', 'Packages above z2='.($value['z2']-$package['height']), false);
+			        log_message('error','Package '.$value['id'].' with serial no.'.$value['serial_no'].' moved down.');
 		        }
 		        return 1;
         	}
@@ -112,7 +140,7 @@ class Package_model extends CI_Model {
 		{
 			$address_list = array();
 			$address = $this->get_package($dArgs['id']);
-			$level = $dArgs['level'];
+			$level = isset($dArgs['level'])?$dArgs['level']:-1;
 			list($x1,$x2, $y1,$y2, $z) = array($address['x1'],$address['x2'],$address['y1'],$address['y2'],$address['z2']);
 			$query = $this->db->get_where('package', array('x1 >=' => (string)$x1,'x2 <=' => (string)$x2, 'y1 >= ' => (string)$y1, 'y2 <= ' => (string)$y2, 'z1 >=' => (string)$z));
 			$address_list = $query->result_array();
@@ -839,6 +867,10 @@ class Package_model extends CI_Model {
 				// var_dump('condition4: '.(($temp_x * $temp_y == $min_area && $temp_x < $prev_x)?'true':'false'));
 				// var_dump('condition5: '.(($temp_x * $temp_y == $min_area && $temp_x >= $prev_x && $temp_y < $prev_y)?'true':'false'));
 				// var_dump('condition6: '.(($temp_x * $temp_y == $min_area && $temp_x >= $prev_x && $candidate['orientation'] == 'vertical' && $candidate['y'] <= $min_tick)?'true':'false'));
+				log_message('error',json_encode($candidate).' | x ='.$candidate_x.' | y ='.$candidate_y.' | tempx ='.$temp_x.' | tempy ='.$temp_y);
+				log_message('error',json_encode($candidate).' | '.round($temp_x * $temp_y * $temp_z,4).' < '.round($min_area,4));
+				log_message('error',json_encode($candidate).' | '.$temp_x. ' | '.$prev_x );
+				log_message('error',json_encode($candidate).' | '.$temp_y. ' | '.$prev_y );
 				if($min_area == -1 || 
 					round($temp_x * $temp_y * $temp_z,4) < round($min_area,4) ||
 					($temp_x * $temp_y * $temp_z == $min_area && $temp_x < $prev_x) ||
