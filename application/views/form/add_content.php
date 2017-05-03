@@ -195,7 +195,17 @@
                     			get_top_address();
                     		}
                     		else{
-                    			failed = '';
+                    			<?php
+                    				if ($this->tank_auth->is_logged_in()){
+                    			?>	
+                    				failed = 'See layout for possible adjustment in container size.<br/>';
+                    			<?php
+                    				}else{
+                    			?>
+                    				failed = 'Contact admin for possible adjustment in container size.<br/>';
+                    			<?php
+                    				}
+                    			?>	
                     			if(data.success.indexOf('general') >= 0)
                     				failed += 'Package cannot be placed anywhere.<br/>';
                     			if(data.success.indexOf('dimension') >= 0)
