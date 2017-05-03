@@ -29,12 +29,22 @@ class Cluster_model extends CI_Model {
 			    	$id = $data['id'];
 			    	unset($data['id']);
 			    }
-
-
+			    if(isset($data['attr'])){
+			    	$attr = $data['attr'];
+			    	unset($data['attr']);
+				}
 			    if($id > 0){
-				    if($this->count($id)['count'] > 0 )
-				    	return array('error'=>'Cannot modify if cluster contains packages.','info'=>$this->count($id));
-
+				    // if($this->count($id)['count'] > 0 )
+				    	// return array('error'=>'Cannot modify if cluster contains packages.','info'=>$this->count($id));
+			    	$cluster = $this->Cluster_model->get_cluster($id);
+			    	if(isset($attr) && in_array($attr, array('length','width','height')))
+			    	{
+			    		if($data[$attr] < $cluster[$attr]){
+			    			$err_msg = 'Cannot decrease cluster '.$attr;
+				    		return array('error'=>$err_msg);
+			    		}
+			    			
+			    	}
 			    	$this->db->where('id',$id);
 			    	return $this->db->update('cluster',$data);
 			    }
