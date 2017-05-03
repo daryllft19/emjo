@@ -96,12 +96,13 @@
 
             $(spans[i]).html(data.count);
             clear_btn = $($(spans[i]).parents('tr').children('td:last-child').find('a')[0]);
+            //Remove disabling of modification of table contents
             if(data.count <= 0 ){
-              $($(spans[i])).parents('tr').find('td[contenteditable]').prop('contenteditable',true);
+              // $($(spans[i])).parents('tr').find('td[contenteditable]').prop('contenteditable',true);
               clear_btn.addClass('disabled');
             }
             else{
-              $($(spans[i])).parents('tr').find('td[contenteditable]').prop('contenteditable',false);
+              // $($(spans[i])).parents('tr').find('td[contenteditable]').prop('contenteditable',false);
               clear_btn.removeClass('disabled')
             }
           })
@@ -254,6 +255,7 @@
 
         $('td[contenteditable]').on('mouseover',function(){
           var node = $(this);
+          node.prop('contenteditable',true);
           node.data('border', node.css('border'));
           if(node.prop('contenteditable') == 'true')
             node.css('border','1px solid rgb(30,144,255)');
@@ -321,7 +323,6 @@
 
             var attr = params['attr']
             var prev_content = params['old']
-            delete params['attr']
             delete params['old']
             $.post('/cluster/modify', {'params': params}, function(data){
               if(data.response == 1)
